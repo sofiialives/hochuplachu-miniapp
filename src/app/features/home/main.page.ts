@@ -198,7 +198,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
        одному слову на строку). Ниже, в @media (max-width:374px),
        .hero--promo целиком переключается на колонку — текст и кнопка
        друг под другом, а не в тесном ряду. */
-    .hero--promo { background-color: white; box-shadow: 0px 26.44px 62.98px -21.64px rgba(0, 0, 0, 0.15); margin-bottom: 16px; }
+    .hero--promo { background-color: white; box-shadow: 0px 26.44px 62.98px -21.64px rgba(0, 0, 0, 0.15); }
     .hero-body { flex: 1; min-width: 0; }
     .hero-title { font-family: var(--font-display); font-size: 20px; font-weight: 700; line-height: 1.2; }
     .hero-sub { color: rgba(0, 0, 0, 1); font-size: 16px; margin-top: 4px; }

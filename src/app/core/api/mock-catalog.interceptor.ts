@@ -1,33 +1,25 @@
 import { HttpInterceptorFn, HttpResponse } from '@angular/common/http';
-import { isDevMode } from '@angular/core';
 import { of } from 'rxjs';
 
 // ЗАЧЕМ ЭТОТ ФАЙЛ:
 // Бэкенд для бренда «Хочу Плачу!» сейчас отдаёт coming_soon для eSIM и
 // Сервисов (нет активных провайдеров/привязки в админке — см. разбор в чате).
 // Чтобы не гонять доступы у бэкенд-команды ради вёрстки/редизайна, здесь
-// лежат моки конкретно этих ручек. Работает ТОЛЬКО в dev-сборке
-// (isDevMode() === false в production build — Angular сам это гарантирует,
-// поэтому в собранном на прод сайте этот код никогда не сработает) и только
-// если явно включено через localStorage (см. включение ниже).
+// лежат моки конкретно этих ручек.
 //
-// Как включить/выключить, не трогая код:
-//   В консоли браузера (на localhost): localStorage.setItem('mockCatalog', '1')
-//   Выключить:                          localStorage.removeItem('mockCatalog')
-//   Потом обновить страницу.
-//
-// Как отключить совсем: убрать mockCatalogInterceptor из withInterceptors([...])
-// в app.config.ts — один функциональный интерцептор, больше нигде не завязан.
+// Мок включён ВСЕГДА, безусловно — этот деплой отдельный, специально
+// для команды, чтобы у всех сразу были одни и те же мок-данные без
+// ручных действий в консоли браузера (никакого localStorage-флага и
+// dev/production-проверок больше нет). Если когда-нибудь этот же код
+// понадобится и на РЕАЛЬНОМ проде для настоящих пользователей — тогда
+// нужно будет вернуть переключатель или просто убрать
+// mockCatalogInterceptor из withInterceptors([...]) в app.config.ts (один
+// функциональный интерцептор, больше нигде не завязан) для того деплоя.
 
 const TOKEN_KEY = 'hp.token';
 
 function mockEnabled(): boolean {
-  if (!isDevMode()) return false;
-  try {
-    return localStorage.getItem('mockCatalog') === '1';
-  } catch {
-    return false; // SSR/приватный режим без localStorage — просто не мокаем
-  }
+  return true;
 }
 
 // AuthService.bootstrap() делает запрос /auth/me ТОЛЬКО если в localStorage
