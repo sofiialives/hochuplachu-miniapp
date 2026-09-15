@@ -1,5 +1,5 @@
 {
-  "buildCommand": "ng build",
+  "buildCommand": "npm run brand:sync && ng build",
   "outputDirectory": "dist/hochuplachu-frontend/browser",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
