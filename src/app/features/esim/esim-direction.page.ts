@@ -122,7 +122,8 @@ interface DayGroup {
   `,
   styles: [`
     .wrap {
-      padding: var(--space-md) 52px var(--space-xl);
+      padding: 0 16px;
+      padding-bottom: 110px;
       max-width: 1200px; margin: 0 auto;
     }
     h1 { margin: 0 0 2px; }
@@ -131,11 +132,11 @@ interface DayGroup {
 
     .head { display: flex; gap: var(--space-md); align-items: center; margin-bottom: var(--space-sm); }
     .flag { width: 100px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, .16); }
-    .emoji { font-size: 40px; line-height: 1; }
+    .emoji { font-size: 28px; line-height: 1; }
     .head-body { min-width: 0; }
-    .meta { font-size: 18px; color: rgba(0, 0, 0, 1); }
+    .meta { font-size: 14px; color: rgba(0, 0, 0, 1); }
     .meta b { color: var(--color-primary-ink); }
-    .lead { font-size: 18px; color: rgba(0, 0, 0, 1); margin-bottom: 32px; }
+    .lead { font-size: 14px; color: rgba(0, 0, 0, 1); margin-bottom: 20px; }
 
     .filters { display: flex; flex-direction: column; gap: 8px; margin-bottom: var(--space-md); }
     .chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
@@ -175,7 +176,7 @@ interface DayGroup {
       width: 100%; box-shadow: 0px 26.44px 62.98px -21.64px rgba(0, 0, 0, 0.15); display: flex; align-items: center; gap: 20px; padding: 24px;
       background: white; cursor: pointer; text-align: left;
     }
-    .grp-title { font-weight: 600; font-size: 20px; }
+    .grp-title { font-weight: 600; font-size: 16px; }
     .grp-count { color: rgba(0, 0, 0, 1); font-size: 14px; flex: 1; }
     .grp-chev { transition: transform var(--dur-quick) ease; color: var(--color-muted); font-size: 24px; }
     .grp-chev--open { transform: rotate(180deg); }

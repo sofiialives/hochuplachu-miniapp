@@ -60,13 +60,16 @@ import { ServiceProduct } from '../../core/api/services.api';
     .hero-title { font-family: var(--font-display); font-size: 20px; font-weight: 700; line-height: 1.2; }
     .hero-sub { color: var(--color-muted); font-size: 14px; }
     .hero-arr { color: var(--color-muted); font-size: 22px; }
-    /* <375px — та же логика, что у .hero--promo на главной: иконка
-       (56px) + текст + стрелка в один ряд на узком экране оставляют
+    /* Мобильный масштаб — весь диапазон до десктопа (<1024px), не
+       только самые узкие экраны: та же логика, что у .hero--promo на
+       главной — иконка (56px) + текст + стрелка в один ряд оставляют
        .hero-body слишком мало места, название сервиса переносится по
        одному слову. Уменьшаем иконку и шрифты вместо смены раскладки —
        тут нет отдельной кнопки, которую нужно уводить на новую строку,
-       достаточно ужать сами элементы. */
-    @media (max-width: 374px) {
+       достаточно ужать сами элементы. Десктоп (≥1024px, у этого
+       компонента нет отдельного desktop-медиа-запроса) остаётся на
+       исходных базовых размерах. */
+    @media (max-width: 1023px) {
       .hero { gap: 10px; padding: 12px; }
       .hero-ico { width: 44px; height: 44px; border-radius: 12px; }
       .hero-title { font-size: 16px; }

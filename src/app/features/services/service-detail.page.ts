@@ -159,19 +159,19 @@ import { formatAmount } from '../../core/currency/currency-symbols';
   styles: [`
     /* .wrap — общий паттерн отступов, как в main.page.ts/services.page.ts. */
     .wrap {
-      padding: 0 52px;
+      padding: 0 16px;
       max-width: 1200px; margin: 0 auto;
       display: flex; flex-direction: column; gap: 20px;
       padding-bottom: var(--space-xl);
     }
     @media (min-width: 1024px) { .wrap { padding-left: 120px; padding-right: 120px; } }
-    h2 { margin: 0; font-family: 'Syncopate Cyr'; font-size: 28px; text-transform: uppercase; text-align: center; }
+    h2 { margin: 0; font-family: 'Syncopate Cyr'; font-size: 22px; text-transform: uppercase; text-align: center; }
     /* Иконка+название — центрированный столбик, без описания (убрано вовсе).
        Раньше margin-bottom на .head СКЛАДЫВАЛСЯ с общим gap самого .wrap —
        получалось двойное расстояние. Теперь единственный источник
        расстояния — gap: 20px у .wrap выше, здесь его больше нет. */
     .head { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-    .ico { width: 82px; height: 82px; border-radius: 12px; object-fit: contain; }
+    .ico { width: 64px; height: 64px; border-radius: 12px; object-fit: contain; }
     @media (min-width: 1024px) {
       h2 { font-size: 36px; }
       .ico { width: 102px; height: 102px; }
@@ -201,8 +201,8 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     }
     /* «дата» — верхняя строка номинала (для подписок это реально длительность
        вроде «12 месяцев», для гифткарт — сумма/название товара). */
-    .denom-value { font-weight: 600; font-size: 24px; color: var(--color-ink); }
-    .denom-price { color: rgba(114, 86, 22, 1); font-size: 20px; }
+    .denom-value { font-weight: 600; font-size: 18px; color: var(--color-ink); }
+    .denom-price { color: rgba(114, 86, 22, 1); font-size: 15px; }
     @media (min-width: 1024px) {
       .denom-value { font-size: 32px; }
       .denom-price { font-size: 26px; }

@@ -28,10 +28,12 @@ import { Component, input, output } from '@angular/core';
       border-top-left-radius: var(--rounded-xl);
       border-top-right-radius: var(--rounded-xl);
       max-height: 90vh; overflow: auto;
-      /* Боковые паддинги — тот же паттерн, что на остальных страницах:
-         52px мобилка, 120px десктоп (медиа-запрос ниже). position:relative
-         нужен как якорь для абсолютно позиционированного .close. */
-      padding: var(--space-lg) 52px calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
+      /* Было 52px с боков на мобилке — тот же паттерн, что чинили на
+         главной/сервисах: фиксированный крупный паддинг на узких экранах
+         съедал слишком много места. 16px мобилка, 120px десктоп
+         (медиа-запрос ниже, не тронут). position:relative нужен как
+         якорь для абсолютно позиционированного .close. */
+      padding: var(--space-lg) 16px calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
       box-shadow: 0 -8px 32px rgba(0,0,0,.18);
       animation: dlg-up .34s var(--ease-spring) both;
     }
@@ -47,7 +49,7 @@ import { Component, input, output } from '@angular/core';
       }
     }
     .head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: var(--space-md); }
-    h3 { font-family:"Syncopate Cyr"; text-transform: uppercase; font-size: 32px; min-width: 0;}
+    h3 { font-family:"Syncopate Cyr"; text-transform: uppercase; font-size: 22px; min-width: 0;}
     .close {
       position: absolute; top: 32px; right: 32px;
       width: 36px; height: 36px; border-radius: var(--rounded-pill);
@@ -56,7 +58,7 @@ import { Component, input, output } from '@angular/core';
     }
     @media (max-width: 450px) {
       .head { padding-right: 56px; }
-      h3 { font-size: 22px; }
+      h3 { font-size: 19px; }
     }
     @media (min-width: 1024px) {
       .sheet { padding-left: 120px; padding-right: 120px; }

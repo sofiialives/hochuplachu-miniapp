@@ -63,12 +63,13 @@ import { EMAIL_REGEX, extractApiError } from '../../core/errors/api-error';
     }
   </section>`,
   styles: [`
-    .title { font-size: 32px; font-family: 'Syncopate Cyr'; text-transform: uppercase;} 
+    .title { font-size: 22px; font-family: 'Syncopate Cyr'; text-transform: uppercase;} 
     .wrap {
-      padding: var(--space-md) 52px var(--space-xl);
+      padding: 0 16px;
       max-width: 1200px; margin: 0 auto;
+      padding-bottom: 110px;
     }
-    .hint { color: rgba(0, 0, 0, 1); font-size: 18px; margin-top: 8px; margin-bottom: 20px; }
+    .hint { color: rgba(0, 0, 0, 1); font-size: 14px; margin-top: 6px; margin-bottom: 16px; }
     .cta { margin-top: var(--space-lg); display: flex; flex-direction: column; gap: var(--space-sm); align-items: stretch; }
     .link-btn {
       align-self: center;

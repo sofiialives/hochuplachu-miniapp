@@ -20,11 +20,11 @@ import { Component, input, output } from '@angular/core';
        ниже); ширина на всю строку, высота 56px, флекс-раскладка под
        лого СБП + текст — своя специфика этой кнопки, не часть variant. */
     .pay {
-      width: 100%; height: 56px;
-      display: flex; align-items: center; justify-content: center; gap: 12px;
+      width: 100%; height: 48px;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
       background: rgba(255, 186, 38, 1); color: var(--color-on-primary);
       border-radius: var(--rounded-lg);
-      font-size: 16px; font-weight: 700;
+      font-size: 14px; font-weight: 700;
       transition:
         box-shadow var(--dur-quick) ease,
         transform var(--dur-quick) var(--ease-out),
@@ -37,7 +37,7 @@ import { Component, input, output } from '@angular/core';
       box-shadow: var(--shadow-primary);
     }
     .pay:disabled { opacity: .6; cursor: not-allowed; }
-    .sbp-logo { width: 22px; height: 22px; }
+    .sbp-logo { width: 18px; height: 18px; }
   `],
 })
 export class PayButtonComponent {

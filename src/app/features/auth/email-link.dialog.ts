@@ -49,7 +49,7 @@ import { EMAIL_REGEX, extractApiError } from '../../core/errors/api-error';
     /* .muted — те же значения, что .hint на email-verify.page.ts: цвет,
        размер, отступы, десктопная градация в медиа-запросе ниже. Имя класса
        не трогала (используется в шаблоне), поменяла только сами значения. */
-    .muted { color: rgba(0, 0, 0, 1); font-size: 18px; margin-top: 8px; margin-bottom: 20px; }
+    .muted { color: rgba(0, 0, 0, 1); font-size: 14px; margin-top: 6px; margin-bottom: 16px; }
     .cta { margin-top: var(--space-md); display: flex; flex-direction: column; gap: var(--space-sm); align-items: stretch; }
     .link-btn {
       align-self: center;

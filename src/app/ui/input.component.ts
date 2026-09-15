@@ -23,14 +23,17 @@ import { Component, input, output } from '@angular/core';
   </label>`,
   styles: [`
     :host { display: block; }
-    .wrap { display: flex; flex-direction: column; gap: 6px; }
-    .label { font-size: 13px; color: rgba(0, 0, 0, 1); font-weight: 500; }
+    .wrap { display: flex; flex-direction: column; gap: 4px; }
+    .label { font-size: 12px; color: rgba(0, 0, 0, 1); font-weight: 500; }
     input {
-      height: 44px; padding: 20px;
+      height: 40px; padding: 0 14px;
       border-radius: var(--rounded-md);
       background: var(--color-surface);
       color: var(--color-ink);
-      font-size: 18px;
+      /* font-size держим на 16px, не ниже — на iOS Safari поле с
+         меньшим шрифтом при фокусе триггерит авто-zoom всей страницы,
+         это не про компактность, отдельное правило браузера. */
+      font-size: 16px;
       font-weight: 600;
       border: 1.5px solid rgba(211, 211, 211, 1);
       transition: border-color var(--dur-quick) ease, box-shadow var(--dur-quick) ease, background var(--dur-quick) ease;
@@ -43,9 +46,13 @@ import { Component, input, output } from '@angular/core';
       box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 25%, transparent);
     }
     input.has-error { border-color: var(--color-error); }
-    .err { font-size: 13px; color: var(--color-error); }
+    .err { font-size: 12px; color: var(--color-error); }
     @media (min-width: 1024px) {
-      input { padding: 26px; font-size: 22px; }
+      /* height:44px — восстанавливает исходный десктопный размер (был
+         implicit через базовое правило input{height:44px}; теперь база
+         уменьшена под мобильный масштаб, значение возвращено явно, чтобы
+         десктоп не изменился). */
+      input { height: 44px; padding: 26px; font-size: 22px; }
     }
   `],
 })

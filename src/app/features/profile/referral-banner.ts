@@ -55,8 +55,8 @@ import { formatReferralAmount } from '../../core/referral/referral-format';
     :host { display: block; }
     .banner {
       width: 100%; height: 100%;
-      display: flex; align-items: center; gap: 24px;
-      padding: 18px 22px;
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px;
       background: var(--color-surface);
       border: 1px solid transparent;
       border-radius: var(--rounded-lg);
@@ -70,9 +70,9 @@ import { formatReferralAmount } from '../../core/referral/referral-format';
 
     .icon-wrap {
   position: relative;
-  width: 25px;
-  height: 25px;
-  flex: 0 0 25px;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
 
   display: flex;
   align-items: center;
@@ -80,8 +80,8 @@ import { formatReferralAmount } from '../../core/referral/referral-format';
 }
 
 .icon-wrap svg {
-  width: 25px;
-  height: 25px;
+  width: 22px;
+  height: 22px;
   display: block;
   position: relative;
   z-index: 1;
@@ -89,7 +89,7 @@ import { formatReferralAmount } from '../../core/referral/referral-format';
 .icon-wrap::before {
   content: "";
   position: absolute;
-  inset: -8.4px;
+  inset: -7px;
   border-radius: 50%;
   padding: 2.4px;
   background: radial-gradient(
@@ -107,10 +107,10 @@ import { formatReferralAmount } from '../../core/referral/referral-format';
   mask-composite: exclude;
   pointer-events: none;
 }
-    .text { flex: 1; font-size: 15px; line-height: 1.25; }
-    .text b { font-weight: 600; font-size: 20px }
+    .text { flex: 1; font-size: 13px; line-height: 1.25; }
+    .text b { font-weight: 600; font-size: 16px }
     .text span { color: rgba(0, 0, 0, 1); }
-    .arrow { color: var(--color-muted); font-size: 36px; }
+    .arrow { color: var(--color-muted); font-size: 26px; }
   `],
 })
 export class ReferralBanner implements OnInit {

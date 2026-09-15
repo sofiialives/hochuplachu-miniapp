@@ -437,7 +437,12 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
        Каталог-режим — шире (760px), чтобы строка с визуалом + текстом +
        метриками + стрелкой нормально поместилась горизонтально. */
     .wrap {
-      padding: 0 52px;
+      padding: 0 16px;
+      /* 110px снизу — футер теперь position:fixed (bottom-nav.component.ts,
+         bottom:20px) и перестал сам резервировать себе место в потоке
+         документа; без этого последний контент страницы оказывался под
+         ним. Высота нав-бара + его отступ от низа + запас сверху. */
+      padding-bottom: 110px;
       max-width: 1200px; margin: 0 auto;
       display: flex; flex-direction: column;
     }
@@ -656,16 +661,16 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
        Повторяет геометрию .bank (aspect-ratio, радиус), но нарочно «пустая»:
        пунктирная рамка + мягкая поверхность вместо тёмного градиента. */
     .no-card {
-      border-radius: 30px;
+      border-radius: 20px;
       border: 2px solid rgba(205, 205, 205, 1); 
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       padding: var(--space-md);
       text-align: center;
-      padding: 56px 20px 32px;
-      margin-bottom: 28px;
+      padding: 24px 16px;
+      margin-bottom: 18px;
     }
     .no-card-ico {
-      width: 160px;  }
+      width: 84px; height: 84px;  }
     .no-card-title { font-size: 20px; font-weight: 600; color: rgba(0, 0, 0, 1); margin-bottom: 20px;}
     .no-card-sub { font-size: 13px; color: var(--color-muted); }
     .no-card .primary-link { margin-top: 6px; }
@@ -768,7 +773,7 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
        (flex-column → stretch на всю ширину), те же края, что у нижней кнопки.
        На узких экранах wrap уводит кнопку на строку ниже. */
     .catalog-head { display: flex; align-items: center; justify-content: center; margin-bottom: 28px; }
-    .catalog-head h1 { padding: 0; margin: 0; font-size: 32px;  }
+    .catalog-head h1 { padding: 0; margin: 0; font-size: 24px;  }
     .catalog-login { flex: 0 0 auto; }
     /* Перенос текста кнопки — только на узких экранах */
     .cta-br { display: none; }
@@ -776,7 +781,7 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
        а её текст переносится в 2 строки по центру, чтобы всё влезло в строку. */
     @media (max-width: 560px) {
       .catalog-head { flex-wrap: nowrap; gap: var(--space-sm); }
-      .catalog-head h1 { font-size: 24px; }
+      .catalog-head h1 { font-size: 19px; }
       .cta-br { display: inline; }
       .catalog-login ::ng-deep button {
         height: auto;
@@ -907,7 +912,7 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
     }
     .metric-val {
       font-family: "Syncopate Cyr";
-      font-size: 22px;
+      font-size: 17px;
       color: rgba(0, 0, 0, 1);
       line-height: 1.1;
       white-space: nowrap;
@@ -981,14 +986,14 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
       font-weight: 500;
     }
     .link-btn:hover { text-decoration: underline; }
-    .primary-link ::ng-deep button { padding: 20px 48px; height: auto; font-size: 20px; border-radius: 20px; }
+    .primary-link ::ng-deep button { padding: 14px 28px; height: auto; font-size: 15px; border-radius: 16px; }
 
            @media (min-width: 1024px) {
       .primary-link ::ng-deep button { padding: 24px 56px; font-size: 32px; }
       .wrap { padding-left: 120px; padding-right: 120px; }  
       .email-dash::before {
           width: 216px; margin: 36px 0 12px;}
-      .no-card-ico { width: 202px;}
+      .no-card-ico { width: 202px; height: 202px;}
       .no-card {
         border-radius: 30px;
       border: 2px solid rgba(205, 205, 205, 1); 

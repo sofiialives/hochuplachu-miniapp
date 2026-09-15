@@ -53,8 +53,11 @@ import { AuthService } from '../core/auth/auth.service';
              кнопками», а не под ними.
          Переменные ставит AuthService из WebApp API и обновляет по событиям
          safeAreaChanged/contentSafeAreaChanged. Вне Telegram content-inset не
-         задан → фолбэк 72px даёт прежнюю высоту бара (12+48+12). */
-      padding: 84px 22px 42px;
+         задан → фолбэк 72px даёт прежнюю высоту бара (12+48+12).
+         Было 84px/42px — заметно больше, чем реально нужно шапке на
+         мобильном; десктопный @media ниже её всё равно полностью
+         переопределяет своим значением, так что тут можно смело уменьшать. */
+      padding: 52px 22px 24px;
       min-height: calc(
         max(var(--tg-safe-area-inset-top, 0px), env(safe-area-inset-top, 0px))
         + var(--tg-content-safe-area-inset-top, 72px)
@@ -74,7 +77,7 @@ import { AuthService } from '../core/auth/auth.service';
     }
     .back:hover { background: var(--color-surface-soft, var(--color-surface-card)); }
     .brand { display: inline-flex; align-items: center; }
-    .brand img { width: 132px; display: block; object-fit: contain; }
+    .brand img { width: 104px; display: block; object-fit: contain; }
     /* brand-tint — логотип, перекрашенный под цвет заголовка брендированной
        страницы. Красятся ТОЛЬКО тёмные заливки (надпись), фирменный акцент
        остаётся своим цветом; если логотип не SVG — BrandLogoComponent

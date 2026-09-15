@@ -96,7 +96,12 @@ import { ServiceHeroCard } from './service-hero-card';
   </app-pull-to-refresh>`,
   styles: [`
     .wrap {
-      padding: 0 52px;
+      padding: 0 16px;
+      /* 110px снизу — футер теперь position:fixed (bottom-nav.component.ts,
+         bottom:20px) и перестал сам резервировать себе место в потоке
+         документа; без этого последний контент страницы оказывался под
+         ним. Высота нав-бара + его отступ от низа + запас сверху. */
+      padding-bottom: 110px;
       max-width: 1200px; margin: 0 auto;
       display: flex; flex-direction: column;
     }
@@ -140,9 +145,9 @@ import { ServiceHeroCard } from './service-hero-card';
     .svc-kind { color: var(--color-muted); font-size: 12px; }
     .svc-hot {
       position: absolute; top: 6px; left: 6px;
-      padding: 2px 8px; border-radius: var(--rounded-pill);
-      background: var(--color-primary); color: var(--color-on-primary);
-      font-size: 11px; font-weight: 600; line-height: 1.5;
+      padding: 5px 8px; border-radius: var(--rounded-pill);
+      background: rgba(255, 186, 38, 1); color: rgba(0, 0, 0, 1);
+      font-family: 'Syncopate Cyr'; font-size: 7px; text-transform: uppercase;
     }
 
     .soon {
@@ -183,15 +188,13 @@ import { ServiceHeroCard } from './service-hero-card';
       .grid app-service-hero-card { grid-column: span 2; }
     }
 
-    /* <375px — та же проблема, что была на главной: 52px паддинга с
-       каждой стороны при 320px ширины экрана оставляет всего 216px на
-       контент. Размещено в конце файла НАРОЧНО — при равной
-       специфичности CSS-правило побеждает то, что идёт ПОЗЖЕ по тексту,
-       а не то, что "внутри медиа-запроса"; если бы это стояло раньше
-       .wrap/.grid, безусловные правила выше молча перебивали бы его. */
-    @media (max-width: 374px) {
-      .wrap { padding: 0 16px; }
-    }
+    /* Мобильный масштаб — весь диапазон до десктопа (<1024px), не
+       только самые узкие экраны: 52px паддинга с каждой стороны много
+       для всего мобильного диапазона (375-580px), не только для 320px.
+       Размещено в конце файла НАРОЧНО — при равной специфичности
+       CSS-правило побеждает то, что идёт ПОЗЖЕ по тексту, а не то, что
+       "внутри медиа-запроса"; если бы это стояло раньше .wrap/.grid,
+       безусловные правила выше молча перебивали бы его. */
   `],
 })
 export class ServicesPage implements OnInit, OnDestroy {

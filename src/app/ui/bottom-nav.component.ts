@@ -64,25 +64,34 @@ import { GuideTargetDirective } from '../features/guides/guide-target.directive'
            <span class="nav-underline" aria-hidden="true"></span>
     </div>`,
   styles: [`
-    /* Никакого position:fixed/absolute — .nav сидит в обычном потоке
-       документа, у самого низа страницы просто потому, что он и есть
-       последний элемент на странице; горизонтальные отступы даёт .wrap,
-       как и на остальных страницах, вертикальный зазор до низа — просто
-       margin-bottom. */
+    /* Сам .nav — просто визуальный бар, позиционирование (fixed) теперь
+       на .wrap ниже. */
     .nav {
       view-transition-name: bottom-nav;
       background: rgba(255, 255, 255, 1);
       border-radius: 72px;
-      padding: 12px 20px;
+      padding: 10px 16px;
       display: flex; flex-direction: column; align-items: center;
     }
-    /* .wrap — тот же layout-контейнер, что и на остальных страницах
-       (padding/max-width/margin) — сам даёт боковые отступы. */
+    /* position:fixed, 20px от низа экрана — по явному запросу владельца
+       (раньше сидел в обычном потоке документа, у низа страницы просто
+       потому что был последним элементом). ВАЖНО: теперь футер выпал из
+       потока — страницы ПОД ним нуждаются в нижнем padding (высота нав-
+       бара + 20px + отступ), иначе последний контент экрана будет
+       перекрыт футером. Этот padding нужно добавить на каждой странице
+       отдельно (обычно на .wrap той страницы) — этот компонент сам не
+       может знать высоту контента других страниц. */
     .wrap {
-      padding: 0 52px;
+      position: fixed;
+      left: 0; right: 0; bottom: 20px;
+      z-index: 500;
+      padding: 0 16px;
       max-width: 1200px; margin: 0 auto;
       display: flex; flex-direction: column;
     }
+    /* <1024px — тот же паттерн, что на главной/сервисах: 52px с боков
+       фиксированно на узких экранах почти не оставляет места контенту. */
+
     .bar {
       display: flex; justify-content: space-between; align-items: center;
       width: 100%;

@@ -154,7 +154,7 @@ html, body {
   min-height: 100vh;
   font-family: var(--font-body);
   font-size: 16px;
-  line-height: 1.55;
+  line-height: 1.45;
   color: var(--color-body);
   background: var(--color-canvas);
   -webkit-font-smoothing: antialiased;
@@ -163,8 +163,16 @@ html, body {
 body {
   background-image: url('/assets/bg-paw.png');
   background-repeat: no-repeat;
-  background-position: bottom center;
+  /* bottom 110px, не bottom (вплотную к низу) — футер теперь
+     position:fixed с непрозрачным белым фоном ровно в этой же зоне
+     (bottom-nav.component.ts), и раньше полностью закрывал лапку собой.
+     Сдвинуто выше зоны, занятой футером, чтобы лапка была видна. */
+  background-position: bottom  center;
   background-attachment: fixed;
+  /* Уменьшено — раньше лапка рендерилась в натуральном размере файла,
+     на мобильных экранах выглядела крупнее, чем нужно фоновому
+     декоративному элементу. */
+  background-size: 310px auto;
   display: flex;
   flex-direction: column;
 }
@@ -186,9 +194,14 @@ h1, h2, h3 {
   margin: 0;
 }
 
-h1 { font-size: 24px; line-height: 1.2; }
-h2 { font-size: 20px; line-height: 1.25; }
-h3 { font-size: 17px; line-height: 1.3; }
+// 580px было эталоном ПОЗИЦИОНИРОВАНИЯ, не размера — вся типографика тут
+// была слишком крупной для мобильного диапазона 375-580px в принципе (не
+// только на самых узких экранах). База уменьшена под мобильный масштаб
+// целиком; десктопные @media(min-width:1024px)-блоки в отдельных
+// компонентах эту базу не используют — они не трогаются.
+h1 { font-size: 20px; line-height: 1.2; }
+h2 { font-size: 17px; line-height: 1.25; }
+h3 { font-size: 15px; line-height: 1.3; }
 
 p {
   margin: 0;

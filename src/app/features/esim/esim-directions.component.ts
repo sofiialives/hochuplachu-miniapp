@@ -86,17 +86,27 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     }
     .search input:focus { outline: none; border-color: var(--color-primary); }
 
-    /* ===================== < 375px: список, 1 в ряд — 2 колонки внутри, места хватает ===================== */
-    .grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    /* ===================== Единая горизонтальная карточка на ВЕСЬ
+       мобильный диапазон (320-1023px) — раньше структура карточки
+       МЕНЯЛАСЬ трижды на разных ширинах (горизонтальная → вертикальная
+       по центру на 375px → снова горизонтальная на 500px), из-за чего
+       выглядело как 3 разных дизайна подряд, а не один и тот же
+       масштабируемый. Теперь только РАЗМЕРЫ плавно меняются через
+       clamp() между 320px и 1023px, структура (иконка слева, текст
+       справа, цена/бейдж в правом столбце) — одна и та же везде. 2
+       колонки в сетке с самого начала (320px), а не 1 — на 320px ширины
+       после паддинга (16px×2) остаётся ~288px, по ~138px на карточку,
+       компактной горизонтальной карточке этого достаточно. ===================== */
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 
     .card {
       display: grid;
-      grid-template-columns: 72px 1fr;
+      grid-template-columns: clamp(40px, 8vw + 20px, 60px) 1fr;
       grid-template-rows: auto auto;
-      column-gap: 12px; row-gap: 8px;
+      column-gap: 8px; row-gap: 4px;
       align-items: start; justify-items: start;
       min-width: 0;
-      padding: 16px; border-radius: 18px;
+      padding: 12px; border-radius: 14px;
       background: rgba(255, 255, 255, 1);
       box-shadow: 0px 26.44px 62.98px -21.64px rgba(0, 0, 0, 0.15);
       cursor: pointer; font: inherit; text-align: left;
@@ -105,66 +115,29 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     .card:hover { border-color: rgba(255, 186, 38, 1); }
     .card:active { transform: scale(.98); }
 
-    .ico { grid-column: 1; grid-row: 1; display: flex; align-items: center; height: 34px; }
-    .flag { width: 48px; height: 36px; object-fit: cover; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.16); flex-shrink: 0; }
-    .emoji { font-size: 30px; line-height: 1; }
+    .ico { grid-column: 1; grid-row: 1; display: flex; align-items: center; height: clamp(20px, 4vw + 10px, 28px); }
+    .flag { width: clamp(28px, 6vw + 12px, 40px); height: clamp(21px, 4.5vw + 9px, 30px); object-fit: cover; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,.16); flex-shrink: 0; }
+    .emoji { font-size: clamp(18px, 4vw + 8px, 26px); line-height: 1; }
 
     .name-block { grid-column: 1; grid-row: 2; min-width: 0; max-width: 100%; }
-    .name { display: block; font-weight: 600; font-size: 14px; }
-    .cnt { color: var(--color-muted); font-size: 11px; }
+    .name { display: block; font-weight: 600; font-size: clamp(11px, 1vw + 8px, 13px); }
+    .cnt { color: var(--color-muted); font-size: clamp(9px, 0.6vw + 7.5px, 11px); }
 
     .from {
       grid-column: 2; grid-row: 1; justify-self: end;
-      font-family: 'Syncopate Cyr'; color: rgba(114, 86, 22, 1); font-size: 12px;
+      font-family: 'Syncopate Cyr'; color: rgba(114, 86, 22, 1); font-size: clamp(9px, 0.8vw + 7px, 11px);
       background: rgba(244, 244, 244, 1);
-      padding: 10px 14px; border-radius: var(--rounded-pill);
+      padding: 6px 9px; border-radius: var(--rounded-pill);
     }
     .badge {
       grid-column: 2; grid-row: 2; justify-self: end;
       font-family: 'Syncopate Cyr';
       background: rgba(255, 186, 38, 1); color: rgba(0, 0, 0, 1);
-      padding: 7px 11px; font-size: 8px; text-transform: uppercase;
+      padding: 5px 8px; font-size: clamp(6px, 0.4vw + 5px, 7px); text-transform: uppercase;
       border-radius: var(--rounded-pill);
     }
 
     .empty { text-align: center; color: var(--color-muted); padding: 32px 0; }
-
-    /* ===================== 375–499px: 2 в ряд, узко — список по центру ===================== */
-    @media (min-width: 375px) {
-      .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-
-      .card {
-        display: flex; flex-direction: column; align-items: center; text-align: center;
-        gap: 8px; padding: 14px;
-      }
-      .ico { justify-content: center; height: 28px; }
-      .flag { width: 40px; height: 30px; }
-      .name-block { max-width: 100%; }
-      .name { font-size: 13px; }
-      .cnt { font-size: 11px; }
-      .from { font-size: 10px; padding: 7px 10px; }
-      .badge { font-size: 7px; padding: 5px 9px; }
-    }
-
-    /* ===================== 500–1023px: 2 в ряд, уже хватает места — снова «по бокам» ===================== */
-    @media (min-width: 500px) {
-      .card {
-        display: grid;
-        grid-template-columns: 56px 1fr;
-        grid-template-rows: auto auto;
-        column-gap: 10px; row-gap: 6px;
-        align-items: start; justify-items: start;
-        text-align: left;
-        padding: 14px;
-      }
-      .ico { grid-column: 1; grid-row: 1; justify-content: flex-start; height: 28px; }
-      .flag { width: 40px; height: 30px; }
-      .name-block { grid-column: 1; grid-row: 2; }
-      .name { font-size: clamp(12px, 0.574vw + 9.13px, 15px); }
-      .cnt { font-size: clamp(10px, 0.382vw + 8.09px, 12px); }
-      .from { grid-column: 2; grid-row: 1; justify-self: end; font-size: clamp(9px, 0.574vw + 6.13px, 12px); padding: 7px 10px; }
-      .badge { grid-column: 2; grid-row: 2; justify-self: end; font-size: clamp(7px, 0.382vw + 5.09px, 9px); padding: 5px 9px; }
-    }
 
     /* ===================== >= 1024px: десктоп, 4 в ряд ===================== */
     @media (min-width: 1024px) {

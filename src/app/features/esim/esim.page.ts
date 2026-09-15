@@ -61,7 +61,10 @@ import { EsimDirectionsComponent } from './esim-directions.component';
   styles: [`
     .wrap {
       /* Боковые паддинги: 52px на мобиле, 120px на десктопе (см. медиа-запрос ниже) */
-      padding: 0 52px;
+      padding: 0 16px;
+      /* 110px снизу — тот же запас под зафиксированный футер, что и на
+         остальных страницах (см. комментарий в main.page.ts). */
+      padding-bottom: 110px;
       max-width: 1200px; margin: 0 auto;
       display: flex; flex-direction: column;
     }

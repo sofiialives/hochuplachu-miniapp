@@ -27,11 +27,11 @@ import { Component, input, output } from '@angular/core';
     button.full { width: 100%; }
     button {
       font-family: var(--font-body);
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       line-height: 1;
-      padding: 12px 20px;
-      height: 40px;
+      padding: 8px 14px;
+      height: 34px;
       border-radius: var(--rounded-md);
       transition:
         background var(--dur-quick) ease,
@@ -70,7 +70,7 @@ import { Component, input, output } from '@angular/core';
     button.variant-coral-band {
       background: var(--grad-primary); color: var(--color-on-primary);
       box-shadow: var(--shadow-primary);
-      height: 56px; padding: 0 28px; font-size: 16px;
+      height: 40px; padding: 0 16px; font-size: 13px;
       border-radius: var(--rounded-lg);
     }
     button.variant-coral-band:hover:not(:disabled) {
@@ -80,6 +80,20 @@ import { Component, input, output } from '@angular/core';
     button.variant-coral-band:active:not(:disabled) {
       background: var(--color-primary-active);
       transform: none;
+    }
+    /* Раньше у этого компонента не было десктопного медиа-запроса вообще
+       — один размер на всех ширинах. База выше уменьшена под мобильный
+       масштаб (375-580px) — здесь явно возвращены прежние (исходные)
+       размеры для ≥1024px, чтобы десктоп не изменился. */
+    @media (min-width: 1024px) {
+      button {
+        font-size: 14px;
+        padding: 12px 20px;
+        height: 40px;
+      }
+      button.variant-coral-band {
+        height: 56px; padding: 0 28px; font-size: 16px;
+      }
     }
   `],
 })

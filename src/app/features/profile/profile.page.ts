@@ -167,7 +167,12 @@ import { GuideService } from '../guides/guide.service';
     }`,
   styles: [`
     .wrap {
-      padding: 0 52px;
+      padding: 0 16px;
+      /* 110px снизу — футер теперь position:fixed (bottom-nav.component.ts,
+         bottom:20px) и перестал сам резервировать себе место в потоке
+         документа; без этого последний контент страницы оказывался под
+         ним. Высота нав-бара + его отступ от низа + запас сверху. */
+      padding-bottom: 110px;
       max-width: 1200px; margin: 0 auto;
       display: flex; flex-direction: column;
     }
@@ -177,15 +182,15 @@ import { GuideService } from '../guides/guide.service';
     .id-col { display: flex; flex-direction: column; align-items: center; }
     .avatar { 
       position: relative;
-      width: 144px;
-      height: 144px;
-      margin-bottom: 28px;
+      width: 96px;
+      height: 96px;
+      margin-bottom: 18px;
     }
     .avatar img, .avatar .ph {
-      width: 144px; height: 144px; border-radius: 50%;
+      width: 96px; height: 96px; border-radius: 50%;
       background: var(--grad-primary);
       color: var(--color-on-primary); display: flex; align-items: center; justify-content: center;
-      font-size: 32px; font-family: var(--font-display);
+      font-size: 22px; font-family: var(--font-display);
       box-shadow: var(--shadow-primary);
     }
 
@@ -235,12 +240,12 @@ import { GuideService } from '../guides/guide.service';
       display: flex; justify-content: center;
       margin: calc(-1 * var(--space-md)) 0 var(--space-xl);
     }
-    .email-login ::ng-deep button { padding: 20px 40px; height: auto; font-size: 20px; border-radius: 20px; }
+    .email-login ::ng-deep button { padding: 16px 32px; height: auto; font-size: 20px; border-radius: 20px; }
 
     .menu { display: flex; flex-direction: column; gap: 8px; margin-bottom: var(--space-xl); }
     .row {
-      display: flex; align-items: center; gap: 24px;
-      padding: 18px 22px;
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px;
       background: var(--color-surface);
       border: 1px solid transparent;
       border-radius: var(--rounded-lg);
@@ -256,10 +261,10 @@ import { GuideService } from '../guides/guide.service';
       color: var(--color-primary-ink);
     }
     .text-guide {text-align: center;}
-    .text { flex: 1; font-size: 15px; line-height: 1.25; }
-    .text b { font-weight: 600; font-size: 20px }
+    .text { flex: 1; font-size: 13px; line-height: 1.25; }
+    .text b { font-weight: 600; font-size: 16px }
     .text span { color: rgba(0, 0, 0, 1); }
-    .arr { color: var(--color-muted); font-size: 32px; line-height: 1; }
+    .arr { color: var(--color-muted); font-size: 18px; line-height: 1; }
     .verification-row {
       display: flex; align-items: center; gap: 14px;
       padding: 14px 16px;
@@ -308,17 +313,17 @@ import { GuideService } from '../guides/guide.service';
     .admin { display: block; text-align: center; margin-top: var(--space-lg); color: var(--color-primary-ink); }
     .icon-wrap {
   position: relative;
-  width: 25px;
-  height: 25px;
-  flex: 0 0 25px;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .icon-wrap svg {
-  width: 25px;
-  height: 25px;
+  width: 22px;
+  height: 22px;
   display: block;
   position: relative;
   z-index: 1;
@@ -352,7 +357,8 @@ import { GuideService } from '../guides/guide.service';
         flex-direction: row; justify-content: center; align-items: center;
         gap: 32px; margin-bottom: 60px;
       }
-      .avatar { margin-bottom: 0; }
+      .avatar { margin-bottom: 0; width: 144px; height: 144px; }
+      .avatar img, .avatar .ph { width: 144px; height: 144px; font-size: 32px; }
       .email { margin-bottom: 0; }
 
       /* Дашборд-черта прячется, десктопная кнопка внутри .id-col занимает её место */
@@ -362,7 +368,9 @@ import { GuideService } from '../guides/guide.service';
         display: flex; justify-content: center;
       }
         .name { font-size: 28px; }
-      .email-login-desktop ::ng-deep button { padding: 24px 44px; height: auto; font-size: 20px; border-radius: 20px; }  `],
+      .email-login-desktop ::ng-deep button { padding: 24px 44px; height: auto; font-size: 20px; border-radius: 20px; }
+
+  `],
 })
 export class ProfilePage implements OnInit {
   private readonly auth = inject(AuthService);

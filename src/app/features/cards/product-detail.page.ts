@@ -37,6 +37,7 @@ import {
        контентом. Back-bar и bottom-nav остаются на своих местах со своими
        фонами; этот слой виден между ними и плавно меняется при свайпе. -->
     <div class="page-bg" [appCachedBg]="pageBgImage()" [appCachedBgGradient]="pageBgGradient()" appCachedBgMode="page"></div>
+    <div class="page-paw" aria-hidden="true"></div>
     <app-back-bar />
     @if (product(); as p) {
       <section class="wrap"
@@ -249,13 +250,33 @@ import {
       transition: background .45s ease;
       pointer-events: none;
     }
-    /* back-bar и wrap должны быть НАД page-bg в нашем stacking context. */
+    /* .page-paw — лапка ОТДЕЛЬНЫМ слоем, а не частью .page-bg: тот
+       элемент управляется директивой appCachedBg/appCachedBgGradient,
+       которая программно (через JS, element.style.backgroundImage)
+       подставляет фон КОНКРЕТНОГО продукта — инлайн-стиль всегда
+       побеждает CSS-правило независимо от специфичности, так что любой
+       background-image, заданный в CSS самого .page-bg, у продукта со
+       своим bg_image_url/bg_gradient просто никогда не применялся бы.
+       Отдельный слой между .page-bg (z-index:0) и .wrap (z-index:1) —
+       лапка теперь ВСЕГДА видна поверх фона продукта, каким бы он ни был. */
+    .page-paw {
+      position: fixed; inset: 0;
+      z-index: 0;
+      background-image: url('/assets/bg-paw.png');
+      background-repeat: no-repeat;
+      background-position: bottom 110px center;
+      background-attachment: fixed;
+      background-size: 310px auto;
+      pointer-events: none;
+    }
+    /* back-bar и wrap должны быть НАД page-bg/page-paw в нашем stacking context. */
     app-back-bar { position: relative; z-index: 1; }
 
     .wrap {
       position: relative;
       z-index: 1;
-      padding: 0 52px;
+      padding: 0 16px;
+      padding-bottom: 110px;
       max-width: 1200px; margin: 0 auto;
       display: flex; flex-direction: column;
     }
@@ -361,15 +382,15 @@ import {
     .pay-row { display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
     .arrows { display: none; }
 
-    h2 {overflow-wrap: break-word; text-align: center; font-size: 32px; margin: 0; }
+    h2 {overflow-wrap: break-word; text-align: center; font-size: 24px; margin: 0; }
     .desc {
       color: rgba(0, 0, 0, 1);
       text-align: center;
-      font-size: 20px;
-      margin: 20px 0 var(--space-lg);
+      font-size: 15px;
+      margin: 14px 0 var(--space-lg);
     }
     .price {
-      text-align: center; font-family: 'Syncopate Cyr'; font-size: 40px;
+      text-align: center; font-family: 'Syncopate Cyr'; font-size: 28px;
       color: rgba(114, 86, 22, 1);
       margin-bottom: 0;
     }
@@ -483,13 +504,10 @@ import {
     .cta-action {
       display: block;
       position: fixed;
-      left: 0; right: 0; bottom: 0;
+      left: 0; right: 0; bottom: 92px;
       z-index: 10;
-      padding: var(--space-md);
-      padding-bottom: max(var(--space-md), env(safe-area-inset-bottom));
       text-decoration: none;
-      backdrop-filter: blur(2px) saturate(150%);
-      -webkit-backdrop-filter: blur(2px) saturate(150%);
+      padding: 0 16px
     }
     .cta-action > * {
       display: block;
@@ -560,8 +578,8 @@ import {
       .rate-lbl { font-size: 12px; }
       .cta-action {
         position: static;
-        background: none; backdrop-filter: none; -webkit-backdrop-filter: none;
-        padding: 0;
+        background: none; 
+        padding: 0 120px;
       }
       .cta-action > * { max-width: none; margin: 0; }
 

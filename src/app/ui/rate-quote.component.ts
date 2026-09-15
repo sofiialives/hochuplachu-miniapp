@@ -62,13 +62,13 @@ export type RateQuoteVariant = 'plain' | 'pill';
     }
     .rate-quote.pill .line {
       display: inline-flex; align-items: baseline; gap: 6px;
-      font-size: 24px;
+      font-size: 17px;
       font-weight: 500;
       color: rgba(0, 0, 0, 1);
       white-space: nowrap;
     }
     .rate-quote.pill .ccy {
-      font-size: 24px;
+      font-size: 17px;
       font-weight: 500;
       color: rgba(0, 0, 0, 1);
     }

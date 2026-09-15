@@ -139,35 +139,35 @@ import { openExternalLink } from '../../core/utils/open-external';
       pointer-events: auto;
     }
     /* Кружок наполовину НАД верхним краем бокса, наполовину внутри —
-       top: -37px (половина высоты 74px) центрирует его ровно на линии
+       top: -28px (половина высоты 56px) центрирует его ровно на линии
        границы. 16px от правого края бокса. */
     .guide-img {
       position: absolute;
-      top: -37px; right: 16px;
-      width: 74px; height: 74px; border-radius: 50%;
+      top: -28px; right: 16px;
+      width: 56px; height: 56px; border-radius: 50%;
       object-fit: cover;
       z-index: 1;
     }
     /* .guide-img-hole — визуальный «зазор» между картинкой и боксом: круг
-       чуть БОЛЬШЕ картинки (82px против 74px), того же полупрозрачного
+       чуть БОЛЬШЕ картинки (62px против 56px), того же полупрозрачного
        серого, что и общий backdrop, лежит ПОД картинкой и ЦЕНТРИРОВАН
        вокруг неё — создаёт иллюзию вырезанной в боксе дырки чуть большего
        диаметра, а не сплошного попадания фото на белый фон. */
     .guide-img-hole {
       position: absolute;
-      top: -41px; right: 12px;
-      width: 82px; height: 82px; border-radius: 50%;
+      top: -31px; right: 13px;
+      width: 62px; height: 62px; border-radius: 50%;
       background: rgba(20, 20, 19, .55);
       z-index: 0;
     }
     .guide-title {
-      font-family: 'Raleway', sans-serif; font-weight: 600; font-size: 24px;
+      font-family: 'Raleway', sans-serif; font-weight: 600; font-size: 19px;
       color: var(--color-ink, #141413);
-      max-width: calc(100% - 74px - 12px);
+      max-width: calc(100% - 56px - 12px);
     }
     .guide-desc {
-      margin-top: 12px;
-      font-size: 16px; color: var(--color-ink, #141413);
+      margin-top: 10px;
+      font-size: 14px; color: var(--color-ink, #141413);
       line-height: 1.4;
     }
     /* Временная диагностика (см. комментарий в шаблоне) — убрать вместе

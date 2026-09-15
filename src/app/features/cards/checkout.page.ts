@@ -144,8 +144,8 @@ type PendingAction = 'pay' | 'free' | 'promo';
     .wrap {
       display: flex; flex-direction: column;
       gap: var(--space-lg);
-      padding: 0 52px;
-      padding-bottom: var(--space-xl);
+      padding: 0 16px;
+      padding-bottom: 110px;
       max-width: 1200px; margin: 0 auto;
     }
     /* order задаёт визуальный порядок независимо от DOM-позиции — на
@@ -172,10 +172,10 @@ type PendingAction = 'pay' | 'free' | 'promo';
     .ticket app-card-tile { width: 100%; max-width: 320px; }
     .info { width: 100%; text-align: center; margin-top: 52px; }
     /* Название — тот же стиль, что и на страничке продукта. */
-    .name { font-family: 'Syncopate Cyr'; font-size: 32px; text-transform: uppercase; color: var(--color-ink); }
+    .name { font-family: 'Syncopate Cyr'; font-size: 22px; text-transform: uppercase; color: var(--color-ink); }
     .divider { width: 78px; height: 2px; background: rgba(200, 200, 200, 1); margin: 20px auto 0; }
     /* Цена — тот же стиль, что и на страничке продукта. */
-    .price { font-family: 'Syncopate Cyr'; font-size: 40px; color: rgba(114, 86, 22, 1); line-height: 1.1; margin-top: 20px; }
+    .price { font-family: 'Syncopate Cyr'; font-size: 26px; color: rgba(114, 86, 22, 1); line-height: 1.1; margin-top: 14px; }
     .price .ccy { font-size: 16px; color: rgba(114, 86, 22, 1); margin-left: 4px; vertical-align: 0.15em; font-family: 'Syncopate Cyr'; }
     /* Префиксные валюты ($) стоят ПЕРЕД числом и без пробела — отступ зеркалим. */
     .price .ccy:first-child { margin-left: 0; margin-right: 1px; }

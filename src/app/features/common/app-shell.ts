@@ -50,12 +50,6 @@ function routePath(url: string): string {
        гость (Профиль ведёт его на /login); /login и /r/:refCode живут вне
        шелла и паддинг не получают. Инсет — максимум Telegram fullscreen
        (--tg-safe-area-inset-bottom из WebApp API) и системной env(). */
-    .shell.has-nav main {
-      padding-bottom: calc(
-        var(--bottom-nav-h)
-        + max(var(--tg-safe-area-inset-bottom, 0px), env(safe-area-inset-bottom, 0px))
-      );
-    }
   `],
 })
 export class AppShell implements OnInit {

@@ -163,7 +163,12 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     </section>`,
   styles: [`
     .wrap {
-      padding: 0 52px;
+      padding: 0 16px;
+      /* 110px снизу — футер теперь position:fixed (bottom-nav.component.ts,
+         bottom:20px) и перестал сам резервировать себе место в потоке
+         документа; без этого последний контент страницы оказывался под
+         ним. Высота нав-бара + его отступ от низа + запас сверху. */
+      padding-bottom: 110px;
       max-width: 1200px; margin: 0 auto;
       display: flex; flex-direction: column;
     }
@@ -181,8 +186,8 @@ import { formatAmount } from '../../core/currency/currency-symbols';
 
     /* ===== Hero карт ===== */
     .hero {
-      display: flex; align-items: center; gap: var(--space-md);
-      padding: 22px 18px;
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 14px;
       border-radius: var(--rounded-xl);
       border: 1px solid color-mix(in srgb, var(--color-primary) 24%, var(--color-hairline-soft));
       box-shadow: var(--shadow-card);
@@ -190,18 +195,15 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     }
     a.hero { transition: transform var(--dur-quick) var(--ease-out), box-shadow var(--dur-quick) ease; }
     a.hero:hover { transform: translateY(-2px); box-shadow: var(--shadow-card-hover); }
-    /* Был битый селектор "hero--promo." (без точки перед именем класса) —
-       правило целиком игнорировалось браузером, flex-wrap никогда не
-       применялся. Плюс на узких экранах flex-wrap один не спасает —
-       кнопка (flex:0 0 auto) не сжимается и не переносится сама по себе,
-       текст .hero-body просто выдавливается в узкую колонку (разрыв по
-       одному слову на строку). Ниже, в @media (max-width:374px),
-       .hero--promo целиком переключается на колонку — текст и кнопка
-       друг под другом, а не в тесном ряду. */
+    /* По просьбе владельца — кнопка ОСТАЁТСЯ справа от текста (не
+       уходит под него колонкой): вместо смены раскладки текст/иконки/
+       кнопка просто УМЕНЬШЕНЫ настолько, чтобы помещаться в ряд даже на
+       узких мобильных экранах. app-button variant="primary" (сама
+       кнопка) уже уменьшена в button.component.ts. */
     .hero--promo { background-color: white; box-shadow: 0px 26.44px 62.98px -21.64px rgba(0, 0, 0, 0.15); }
     .hero-body { flex: 1; min-width: 0; }
-    .hero-title { font-family: var(--font-display); font-size: 20px; font-weight: 700; line-height: 1.2; }
-    .hero-sub { color: rgba(0, 0, 0, 1); font-size: 16px; margin-top: 4px; }
+    .hero-title { font-family: var(--font-display); font-size: 15px; font-weight: 700; line-height: 1.2; }
+    .hero-sub { color: rgba(0, 0, 0, 1); font-size: 12px; margin-top: 3px; }
     .hero-cta { text-decoration: none; flex: 0 0 auto; }
     .hero-arr { color: var(--color-muted); font-size: 22px; }
     .hero-spin {
@@ -231,16 +233,12 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       margin-top: 0;
       gap: 4px 12px;
     }
-    /* Колонкой на мобилке — flex-wrap не помог: перенос ФЛЕКС-ЭЛЕМЕНТОВ
-       и перенос ТЕКСТА внутри одного из них (h2 на 2 строки) считаются
-       независимо, из-за чего .sec-link цеплялся к правому краю ВТОРОЙ
-       строки заголовка, а не уходил под весь заголовок целиком. Колонка
-       — предсказуемо и без сюрпризов: h2 и ссылка друг под другом
-       всегда, при любой длине заголовка. */
-    @media (max-width: 767px) {
-      .sec-head { flex-direction: column; align-items: flex-start; gap: 4px; }
-    }
-    .sec-link { color: rgba(137, 137, 137, 1); font-size: 16px; font-weight: 500; text-decoration: none; white-space: nowrap; }
+    /* По просьбе владельца — h2 и .sec-link остаются В РЯД (не колонкой),
+       «Все тарифы →» должно быть НАПРОТИВ заголовка, а не под ним.
+       h2 сам переносится на 2 строки при нехватке места (min-width:0 на
+       h2 ниже это разрешает), .sec-link не переносится (white-space:
+       nowrap) и просто ужимается по своему компактному размеру. */
+    .sec-link { color: rgba(137, 137, 137, 1); font-size: 14px; font-weight: 500; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
     .sec-link:hover { text-decoration: underline; }
     .top-row {
       display: flex; flex-direction: column;
@@ -293,12 +291,12 @@ import { formatAmount } from '../../core/currency/currency-symbols';
 
     .card {
       display: grid;
-      grid-template-columns: 72px 1fr;
+      grid-template-columns: clamp(40px, 8vw + 20px, 60px) 1fr;
       grid-template-rows: auto auto;
-      column-gap: 12px; row-gap: 8px;
+      column-gap: 8px; row-gap: 4px;
       align-items: start; justify-items: start;
       min-width: 0;
-      padding: 16px; border-radius: 18px;
+      padding: 12px; border-radius: 14px;
       background: rgba(255, 255, 255, 1);
       box-shadow: 0px 26.44px 62.98px -21.64px rgba(0, 0, 0, 0.15);
       text-decoration: none; color: var(--color-ink);
@@ -308,25 +306,25 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     .card:hover { border-color: rgba(255, 186, 38, 1); }
     .card:active { transform: scale(.98); }
 
-    .ico { grid-column: 1; grid-row: 1; display: flex; align-items: center; height: 34px; }
-    .flag { width: 48px; height: 36px; object-fit: cover; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.16); flex-shrink: 0; }
-    .emoji { font-size: 30px; line-height: 1; }
+    .ico { grid-column: 1; grid-row: 1; display: flex; align-items: center; height: clamp(20px, 4vw + 10px, 28px); }
+    .flag { width: clamp(28px, 6vw + 12px, 40px); height: clamp(21px, 4.5vw + 9px, 30px); object-fit: cover; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,.16); flex-shrink: 0; }
+    .emoji { font-size: clamp(18px, 4vw + 8px, 26px); line-height: 1; }
 
     .name-block { grid-column: 1; grid-row: 2; min-width: 0; max-width: 100%; }
-    .name { display: block; font-weight: 600; font-size: 14px; }
-    .cnt { color: var(--color-muted); font-size: 11px; }
+    .name { display: block; font-weight: 600; font-size: clamp(11px, 1vw + 8px, 13px); }
+    .cnt { color: var(--color-muted); font-size: clamp(9px, 0.6vw + 7.5px, 11px); }
 
     .from {
       grid-column: 2; grid-row: 1; justify-self: end;
-      font-family: 'Syncopate Cyr'; color: rgba(114, 86, 22, 1); font-size: 12px;
+      font-family: 'Syncopate Cyr'; color: rgba(114, 86, 22, 1); font-size: clamp(9px, 0.8vw + 7px, 11px);
       background: rgba(244, 244, 244, 1);
-      padding: 10px 14px; border-radius: var(--rounded-pill);
+      padding: 6px 9px; border-radius: var(--rounded-pill);
     }
     .badge {
       grid-column: 2; grid-row: 2; justify-self: end;
       font-family: 'Syncopate Cyr';
       background: rgba(255, 186, 38, 1); color: rgba(0, 0, 0, 1);
-      padding: 7px 11px; font-size: 8px; text-transform: uppercase;
+      padding: 5px 8px; font-size: clamp(6px, 0.4vw + 5px, 7px); text-transform: uppercase;
       border-radius: var(--rounded-pill);
     }
 
@@ -365,42 +363,6 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       padding: 4px; border-radius: var(--rounded-pill);
       background: rgba(255, 186, 38, 1); color: rgba(0, 0, 0, 1);
       font-family: 'Syncopate Cyr'; font-size: 6px; text-transform: uppercase;
-    }
-
-    /* ===== 375–499px: карточке не хватает на 2 колонки внутри —
-       вертикальный список по центру ===== */
-    @media (min-width: 375px) {
-      .card {
-        display: flex; flex-direction: column; align-items: center; text-align: center;
-        gap: 8px; padding: 14px;
-      }
-      .ico { justify-content: center; height: 28px; }
-      .flag { width: 40px; height: 30px; }
-      .name-block { max-width: 100%; }
-      .name { font-size: 13px; }
-      .cnt { font-size: 11px; }
-      .from { font-size: 10px; padding: 7px 10px; }
-      .badge { font-size: 7px; padding: 5px 9px; }
-    }
-
-    /* ===== 500–1023px: уже хватает места — снова «по бокам» ===== */
-    @media (min-width: 500px) {
-      .card {
-        display: grid;
-        grid-template-columns: 56px 1fr;
-        grid-template-rows: auto auto;
-        column-gap: 10px; row-gap: 6px;
-        align-items: start; justify-items: start;
-        text-align: left;
-        padding: 14px;
-      }
-      .ico { grid-column: 1; grid-row: 1; justify-content: flex-start; height: 28px; }
-      .flag { width: 40px; height: 30px; }
-      .name-block { grid-column: 1; grid-row: 2; }
-      .name { font-size: clamp(12px, 0.574vw + 9.13px, 15px); }
-      .cnt { font-size: clamp(10px, 0.382vw + 8.09px, 12px); }
-      .from { grid-column: 2; grid-row: 1; justify-self: end; font-size: clamp(9px, 0.574vw + 6.13px, 12px); padding: 7px 10px; }
-      .badge { grid-column: 2; grid-row: 2; justify-self: end; font-size: clamp(7px, 0.382vw + 5.09px, 9px); padding: 5px 9px; }
     }
 
     /* ===== ≥1024px: десктопные размеры ===== */
@@ -444,22 +406,20 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     @keyframes main-skel { to { transform: translateX(100%); } }
     @media (prefers-reduced-motion: reduce) { .skel::after { animation: none; } }
 
-    /* ===== <375px =====
+    /* ===== Мобильный масштаб — ВЕСЬ диапазон до десктопа (<1024px), не
+       только самые узкие экраны. Раньше это правило стояло на
+       max-width:374px — работало только НИЖЕ 375px, а на 375-580px (весь
+       заявленный мобильный диапазон) кнопка и текст .hero--promo
+       оставались в ряд, текст по-прежнему выдавливался в узкую колонку.
+       Один и тот же компактный дизайн должен работать одинаково во ВСЁМ
+       диапазоне 375-1023px, не только в его самом узком крае.
        Размещено В САМОМ КОНЦЕ файла НАРОЧНО: при равной специфичности
        CSS-правило побеждает то, что идёт ПОЗЖЕ по тексту — медиа-запрос
-       сам по себе приоритета не даёт. Этот же блок раньше стоял в
-       НАЧАЛЕ файла стилей, и все его правила молча перебивались более
-       поздними безусловными правилами (.hero--promo, h2 и т.д.) — на
-       экране ничего из них не применялось никогда. */
-    @media (max-width: 374px) {
-      .wrap { padding: 0 16px; }
-      .esim-grid { grid-template-columns: 1fr; }
-      .svc-grid { grid-template-columns: 1fr; }
-      .svc-grid app-service-hero-card { grid-column: 1; }
-      .hero--promo { flex-direction: column; align-items: stretch; }
-      .hero--promo .hero-cta { width: 100%; }
-      .hero--promo .hero-cta ::ng-deep app-button { display: block; width: 100%; }
-      .hero--promo .hero-cta ::ng-deep button { width: 100%; }
+       сам по себе приоритета не даёт. */
+    @media (max-width: 1023px) {
+      .esim-grid { grid-template-columns: repeat(2, 1fr); }
+      .svc-grid { grid-template-columns: repeat(2, 1fr); }
+      .svc-grid app-service-hero-card { grid-column: 1 / -1; }
     }
   `],
 })
