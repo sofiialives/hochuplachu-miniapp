@@ -417,23 +417,55 @@ export class GuideOverlayComponent {
     // stopPropagation, просто ЧИТАЕМ событие раньше остальных.
     const onDocClick = (e: MouseEvent): void => {
       if (!this.guide.active()) return;
-      // Ссылка на бота-гайд (финальный шаг, desc содержит <a
-      // href="https://t.me/...">) — это Telegram Mini App, обычный
-      // переход по href может увести из мини-аппа некорректно. Перехватываем
-      // клик именно по t.me-ссылкам внутри .guide-desc и открываем через
-      // openExternalLink — тот же путь, что и для внешних ссылок в
-      // checkout.page.ts (redirect-режим СБП).
       const clickedEl = e.target as HTMLElement | null;
-      const link = clickedEl?.closest('.guide-desc a[href^="https://t.me/"]') as HTMLAnchorElement | null;
-      if (link) {
-        e.preventDefault();
-        openExternalLink(link.href);
+      // Клик по самому гайд-боксу (стрелки, точки, «Пропустить», ссылка на
+      // бота) — всегда пропускаем как есть, у него свои (click)-биндинги
+      // в шаблоне. Только этот блок не подчиняется общей блокировке ниже.
+      if (clickedEl?.closest('.guide-box')) {
+        // Ссылка на бота-гайд (финальный шаг, desc содержит <a
+        // href="https://t.me/...">) — это Telegram Mini App, обычный
+        // переход по href может увести из мини-аппа некорректно.
+        // Перехватываем клик именно по t.me-ссылкам внутри .guide-desc и
+        // открываем через openExternalLink — тот же путь, что и для
+        // внешних ссылок в checkout.page.ts (redirect-режим СБП).
+        const link = clickedEl.closest('.guide-desc a[href^="https://t.me/"]') as HTMLAnchorElement | null;
+        if (link) {
+          e.preventDefault();
+          openExternalLink(link.href);
+        }
         return;
       }
-      const target = this.guide.targetEl();
-      if (!target) return;
-      const clicked = e.target as Node | null;
-      if (!clicked || !(target === clicked || target.contains(clicked))) return;
+      // Два РАЗНЫХ понятия: highlightTarget — вся подсвеченная область
+      // (маска/вырез), клики ВНУТРИ неё не блокируются вообще (можно
+      // печатать в поле промокода, тыкать чекбокс и т.п. — это НЕ
+      // продвигает гайд, но и не должно блокироваться). advanceTarget —
+      // более узкий clickTargetEl, если он зарегистрирован для этого шага
+      // (appGuideClickTarget, напр. кнопка «Перейти к оплате» внутри
+      // целиком подсвеченного блока) — ТОЛЬКО клик по нему продвигает
+      // гайд. Если clickTargetEl не зарегистрирован — advanceTarget тот
+      // же, что и highlightTarget (подсветка и клик — один элемент, как
+      // было раньше на всех остальных шагах).
+      const highlightTarget = this.guide.targetEl();
+      const advanceTarget = this.guide.clickTargetEl() ?? highlightTarget;
+      const insideHighlight = !!highlightTarget && (highlightTarget === clickedEl || highlightTarget.contains(clickedEl));
+      const insideAdvance = !!advanceTarget && (advanceTarget === clickedEl || advanceTarget.contains(clickedEl));
+      // Клик мимо ВСЕЙ подсвеченной области — по просьбе владельца, чтобы
+      // пользователь не путался и не мог случайно уйти со страницы во
+      // время гайда, гасим его ПОЛНОСТЬЮ (preventDefault останавливает
+      // действие по умолчанию — переход по ссылке/сабмит, stopPropagation
+      // не даёт событию дойти до собственных обработчиков кликнутого
+      // элемента вроде routerLink). Скролл эти методы не трогают вообще
+      // — им управляют отдельные wheel/touch-события браузера, так что
+      // скроллить страницу во время гайда всё равно можно.
+      if (!insideHighlight) {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
+      // Клик ВНУТРИ подсветки, но не по узкому advance-target-у (если он
+      // задан) — не блокируем (поле промокода и т.п. остаются рабочими),
+      // просто не продвигаем гайд.
+      if (!insideAdvance) return;
       setTimeout(() => this.guide.next(), 50);
     };
     document.addEventListener('click', onDocClick, { capture: true });

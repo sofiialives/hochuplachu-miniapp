@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostListener, OnDestroy, effect, inject, input } from '@angular/core';
+import { Directive, ElementRef, OnDestroy, effect, inject, input } from '@angular/core';
 import { GuideService } from './guide.service';
 
 // [appGuideTarget]="'issue-cta'" — повесь на элемент, который гайд должен
@@ -16,6 +16,15 @@ import { GuideService } from './guide.service';
 // на всё приложение: элементы (иконки через fill="currentColor", текст
 // кнопок и т.д.) получают акцентный жёлтый цвет автоматически, без
 // правки CSS каждой отдельной страницы.
+//
+// ВАЖНО: продвижение гайда по клику здесь НЕ обрабатывается — раньше тут
+// был собственный @HostListener('click'), но это дублировало
+// централизованный document-слушатель в guide-overlay.component.ts:
+// клик по target-у срабатывал ДВАЖДЫ (тут и там), и guide.next() вызывался
+// два раза подряд — гайд перескакивал сразу через шаг, что выглядело как
+// «кнопка вперёд не работает» (на деле работала, но перескакивала).
+// Директива теперь отвечает ТОЛЬКО за регистрацию/подсветку — клик
+// целиком на оверлее, единственном источнике истины по кликам.
 @Directive({ selector: '[appGuideTarget]', standalone: true })
 export class GuideTargetDirective implements OnDestroy {
   private readonly guide = inject(GuideService);
@@ -31,26 +40,6 @@ export class GuideTargetDirective implements OnDestroy {
         this.guide.registerTarget(id!, this.el.nativeElement);
       }
     });
-  }
-
-  // Клик по подсвеченному элементу сам продвигает гайд на следующий шаг —
-  // НЕ preventDefault/stopPropagation, обычное действие клика (навигация
-  // по routerLink, submit и т.д.) должно отработать как обычно. next()
-  // отложен на макротаск, чтобы гарантированно сработать ПОСЛЕ остальных
-  // click-хендлеров того же элемента (например, routerLink) — иначе
-  // порядок между несколькими слушателями клика на одном элементе не
-  // гарантирован браузером/Angular. Повторная проверка id ВНУТРИ
-  // колбэка (а не только при планировании) — на случай если событие
-  // клика по какой-то причине сработало дважды (синтетический click от
-  // touch-устройств поверх настоящего) и шаг уже успел продвинуться:
-  // тогда второй отложенный вызов не продвинет гайд ещё раз мимо шага.
-  @HostListener('click')
-  onClick(): void {
-    const id = this.appGuideTarget();
-    if (!id || this.guide.currentTargetId() !== id) return;
-    setTimeout(() => {
-      if (this.guide.currentTargetId() === id) this.guide.next();
-    }, 50);
   }
 
   ngOnDestroy(): void {
