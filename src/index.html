@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <!-- title и description — статические дефолты (бренд по умолчанию). Их сразу
+       перетирает inline-bootstrap в /assets/runtime-config.js (синхронный
+       <script> ниже, до парсинга <body>) значением brand.service_name —
+       поэтому мультибренд (CatCard / «Хочу плачу») видит своё название без
+       мигания вкладки. Fallback runtime-config.service.applyDocumentMeta(). -->
+  <title>Хочу плачу</title>
+  <meta name="description" content="Хочу плачу — выпуск виртуальных карт и пополнения для оплаты зарубежных сервисов">
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#fed136">
+  <!-- Заглушка: пустой data-URL предотвращает автоматический запрос /favicon.ico,
+       который иначе бы успел показать дефолтную иконку до runtime-config.js.
+       Реальный favicon ставит inline-блок в /assets/runtime-config.js
+       (синхронный <script> ниже, выполнится до парсинга <body>). -->
+  <link rel="icon" href="data:,">
+  <!-- Шрифты self-hosted (public/fonts, @font-face в global.scss). Preload —
+       только display-шрифт заголовков: он рисует первый видимый текст. -->
+  <link rel="preload" href="/fonts/unbounded-700-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/unbounded-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- Splash-стили инлайн: их нельзя ждать из основного бандла, иначе на
+       медленной сети между парсингом <body> и загрузкой styles.css будет
+       мерцание неотстилизованного блока. CSS-переменные --color-* и
+       --brand-logo проставляются /assets/runtime-config.js (синхронный
+       <script> выше парсинга <body>), поэтому к моменту первого paint'a
+       splash уже в брендовых цветах. -->
+  <style>
+    #app-splash {
+      position: fixed;
+      inset: 0;
+      z-index: 100000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-canvas, #f8f9fa);
+      transition: opacity .35s ease;
+      overflow: hidden;
+    }
+    /* Центральный блок: лого + спиннер, 50px между ними — раньше был
+       .gap: 28px на самом #app-splash (тогда там было только два
+       элемента), теперь #app-splash содержит ещё и лапку снизу, поэтому
+       лого+спиннер вынесены в свою обёртку с собственным gap. */
+    #app-splash__center {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 50px;
+    }
+    #app-splash__logo {
+      width: 200px;
+      height: auto;
+      background-image: var(--brand-logo, none);
+      background-position: center;
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    #app-splash__spinner {
+      width: 62px;
+      height: 62px;
+      border: 3px solid var(--color-hairline, rgba(33,37,41,.10));
+      /* rgba(255, 186, 38, 1) — фирменный жёлтый явным значением (не
+         --color-primary): сплэш показывается ДО того, как runtime-config.js
+         успевает применить брендовые CSS-переменные для мультибренда,
+         тут нужен конкретно этот цвет, а не то, что подставит бренд. */
+      border-top-color: rgba(255, 186, 38, 1);
+      border-radius: 50%;
+      animation: app-splash-spin .9s linear infinite;
+    }
+    @keyframes app-splash-spin { to { transform: rotate(360deg); } }
+    /* Лапка снизу экрана — та же декоративная SVG-лапка, что используется
+       как фоновый элемент по всему приложению (см. app.component.ts,
+       .bg-paws) — для визуальной согласованности между сплэшем и самим
+       приложением после загрузки. */
+    #app-splash__paw {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+    /* AppComponent ставит .app-ready на <html> после первого NavigationEnd —
+       splash плавно гасится и снимается из DOM по transitionend. */
+    html.app-ready #app-splash {
+      opacity: 0;
+      pointer-events: none;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #app-splash__spinner { animation: none; }
+      #app-splash { transition: none; }
+    }
+  </style>
+  <script src="/assets/runtime-config.js"></script>
+  <!-- Telegram Mini App SDK проксируется через свой домен, см. nginx.conf -->
+  <script src="/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <!-- Splash — единственный DOM, который пользователь видит до bootstrap'а
+       Angular. Снимается в AppComponent (см. там — после первого
+       NavigationEnd ставит класс .app-ready на <html>). -->
+  <div id="app-splash" aria-hidden="true" role="status" aria-label="Загрузка">
+    <div id="app-splash__center">
+      <div id="app-splash__logo"></div>
+      <div id="app-splash__spinner"></div>
+    </div>
+    <svg id="app-splash__paw" xmlns="http://www.w3.org/2000/svg" width="564" height="396" viewBox="0 0 564 396" fill="none" aria-hidden="true">
+      <path d="M245.974 91.5564C269.708 92.8846 289.056 123.026 289.077 159.237C289.137 195.253 270.204 223.573 246.43 222.441C222.852 221.347 203.308 191.167 203.092 154.916C202.837 118.861 222.16 90.6191 245.974 91.5564ZM385.728 119.738C408.239 128.143 414.912 161.627 401.094 194.844C386.651 228.138 357.134 248.426 334.779 240.256C312.228 232.048 305.751 198.603 319.96 165.465C334.012 132.092 363.529 111.804 385.728 119.738ZM123.271 160.381C147.485 155.297 174.273 178.802 183.996 212.292C192.624 246.17 180.999 277.592 156.98 282.715C132.962 287.839 106.329 264.568 97.0761 230.767C87.8229 196.966 99.8782 165.428 123.271 160.381ZM475.101 231.329C494.71 245.047 493.6 278.792 471.97 306.366C450.341 333.94 416.771 345.07 396.616 331.039C376.46 317.007 377.921 283.536 399.003 255.648C420.945 228.545 454.75 217.258 475.101 231.329ZM399.969 435.454C397.046 453.985 378.873 471.475 360.527 475.708C322.307 484.68 287.57 443.096 248.673 435.252C209.776 427.409 160.971 453.57 130.078 429.237C112.463 415.718 104.1 387.588 110.898 366.991C120.289 338.577 158.43 329.995 183.445 312.868C216.563 290.866 246.554 243.01 285.842 250.932C324.934 258.816 335.365 314.009 356.037 347.672C372.925 375.893 405.025 403.318 399.969 435.454Z" fill="#E9E9E9"/>
+    </svg>
+  </div>
+  <app-root></app-root>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "auth": {
+    "login_title": "Sign in or create account",
+    "email_placeholder": "Email",
+    "code_placeholder": "Code from email",
+    "send_code": "Send code",
+    "verify": "Sign in"
+  },
+  "common": {
+    "back": "Back",
+    "close": "Close",
+    "loading": "Loading..."
+  }
+}

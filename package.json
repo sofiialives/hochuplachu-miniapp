@@ -1,0 +1,44 @@
+{
+  "name": "hochuplachu-frontend",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "ng": "ng",
+    "start": "node --env-file-if-exists=.env scripts/dev.mjs",
+    "build": "npm run brand:sync && ng build",
+    "watch": "npm run brand:sync && ng build --watch --configuration development",
+    "brand:sync": "node --env-file-if-exists=.env scripts/sync-brand-config.mjs",
+    "test": "ng test"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "21.2.12",
+    "@angular/cdk": "21.2.10",
+    "@angular/common": "21.2.12",
+    "@angular/compiler": "21.2.12",
+    "@angular/core": "21.2.12",
+    "@angular/forms": "21.2.12",
+    "@angular/platform-browser": "21.2.12",
+    "@angular/router": "21.2.12",
+    "@jsverse/transloco": "^7.5.0",
+    "@resvg/resvg-js": "^2.6.2",
+    "@telegram-apps/sdk": "^2.10.0",
+    "angularx-qrcode": "^21.0.5",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "21.2.10",
+    "@angular/cli": "21.2.10",
+    "@angular/compiler-cli": "21.2.12",
+    "@types/jasmine": "~5.1.0",
+    "@types/node": "^20.0.0",
+    "jasmine-core": "~5.1.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "typescript": "~5.9.0"
+  }
+}

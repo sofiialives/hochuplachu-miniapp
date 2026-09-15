@@ -1,0 +1,92 @@
+// Дизайн-токены «Хочу Плачу!» — визуальный язык лендинга hochuplachu-landing
+// (site.config.ts → brand.palette / paletteExtended / tokens), адаптированный
+// под мобильное приложение. См. DESIGN.md, раздел «Visual Language v2».
+//
+// МУЛЬТИБРЕНД: восемь ключей ниже (блок «Brand») переопределяются в рантайме
+// из brand.json (RuntimeConfigService.applyThemeFromConfig + inline-bootstrap
+// в runtime-config.js). Всё остальное — ПРОИЗВОДНЫЕ от них через color-mix():
+// CatCard со своим primary (#d2aa22) автоматически получает свои
+// hover/active/soft/градиент — захардкоженных производных быть не должно.
+
+:root {
+  // ===== Brand: 8 брендируемых ключей (контракт BrandColors / brand.json) =====
+  --color-primary: #fed136;      // фирменный жёлтый лендинга
+  --color-on-primary: #3d2000;   // тёмный текст на жёлтом (контраст!)
+  --color-ink: #212529;          // заголовки / сильный текст
+  --color-canvas: #f8f9fa;       // фон страницы (landing surfaceAlt)
+  --color-muted: #6c757d;        // вторичный текст
+  --color-hairline: #dee2e6;     // границы (landing border)
+  --color-surface: #ffffff;      // карточки / поверхности
+  --color-surface-card: #f1f3f5; // чипы, кнопки-пилюли, вторичные поверхности
+
+  // ===== Производные от primary — ТОЛЬКО color-mix() =====
+  --color-primary-hover: color-mix(in srgb, var(--color-primary) 90%, #1a1a1a);
+  --color-primary-active: color-mix(in srgb, var(--color-primary) 78%, #1a1a1a);
+  --color-primary-soft: color-mix(in srgb, var(--color-primary) 14%, var(--color-surface));   // ≈ primarySoft #FFF8E1
+  --color-primary-softer: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface)); // ≈ primarySofter #FFF0B8
+  --color-primary-disabled: color-mix(in srgb, var(--color-primary) 22%, var(--color-surface));
+  // Текстовый акцент бренда: сам primary (жёлтый) на светлом фоне нечитаем,
+  // все ЦВЕТА ТЕКСТА/ссылок/цен используют этот затемнённый вариант.
+  --color-primary-ink: color-mix(in srgb, var(--color-primary) 45%, var(--color-ink));
+  // Градиент CTA (landing primaryGradient #FFD828→#F5B800, восстановлен из primary):
+  --color-primary-grad-from: color-mix(in srgb, var(--color-primary) 90%, #ffffff);
+  --color-primary-grad-to: color-mix(in srgb, var(--color-primary) 82%, #b36b00);
+  --grad-primary: linear-gradient(150deg, var(--color-primary-grad-from) 0%, var(--color-primary-grad-to) 100%);
+  // Тени под брендовые CTA (landing shadowPrimary / shadowPrimaryHover):
+  --shadow-primary: 0 2px 12px color-mix(in srgb, var(--color-primary) 35%, transparent);
+  --shadow-primary-hover: 0 4px 18px color-mix(in srgb, var(--color-primary) 50%, transparent);
+
+  // ===== Нейтрали (производные ink/muted/hairline, не брендируются) =====
+  --color-body: #343a40;
+  --color-body-strong: var(--color-ink);
+  --color-muted-soft: #8c959d;
+  --color-hairline-soft: #e9ecef;
+  --color-surface-soft: color-mix(in srgb, var(--color-ink) 3%, var(--color-surface));
+  --color-surface-cream-strong: color-mix(in srgb, var(--color-ink) 8%, var(--color-surface));
+  --color-surface-dark: #17191c;
+  --color-surface-dark-elevated: #24272c;
+  --color-surface-dark-soft: #1e2125;
+  --color-on-dark: #f8f9fa;
+  --color-on-dark-soft: #9aa1a8;
+
+  // ===== Семантика (landing paletteExtended) =====
+  --color-accent-teal: #17a2b8;
+  --color-accent-amber: #f5b800;
+  --color-success: #198754;
+  --color-warning: #b58500;
+  --color-error: #dc3545;
+  --color-danger: var(--color-error); // алиас: часть страниц пишет danger
+
+  // ===== Typography (self-hosted, @font-face в global.scss) =====
+  --font-display: 'Unbounded', 'Onest', system-ui, sans-serif;
+  --font-body: 'Raleway', 'Onest', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  // ===== Radii (landing tokens: card 16px, button 12px, pill) =====
+  --rounded-xs: 6px;
+  --rounded-sm: 8px;
+  --rounded-md: 12px;
+  --rounded-lg: 16px;
+  --rounded-xl: 20px;
+  --rounded-pill: 999px;
+
+  // ===== Spacing =====
+  --space-xxs: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-xxl: 48px;
+  --space-section: 96px;
+
+  // ===== Elevation (мягкие тени вместо голых hairline-рамок) =====
+  --shadow-card: 0 1px 2px rgba(33, 37, 41, 0.04), 0 8px 24px rgba(33, 37, 41, 0.06);
+  --shadow-card-hover: 0 2px 6px rgba(33, 37, 41, 0.06), 0 12px 28px rgba(33, 37, 41, 0.12);
+
+  // ===== Motion =====
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.45, 0.64, 1); // лёгкий overshoot для диалогов/bottom-sheet
+  --dur-quick: 0.18s;
+  --dur-normal: 0.24s;
+}
