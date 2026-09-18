@@ -8,15 +8,6 @@ import { MyEsimsComponent } from './my-esims.component';
 import { EsimApi, EsimDirection } from '../../core/api/esim.api';
 import { EsimDirectionsComponent } from './esim-directions.component';
 
-// EsimPage — «/esim»: зеркалит страницу Карт (решение №5 дизайна) — сверху
-// ПОСЛЕДНЯЯ купленная eSIM со ссылкой «Все eSIM» на /esim/my (как «Последние
-// операции» → /history на странице карт), ниже каталог направлений. Список
-// рисует и грузит MyEsimsComponent; страница держит его только ради
-// pull-to-refresh. Гость видит один каталог.
-//
-// «Все направления» + подпись живут ЗДЕСЬ, а не внутри EsimDirectionsComponent —
-// на десктопе этот заголовок стоит в один ряд с ESIM (см. .head-row), а табы/
-// поиск/сетка остаются в компоненте на всю ширину ниже.
 @Component({
   selector: 'app-esim-page',
   standalone: true,
@@ -60,17 +51,12 @@ import { EsimDirectionsComponent } from './esim-directions.component';
   </app-pull-to-refresh>`,
   styles: [`
     .wrap {
-      /* Боковые паддинги: 52px на мобиле, 120px на десктопе (см. медиа-запрос ниже) */
       padding: 0 16px;
-      /* 110px снизу — тот же запас под зафиксированный футер, что и на
-         остальных страницах (см. комментарий в main.page.ts). */
-      padding-bottom: 110px;
       max-width: 1200px; margin: 0 auto;
       display: flex; flex-direction: column;
     }
 
-    /* ===== ESIM + «Все направления»: на мобиле друг под другом,
-       на десктопе — в один ряд с отступом 70px между блоками ===== */
+    
     .head-row { display: flex; flex-direction: column; }
     h1 {
       font-family: 'Syncopate Cyr';
@@ -90,7 +76,7 @@ import { EsimDirectionsComponent } from './esim-directions.component';
       line-height: 1.2;
     }
 
-    app-esim-directions { display: block; margin-top: 32px; }
+    app-esim-directions { display: block; margin-top: 32px; margin-bottom: 110px; }
 
     @media (min-width: 1024px) {
       .wrap { padding: 0 120px; }
@@ -101,7 +87,7 @@ import { EsimDirectionsComponent } from './esim-directions.component';
       app-esim-directions { margin-top: 60px; }
     }
 
-    /* ===== Каталог: заглушка «в разработке» ===== */
+    
     .soon {
       padding: var(--space-lg) var(--space-md);
       border: 2px dashed color-mix(in srgb, var(--color-ink) 22%, transparent);
@@ -112,7 +98,7 @@ import { EsimDirectionsComponent } from './esim-directions.component';
     .soon-title { font-weight: 600; }
     .soon-sub { color: var(--color-muted); font-size: 13px; margin-top: 4px; }
 
-    /* ===== Скелетоны ===== */
+    
     .skel-list { display: flex; flex-direction: column; gap: var(--space-sm); }
     .skel {
       display: block; height: 96px; border-radius: var(--rounded-lg);

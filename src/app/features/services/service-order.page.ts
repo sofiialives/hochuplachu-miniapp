@@ -7,11 +7,6 @@ import { ServicesApi, ServiceKind, ServiceOrder, orderGross, serviceNeedsLogin, 
 import { ToastService } from '../../core/notifications/toast.service';
 import { formatAmount } from '../../core/currency/currency-symbols';
 
-// ServiceOrderPage — «/services/orders/:id», view-режим заказа (deep-link из
-// истории/писем): статус, коды по кнопке (gift_card), детали. Логин показывается
-// видам, которым он нужен (пополнение, подписка); позиция подписана «План» у
-// подписки и «Номинал» у гифткарты. Оплата незакрытой заявки — переход на
-// payment-страницу.
 @Component({
   selector: 'app-service-order',
   standalone: true,
@@ -114,7 +109,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       }
     </section>`,
   styles: [`
-    .wrap { padding: var(--space-md); max-width: 560px; margin: 0 auto; padding-bottom: var(--space-xl); display: flex; flex-direction: column; gap: var(--space-md); }
+    .wrap { padding: var(--space-md); max-width: 560px; margin: 0 auto; padding-bottom: 110px; display: flex; flex-direction: column; gap: var(--space-md); }
     h2 { text-align: center; margin: 0; }
     .muted { color: var(--color-muted); }
     .center { text-align: center; }
@@ -224,17 +219,15 @@ export class ServiceOrderPage implements OnInit {
     }
   }
   protected money(v: number, c: string | null | undefined): string { return formatAmount(v, c); }
-  /** Цена заказа ДО скидки промокода (`price` заявки — уже нетто к оплате). */
+  
   protected gross(o: ServiceOrder): number { return orderGross(o); }
   protected discount(o: ServiceOrder): number { return o.discount_amount ?? 0; }
   protected needsLogin(kind: ServiceKind): boolean { return serviceNeedsLogin(kind); }
 
-  /** Строка зачисления заявки: «50 ⭐» у штучного товара, «~ 1 000 ₽» у денег.
-   *  Единица берётся из СНАПШОТА заявки — продукт мог с тех пор смениться. */
+  
   protected creditedLine(o: ServiceOrder): string {
     const amount = o.amount ?? 0;
     if (o.amount_unit) return `${amount} ${o.amount_unit}`;
-    // От суммы ЗАКАЗА, а не от `price`: под 100% промокодом тот равен нулю.
     return `~ ${formatAmount(topupCreditedDisplay(orderGross(o), o.fee_pct ?? 0), o.amount_currency)}`;
   }
   protected dateOf(iso: string): string {

@@ -2,21 +2,6 @@ import { Component, computed, input, output, signal } from '@angular/core';
 import { EsimDirection } from '../../core/api/esim.api';
 import { formatAmount } from '../../core/currency/currency-symbols';
 
-/**
- * Витрина «Все направления»: табы + поиск + карточки стран/регионов.
- *
- * Поиск на мобиле — фикс 320px, переключается на фикс 424px только на
- * @media (min-width:1024px).
- *
- * Карточка — ЧЕТЫРЕ внутренних состояния (сетка карточек при этом всего
- * два: 1 в ряд <375px, 2 в ряд от 375px, 4 в ряд от 1024px):
- *  - < 375px (1 в ряд): 2-колоночная сетка внутри — карточке хватает ширины.
- *  - 375–499px (2 в ряд, узко): карточке НЕ хватает на 2 колонки внутри —
- *    вертикальный список по центру.
- *  - 500–1023px (2 в ряд, уже достаточно широко): снова 2-колоночная сетка
- *    внутри — тут уже хватает места «по бокам».
- *  - >= 1024px (4 в ряд): 2-колоночная сетка, десктопные размеры.
- */
 @Component({
   selector: 'app-esim-directions',
   standalone: true,
@@ -65,7 +50,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     </section>
   `,
   styles: [`
-    /* ===================== БАЗА: 320–1023px ===================== */
+    
 
     .bar { display: flex; flex-direction: column; align-items: stretch; gap: 10px; margin-bottom: 24px; }
     .tabs { display: flex; padding: 6px; background: white; border-radius: var(--rounded-pill); align-self: flex-start; }
@@ -86,17 +71,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     }
     .search input:focus { outline: none; border-color: var(--color-primary); }
 
-    /* ===================== Единая горизонтальная карточка на ВЕСЬ
-       мобильный диапазон (320-1023px) — раньше структура карточки
-       МЕНЯЛАСЬ трижды на разных ширинах (горизонтальная → вертикальная
-       по центру на 375px → снова горизонтальная на 500px), из-за чего
-       выглядело как 3 разных дизайна подряд, а не один и тот же
-       масштабируемый. Теперь только РАЗМЕРЫ плавно меняются через
-       clamp() между 320px и 1023px, структура (иконка слева, текст
-       справа, цена/бейдж в правом столбце) — одна и та же везде. 2
-       колонки в сетке с самого начала (320px), а не 1 — на 320px ширины
-       после паддинга (16px×2) остаётся ~288px, по ~138px на карточку,
-       компактной горизонтальной карточке этого достаточно. ===================== */
+    
     .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 
     .card {
@@ -139,7 +114,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
 
     .empty { text-align: center; color: var(--color-muted); padding: 32px 0; }
 
-    /* ===================== >= 1024px: десктоп, 4 в ряд ===================== */
+    
     @media (min-width: 1024px) {
       .bar { flex-direction: row; align-items: center; justify-content: flex-start; gap: 20px; margin-bottom: 40px; }
       .tabs { align-self: auto; }

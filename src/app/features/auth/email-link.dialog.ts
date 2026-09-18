@@ -46,11 +46,12 @@ import { EMAIL_REGEX, extractApiError } from '../../core/errors/api-error';
   </app-dialog>`,
   styles: [`
     .sub { font-weight: 500; color: var(--color-success); }
-    /* .muted — те же значения, что .hint на email-verify.page.ts: цвет,
-       размер, отступы, десктопная градация в медиа-запросе ниже. Имя класса
-       не трогала (используется в шаблоне), поменяла только сами значения. */
+    
     .muted { color: rgba(0, 0, 0, 1); font-size: 14px; margin-top: 6px; margin-bottom: 16px; }
     .cta { margin-top: var(--space-md); display: flex; flex-direction: column; gap: var(--space-sm); align-items: stretch; }
+    @media (min-width: 1024px) {
+      .cta ::ng-deep button { height: 62px; font-size: 20px; border-radius: 15px; }
+    }
     .link-btn {
       align-self: center;
       color: rgba(255, 186, 38, 1);

@@ -200,7 +200,7 @@ function tgWebApp(): TgWebApp | null {
       }
     </section>`,
   styles: [`
-    .wrap { padding: var(--space-md); max-width: 480px; margin: 0 auto; padding-bottom: 96px; }
+    .wrap { padding: var(--space-md); max-width: 480px; margin: 0 auto; padding-bottom: 110px; }
     .title { margin: 0 0 var(--space-sm); font-size: 24px; font-weight: 500; }
     .sub { color: var(--color-muted); margin: 0 0 var(--space-lg); font-size: 14px; }
     .progress {

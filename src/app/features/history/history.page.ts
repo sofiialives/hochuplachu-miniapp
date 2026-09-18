@@ -116,7 +116,7 @@ interface DayGroup { label: string; rows: CardTransaction[]; }
     </section>
   </app-pull-to-refresh>`,
   styles: [`
-    .wrap { padding: var(--space-md); padding-bottom: 96px; max-width: 640px; margin: 0 auto; }
+    .wrap { padding: 0 16px; padding-bottom: 110px; max-width: 640px; margin: 0 auto; }
     h2 { text-align: center; }
     .hint { text-align: center; color: var(--color-muted); margin-bottom: var(--space-lg); }
     /* Заглушка «нет карт» — вместо фильтров и списка операций. */

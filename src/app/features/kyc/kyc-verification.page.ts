@@ -42,7 +42,7 @@ import { buildVerificationUrl, resolveActiveLang } from '../../shared/verificati
       }
     </section>`,
   styles: [`
-    .wrap { padding: var(--space-md); max-width: 720px; margin: 0 auto; }
+    .wrap { padding: var(--space-md); max-width: 720px; margin: 0 auto; padding-bottom: 110px; }
     h2 { text-align: center; }
     .msg { text-align: center; margin: var(--space-md) 0; }
     .msg.muted { color: var(--color-muted); }

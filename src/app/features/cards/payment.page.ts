@@ -349,7 +349,7 @@ interface KindOps {
       </section>
     }`,
   styles: [`
-    .wrap { padding: var(--space-md); max-width: 560px; margin: 0 auto; padding-bottom: var(--space-xl); overflow-x: hidden; }
+    .wrap { padding: var(--space-md); max-width: 560px; margin: 0 auto; padding-bottom: 110px; overflow-x: hidden; }
     h2 { text-align: center; }
     h3 { font-size: 16px; margin: 0 0 8px; }
     h4 { font-size: 14px; margin: var(--space-sm) 0 6px; font-weight: 600; color: var(--color-danger, #c0392b); }

@@ -25,7 +25,6 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
 import { GuideTargetDirective } from '../guides/guide-target.directive';
 import { GuideClickTargetDirective } from '../guides/guide-click-target.directive';
 
-/** Действие, отложенное до подтверждения email гостем. */
 type PendingAction = 'pay' | 'free' | 'promo';
 
 @Component({
@@ -148,17 +147,11 @@ type PendingAction = 'pay' | 'free' | 'promo';
       padding-bottom: 110px;
       max-width: 1200px; margin: 0 auto;
     }
-    /* order задаёт визуальный порядок независимо от DOM-позиции — на
-       мобиле .right-side «прозрачен» (display:contents ниже), и h2/
-       .ticket/.right-col становятся его прямыми детьми в .wrap: order
-       расставляет их 1/2/3 (заголовок → тикет → блок оформления), как и
-       было. На десктопе .right-side уже настоящий flex-контейнер — те же
-       order-значения там просто держат h2 над .right-col ВНУТРИ него. */
+    
     .right-side { display: contents; }
     h2 { order: 1; text-align: center; margin: 0; }
 
-    /* Ticket-блок — карта-визуал + название + черточка + цена. Вертикальный
-       стек по центру, кремовый фон под брендинг чекаута. */
+    
     .ticket {
       order: 2;
       display: flex; flex-direction: column; align-items: center;
@@ -171,13 +164,13 @@ type PendingAction = 'pay' | 'free' | 'promo';
     }
     .ticket app-card-tile { width: 100%; max-width: 320px; }
     .info { width: 100%; text-align: center; margin-top: 52px; }
-    /* Название — тот же стиль, что и на страничке продукта. */
+    
     .name { font-family: 'Syncopate Cyr'; font-size: 22px; text-transform: uppercase; color: var(--color-ink); }
     .divider { width: 78px; height: 2px; background: rgba(200, 200, 200, 1); margin: 20px auto 0; }
-    /* Цена — тот же стиль, что и на страничке продукта. */
+    
     .price { font-family: 'Syncopate Cyr'; font-size: 26px; color: rgba(114, 86, 22, 1); line-height: 1.1; margin-top: 14px; }
     .price .ccy { font-size: 16px; color: rgba(114, 86, 22, 1); margin-left: 4px; vertical-align: 0.15em; font-family: 'Syncopate Cyr'; }
-    /* Префиксные валюты ($) стоят ПЕРЕД числом и без пробела — отступ зеркалим. */
+    
     .price .ccy:first-child { margin-left: 0; margin-right: 1px; }
 
       @media (max-width: 530px) {
@@ -206,8 +199,7 @@ type PendingAction = 'pay' | 'free' | 'promo';
       color: var(--color-muted); font-size: 13px; line-height: 1.5;
       cursor: pointer;
     }
-    /* Кастомный чекбокс вместо нативного — жёлтый квадрат со скруглением,
-       галочка (тот же SVG, что и в перках на product-detail) белая внутри. */
+    
     .agree-box {
       flex: 0 0 auto;
       flex-shrink: 0; flex-grow: 0;
@@ -227,25 +219,15 @@ type PendingAction = 'pay' | 'free' | 'promo';
     .agree a { color: var(--color-primary-ink); text-decoration: underline; text-underline-offset: 2px; }
     .agree a:hover { text-decoration: none; }
 
-    /* Гостевой email — внутри блока заказа (промокод → email → итого), как
-       в референсе: отдельно стоящее поле сливалось с текстом страницы.
-       Отдельной страницы входа нет: код подтверждения приходит в диалог
-       поверх чекаута, после него оплата продолжается тем же кликом. */
+    
     .guest-email { margin: var(--space-sm) 0; }
 
-    /* .right-col — order + agree + кнопка, единым блоком (нужен как ЦЕЛОЕ
-       на десктопе, чтобы встать рядом с .ticket через space-between). */
+    
     .right-col { order: 3; display: flex; flex-direction: column; gap: var(--space-lg); }
 
-    /* ===== Десктоп (≥1024px) — .ticket и правая колонка в один ряд ===== */
-    /* ===== Десктоп (≥1024px) — .ticket слева на всю высоту, справа
-       заголовок «Оформление» + 20px + .right-col друг под другом. */
-    /* ===== Десктоп (≥1024px) — .ticket и .right-side (заголовок+
-       .right-col) в один ряд, flex align-items:stretch (по умолчанию у
-       row) сам уравнивает высоту ОБЕИХ колонок по более высокой — раньше
-       .ticket растягивался через grid-row:1/3 (спан на две строки), из-за
-       чего его высота считалась от суммы h2+20px+.right-col, а не просто
-       «сравняться с .right-col» — отсюда и лишнее растяжение. */
+    
+    
+    
     @media (min-width: 1024px) {
       .wrap {
         flex-direction: row;
@@ -260,11 +242,7 @@ type PendingAction = 'pay' | 'free' | 'promo';
         order: 2;
       }
       h2 { text-align: left; margin: 0; }
-      /* .ticket уменьшен компактнее ТОЛЬКО на десктопе (мобилка не
-         трогается) — раньше набор паддингов/шрифтов/карты по сумме
-         давал контейнер заметно выше .right-side, хотя align-items:
-         stretch выравнивает КОРОБКИ, а не убирает разницу в их
-         естественном содержимом. */
+      
       .ticket {
         flex: 1 1 0;
         justify-content: center;
@@ -298,25 +276,16 @@ export class CheckoutPage implements OnInit {
   protected readonly promoApplied = signal<PromoValidation | null>(null);
   protected readonly promoLoading = signal(false);
   protected readonly promoError = signal<string>('');
-  // Согласие предустановлено (решение владельца): чекбокс остаётся снимаемым,
-  // но лишний обязательный клик на пути к оплате убран.
   protected readonly agreed = signal(true);
   protected readonly loading = signal(false);
   protected readonly showPicker = signal(false);
   protected readonly currencies = signal<PaymentCurrency[]>([]);
   protected readonly requisitesFor = signal<PaymentCurrency | null>(null);
-  // sbpOnly — единственный доступный метод оплаты — СБП: клик по
-  // кнопке ведёт сразу в СБП-флоу, на кнопке рисуем логотип СБП.
   protected readonly sbpOnly = computed(() => {
     const list = this.currencies();
     return list.length === 1 && isSbpProvider(list[0].provider) && isMethodAvailable(list[0]);
   });
 
-  // ── Гостевой вход прямо на чекауте ──────────────────────────────────────
-  // Страница открыта без сессии (переход с лендинга «купить карту»): вместо
-  // редиректа на /login просим email здесь же и доводим до оплаты без ухода со
-  // страницы. pendingAction помнит, ЧТО пользователь нажал до подтверждения,
-  // чтобы продолжить ровно это действие после установления сессии.
   protected readonly isGuest = computed(() => !this.auth.isAuthenticated());
   protected readonly email = signal('');
   protected readonly emailError = signal('');
@@ -324,8 +293,6 @@ export class CheckoutPage implements OnInit {
   protected readonly busyLabel = computed(() => (this.isGuest() ? 'Отправляем код…' : 'Создание счёта…'));
   private pendingAction: PendingAction | null = null;
 
-  // Пригласительный бонус к выпуску карты больше не применяется — он тратится
-  // скидкой на первое пополнение первой открытой карты (см. topup.page).
   protected readonly finalAmount = computed(() => {
     const p = this.product();
     if (!p) return 0;
@@ -339,22 +306,18 @@ export class CheckoutPage implements OnInit {
     this.currency.loadMethods('issue').subscribe((r) => this.currencies.set(r.methods));
   }
 
-  /** Legal-страницы живут на лендинге бренда (landing_base_url из brand.json);
-   *  если оператор его не заполнил — на лендинге CatCard как публичный дефолт. */
+  
   protected legalUrl(slug: 'agreement' | 'privacy'): string {
     const base = (this.cfg.brand.landing_base_url || 'https://catcard.app').replace(/\/+$/, '');
     return `${base}/legal/${slug}/`;
   }
-
-  // ── Гостевой email-вход ─────────────────────────────────────────────────
 
   protected onEmailChange(v: string): void {
     this.email.set(v);
     if (this.emailError()) this.emailError.set('');
   }
 
-  /** Гостю нужен email до любого действия, которое требует сессии. Возвращает
-   *  true если запущен email-flow (вызывающий должен сразу выйти). */
+  
   private requireAuth(action: PendingAction): boolean {
     if (this.auth.isAuthenticated()) return false;
     const value = this.email().trim().toLowerCase();
@@ -381,15 +344,11 @@ export class CheckoutPage implements OnInit {
     return true;
   }
 
-  /** Сессия установлена — доигрываем отложенное действие. Верификацию
-   *  перечитываем заранее: gate внутри действий читает её снапшот, а у гостя
-   *  он был пуст. */
+  
   protected async onAuthenticated(): Promise<void> {
     this.showCodeDialog.set(false);
     const action = this.pendingAction;
     this.pendingAction = null;
-    // Методы оплаты перезагружаем: доступность условных валют зависит от
-    // истории юзера, а первый запрос ушёл ещё гостем.
     this.currency.loadMethods('issue').subscribe((r) => this.currencies.set(r.methods));
     await this.verification.refresh();
     switch (action) {
@@ -412,7 +371,6 @@ export class CheckoutPage implements OnInit {
   applyPromo(): void {
     const p = this.product();
     if (!p || !this.promoCode().trim()) return;
-    // /promo/validate — endpoint под авторизацией: гостю сначала email.
     if (this.requireAuth('promo')) return;
     this.promoLoading.set(true);
     this.promoError.set('');
@@ -426,8 +384,6 @@ export class CheckoutPage implements OnInit {
     });
   }
 
-  // При правке промокода сбрасываем и валидную скидку, и сообщение об
-  // ошибке — старый результат уже не относится к новому коду.
   onPromoChanged(): void {
     this.promoApplied.set(null);
     this.promoError.set('');
@@ -438,7 +394,6 @@ export class CheckoutPage implements OnInit {
     if (this.gateVerification()) return;
     const list = this.currencies();
     const avail = list.filter(isMethodAvailable);
-    // Одна валюта в списке — выбор метода оплаты не показываем: сразу её флоу.
     if (list.length === 1 && avail.length === 1) {
       this.selectCurrency(avail[0]);
       return;
@@ -448,14 +403,10 @@ export class CheckoutPage implements OnInit {
 
   selectCurrency(c: PaymentCurrency): void {
     this.showPicker.set(false);
-    // СБП (kassaai / platega): реквизитов плательщика нет — сразу счёт.
     if (isSbpProvider(c.provider)) {
       this.issue(c.id, {});
       return;
     }
-    // Если у валюты нет полей реквизитов ИЛИ единственное поле — телефон
-    // (backend подставит User.Phone сам), диалог не открываем — сразу
-    // шлём issue с пустым from.
     if (nonPhoneFromFields(c).length === 0) {
       this.issue(c.id, {});
       return;
@@ -474,9 +425,7 @@ export class CheckoutPage implements OnInit {
     this.issue('', {});
   }
 
-  /** Если strict-режим и есть незакрытые проверки — редирект на /verification
-   *  с returnUrl на текущую страницу. Возвращает true если редирект сделан
-   *  (вызывающий код должен сразу вернуться). */
+  
   private gateVerification(): boolean {
     if (!this.verification.needed()) return false;
     void this.router.navigate(['/verification'], { queryParams: { return: this.router.url } });
@@ -487,10 +436,6 @@ export class CheckoutPage implements OnInit {
     const p = this.product();
     if (!p) return;
     this.loading.set(true);
-    // matomo_cid + utm — атрибуция серверной конверсии. matomo_cid читаем
-    // асинхронно; utm (первое касание, в т.ч. из Telegram start_param) — из
-    // localStorage. backend при реальной оплате (paid) отправит Matomo-покупку
-    // с этим _id и метками кампании.
     const utm = this.analytics.getUtm();
     this.analytics.getMatomoVisitorId().then((matomoCid) => {
     this.orders.issue({
@@ -503,23 +448,12 @@ export class CheckoutPage implements OnInit {
     }).subscribe({
       next: (res) => {
         this.loading.set(false);
-        // Покупку в аналитику НЕ шлём на создании. status==='paid' = заявка
-        // мгновенно оплачена (промо покрыло всё) = реальная покупка →
-        // фиксируем Яндекс-цель здесь и уходим на главную (backend всегда
-        // отдаёт провайдера выбранной валюты, поэтому ориентируемся на статус, как в
-        // topup.page). Для платной заявки цель выстрелит в payment.page при
-        // isPaid(). Matomo-покупку в любом случае отправит backend при paid.
         if (res.order.status === 'paid') {
           this.analytics.reachGoalCardPurchase(res.order.id);
           this.toast.success('Карта выпускается!');
-          // Карты в GET /cards ещё нет (появится на card.issued) — помечаем
-          // для ЛК, чтобы он показал «Карта выпускается…», а не «нет карт».
           storeIssuingOrderId(res.order.id);
           this.router.navigate(['/cards']);
         } else {
-          // redirect-режим СБП: пейформу эквайра открываем сразу в новом окне
-          // (мы ещё в окне активации клика — попап-блокер пропускает);
-          // payment-страница покажет «ожидание платежа» с кнопкой-фолбэком.
           if (res.order.mode === 'redirect') openExternalLink(res.order.url);
           this.router.navigate(['/orders', res.order.id, 'payment']);
         }
@@ -528,15 +462,11 @@ export class CheckoutPage implements OnInit {
         this.loading.set(false);
         const code: string = e?.error?.error?.code ?? '';
         const msg: string = e?.error?.error?.message ?? 'Ошибка';
-        // Промо-ошибки при создании заявки рендерим внутри блока промокода
-        // (а не toast'ом), чтобы пользователь видел, где именно проблема.
         if (code.startsWith('PROMO_')) {
           this.promoApplied.set(null);
           this.promoError.set(msg);
           return;
         }
-        // Backend gate сработал (юзер обошёл фронтовую проверку или
-        // изменил статус между refresh'ами) — направляем на /verification.
         if (code === 'VERIFICATION_EMAIL_REQUIRED' || code === 'VERIFICATION_PHONE_REQUIRED' || code === 'VERIFICATION_KYC_REQUIRED') {
           void this.verification.refresh();
           void this.router.navigate(['/verification'], { queryParams: { return: this.router.url } });

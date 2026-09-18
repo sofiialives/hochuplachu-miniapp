@@ -15,10 +15,7 @@ import { Component, input, output } from '@angular/core';
   </button>`,
   styles: [`
     :host { display: block; }
-    /* Цвет/hover/active/disabled — один в один с button.component.ts
-       variant="primary" (см. .pay/.pay:hover/.pay:active/.pay:disabled
-       ниже); ширина на всю строку, высота 56px, флекс-раскладка под
-       лого СБП + текст — своя специфика этой кнопки, не часть variant. */
+    
     .pay {
       width: 100%; height: 48px;
       display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -45,9 +42,6 @@ export class PayButtonComponent {
   readonly disabled = input(false);
   readonly loading = input(false);
   readonly loadingLabel = input<string>('Создание счёта…');
-  // sbpLogo — показать логотип СБП слева от текста: страница включает его,
-  // когда единственный доступный метод оплаты — СБП (kassaai / platega) и
-  // клик ведёт сразу в СБП-флоу, минуя выбор валюты.
   readonly sbpLogo = input(false);
   readonly clicked = output<void>();
 }

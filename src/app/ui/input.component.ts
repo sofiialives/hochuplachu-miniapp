@@ -30,9 +30,7 @@ import { Component, input, output } from '@angular/core';
       border-radius: var(--rounded-md);
       background: var(--color-surface);
       color: var(--color-ink);
-      /* font-size держим на 16px, не ниже — на iOS Safari поле с
-         меньшим шрифтом при фокусе триггерит авто-zoom всей страницы,
-         это не про компактность, отдельное правило браузера. */
+      
       font-size: 16px;
       font-weight: 600;
       border: 1.5px solid rgba(211, 211, 211, 1);
@@ -48,10 +46,7 @@ import { Component, input, output } from '@angular/core';
     input.has-error { border-color: var(--color-error); }
     .err { font-size: 12px; color: var(--color-error); }
     @media (min-width: 1024px) {
-      /* height:44px — восстанавливает исходный десктопный размер (был
-         implicit через базовое правило input{height:44px}; теперь база
-         уменьшена под мобильный масштаб, значение возвращено явно, чтобы
-         десктоп не изменился). */
+      
       input { height: 44px; padding: 26px; font-size: 22px; }
     }
   `],
@@ -68,15 +63,7 @@ export class InputComponent {
   readonly name = input<string>('');
   readonly pattern = input<string | null>(null);
   readonly error = input('');
-  // integerOnly — поле принимает только целое число: разделители тысяч
-  // выбрасываются, ввод обрезается по первому не-цифровому символу («12.5» → «12»).
   readonly integerOnly = input(false);
-  // prefix — обязательная приставка значения («@» у ника Telegram): она
-  // подставляется САМА, как только введён любой другой символ, а лишние её
-  // вхождения выбрасываются («durov» → «@durov», «@@du@rov» → «@durov»). Пустое
-  // поле остаётся пустым — приставка в одиночку не значение, иначе поле нельзя
-  // было бы очистить; набранная одна приставка сохраняется, чтобы она не
-  // пропадала из-под курсора на первом же символе.
   readonly prefix = input('');
   readonly valueChange = output<string>();
   readonly enterPressed = output<void>();
@@ -85,8 +72,6 @@ export class InputComponent {
     const el = e.target as HTMLInputElement;
     const raw = this.integerOnly() ? el.value.replace(/\s/g, '').match(/^\d*/)![0] : el.value;
     const v = this.withPrefix(raw);
-    // Отфильтрованный символ мог не изменить значение владельца («12.» → «12»),
-    // тогда Angular не перерисует [value] и точка осталась бы в поле — пишем в DOM.
     if (el.value !== v) el.value = v;
     this.valueChange.emit(v);
   }

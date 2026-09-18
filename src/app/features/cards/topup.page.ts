@@ -89,7 +89,7 @@ import { CurrencyPickerDialogComponent } from './currency-picker.dialog';
       <app-requisites-dialog [currency]="cur" (dismissed)="requisitesFor.set(null)" (submitted)="onRequisites($event)" />
     }`,
   styles: [`
-    .wrap { padding: var(--space-md); max-width: 480px; margin: 0 auto; padding-bottom: var(--space-xl); }
+    .wrap { padding: var(--space-md); max-width: 480px; margin: 0 auto; padding-bottom: 110px; }
     h2 { text-align: center; }
     .hint { text-align: center; color: var(--color-muted); margin-bottom: var(--space-lg); }
     .amount { margin-bottom: var(--space-md); }
@@ -128,8 +128,6 @@ export class TopUpPage implements OnInit {
 
   protected readonly card = signal<UserCard | null>(null);
   protected readonly product = signal<CardProduct | null>(null);
-  // Валюта баланса карты — атрибут CardProduct, не самой Card. Резолвим
-  // после загрузки карты по её card_product_id.
   protected readonly cardCurrency = computed(() => this.product()?.card_currency ?? '');
   protected readonly amount = signal('');
   protected readonly promoCode = signal('');
@@ -139,31 +137,16 @@ export class TopUpPage implements OnInit {
   protected readonly showPicker = signal(false);
   protected readonly currencies = signal<PaymentCurrency[]>([]);
   protected readonly requisitesFor = signal<PaymentCurrency | null>(null);
-  // availableCurrencies — методы, доступные к выбору сейчас (без «серых»
-  // условных): лимиты/подсказки считаем только по ним.
   protected readonly availableCurrencies = computed(() => this.currencies().filter(isMethodAvailable));
-  // sbpOnly — единственный доступный метод — СБП: логотип СБП на кнопке.
   protected readonly sbpOnly = computed(() => {
     const list = this.currencies();
     return list.length === 1 && isSbpProvider(list[0].provider) && isMethodAvailable(list[0]);
   });
-  // loading — выставляется на время создания TopUpOrder; блокирует кнопки
-  // оплаты, чтобы пользователь не отправил две одинаковые заявки подряд.
   protected readonly loading = signal(false);
-  // disabledForProduct — у CardProduct.DisableTopup=true. Рисуем stub вместо
-  // формы (и backend всё равно зарежет POST /cards/:id/topup с TOPUP_DISABLED,
-  // см. order_service.go); страница защищает от старой вкладки/устаревшего
-  // bookmark и убирает «мусорный» интерфейс.
   protected readonly disabledForProduct = computed(() => !!this.product()?.disable_topup);
 
-  // goBack — на закрытие stub-страницы возвращаемся туда же, откуда пришли
-  // (обычно /). Location.back() сохраняет состояние home (скролл, активная
-  // карта в карусели), router.navigate('/') — сбросил бы.
   protected goBack(): void { this.location.back(); }
 
-  // referralBonus — приветственный бонус приглашённого (bonus_available из
-  // /referral/info). Загружается только когда пополняется ПЕРВАЯ карта юзера
-  // и бонус ещё не потрачен — см. maybeLoadReferralBonus.
   protected readonly referralBonus = signal<number>(0);
   protected readonly referralBonusCurrency = signal<string>('');
 
@@ -177,13 +160,6 @@ export class TopUpPage implements OnInit {
     this.maybeLoadReferralBonus(id);
   }
 
-  // Бонус приглашённого зачисляется НА КАРТУ сверх суммы при ПЕРВОМ пополнении
-  // ПЕРВОЙ открытой карты (зеркало backend CreateTopUp + isFirstCard). «Первая
-  // карта» — первый элемент GET /cards: backend отдаёт список created_at ASC
-  // без deleted. Сумму даёт /referral/info (bonus_available) — бэк учитывает
-  // там и тип рефовода (приглашённым партнёром бонус не полагается), и его
-  // блокировку. Запрос идёт только при выполнении локальных условий, чтобы не
-  // дёргать бэк на каждое пополнение.
   private maybeLoadReferralBonus(cardId: string): void {
     const u = this.auth.user();
     if (!u || !u.referred_by_id || u.referral_bonus_applied) return;
@@ -194,18 +170,14 @@ export class TopUpPage implements OnInit {
           this.referralBonus.set(info.bonus_available);
           this.referralBonusCurrency.set(info.referee_bonus.currency);
         },
-        error: () => { /* без бонуса — просто не показываем строку */ },
+        error: () => {  },
       });
     };
     const cached = this.cardsApi.cardsCache();
     if (cached.length > 0) check(cached);
-    else this.cardsApi.myCards().subscribe({ next: (r) => check(r.cards ?? []), error: () => { /* нет списка — нет предпросмотра, backend применит бонус сам */ } });
+    else this.cardsApi.myCards().subscribe({ next: (r) => check(r.cards ?? []), error: () => {  } });
   }
 
-  // referralBonusApplicable — сумма бонуса, которая будет зачислена на карту
-  // сверх суммы пополнения (валюта бонуса должна быть совместима с валютой
-  // карты). На плату НЕ влияет — это не скидка (зеркало backend CreateTopUp:
-  // funding публикуется на Amount + ReferralBonus).
   protected readonly referralBonusApplicable = computed(() =>
     bonusApplicableTo(this.referralBonus(), this.referralBonusCurrency(), this.cardCurrency()));
 
@@ -213,11 +185,6 @@ export class TopUpPage implements OnInit {
     return formatReferralAmount(this.referralBonusApplicable(), this.referralBonusCurrency());
   }
 
-  // chargeAmount — то, что реально пойдёт в coincat как to_amount. Логика
-  // зеркалит backend OrderService.CreateTopUp: на amount накидываем сервисный
-  // процент (DepositFeePct), затем вычитаем скидку промокода. Скидка влияет
-  // ТОЛЬКО на оплату — на карту в любом случае зачисляется полная amount
-  // (плюс пригласительный бонус, если он применим).
   protected readonly chargeAmount = computed(() => {
     const n = parseFloat(this.amount());
     if (isNaN(n) || n <= 0) return 0;
@@ -228,7 +195,6 @@ export class TopUpPage implements OnInit {
     return Math.max(0, gross - discount);
   });
 
-  // amountError — пользователь ввёл сумму > 0, но ни одна валюта не возьмёт.
   protected readonly amountError = computed(() => {
     const n = parseFloat(this.amount());
     if (isNaN(n) || n <= 0) return false;
@@ -237,9 +203,6 @@ export class TopUpPage implements OnInit {
     return !anyCurrencyAccepts(list, this.chargeAmount());
   });
 
-  // rangeHint — текст под полем суммы: либо «Допустимая сумма: X — Y», либо
-  // ошибка «Сумма вне диапазона: X — Y». Диапазон выражаем в card-валюте
-  // (делим на 1+fee_pct), чтобы пользователь сравнивал с тем, что вводит.
   protected readonly rangeHint = computed(() => {
     const list = this.availableCurrencies();
     if (list.length === 0) return '';
@@ -252,9 +215,6 @@ export class TopUpPage implements OnInit {
     const sym = symbolFor(this.cardCurrency());
     const range = `${b.fmt(b.min)} — ${b.fmt(b.max)} ${sym}`;
     if (!this.amountError()) return `Допустимая сумма: ${range}`;
-    // Введённая сумма может быть в диапазоне, но к оплате идёт сумма ЗА
-    // ВЫЧЕТОМ скидки промокода — и она уже ниже минимума. Без пояснения
-    // пользователь видит «вне диапазона» на корректной с виду сумме.
     const discount = this.promoApplied()?.discount_amount ?? 0;
     const eff = this.chargeAmount() / factor;
     if (discount > 0 && eff < b.min && !this.isFree()) {
@@ -271,10 +231,6 @@ export class TopUpPage implements OnInit {
     return anyCurrencyAccepts(list, this.chargeAmount());
   }
 
-  // isFree — промокод покрыл всю плату (gross − discount ≤ 0). Бэк примет
-  // топап со status="paid" без обращения к провайдеру оплаты; ввод суммы
-  // обязателен, иначе вычислять нечего. Пригласительный бонус на плату не
-  // влияет вовсе — он зачисляется на карту сверх суммы.
   protected readonly isFree = computed(() => {
     const n = parseFloat(this.amount());
     if (isNaN(n) || n <= 0) return false;
@@ -290,9 +246,6 @@ export class TopUpPage implements OnInit {
     return symbolFor(this.cardCurrency());
   }
 
-  // formatRangeFn — arrow-property передаётся в currency-picker-dialog как input.
-  // Диапазон лимитов приходит в charge-валюте (после fee); приводим обратно
-  // к card-валюте (то, что пользователь ввёл в поле суммы) делением на 1+fee.
   protected readonly formatRangeFn = (min: number, max: number): string => {
     const p = this.product();
     const fee = p && p.deposit_fee_pct > 0 ? p.deposit_fee_pct : 0;
@@ -301,11 +254,6 @@ export class TopUpPage implements OnInit {
     return `${b.fmt(b.min)} — ${b.fmt(b.max)}`;
   };
 
-  // bounds — границы диапазона под целочисленный ввод суммы: минимум округляем
-  // вверх, максимум вниз, чтобы любое целое из подсказки гарантированно прошло
-  // проверку лимитов (сужение безопасно в обе стороны). Если целых внутри
-  // диапазона не осталось (1.2 — 1.8), оставляем дробные границы — иначе
-  // подсказка выглядела бы как «2 — 1».
   private bounds(min: number, max: number): { min: number; max: number; fmt: (n: number) => string } {
     const lo = Math.ceil(min);
     const hi = Math.floor(max);
@@ -349,7 +297,6 @@ export class TopUpPage implements OnInit {
     if (this.gateVerification()) return;
     const list = this.currencies();
     const avail = this.availableCurrencies();
-    // Одна валюта в списке — выбор метода оплаты не показываем: сразу её флоу.
     if (list.length === 1 && avail.length === 1) {
       this.selectCurrency(avail[0]);
       return;
@@ -358,7 +305,6 @@ export class TopUpPage implements OnInit {
   }
   selectCurrency(c: PaymentCurrency): void {
     this.showPicker.set(false);
-    // СБП (kassaai / platega): реквизитов плательщика нет — сразу счёт.
     if (isSbpProvider(c.provider)) {
       this.create(c.id, {});
       return;
@@ -386,7 +332,6 @@ export class TopUpPage implements OnInit {
     if (!c) return;
     const a = parseFloat(this.amount());
     this.loading.set(true);
-    // matomo_cid + utm — для серверной атрибуции конверсии (см. checkout.page).
     const utm = this.analytics.getUtm();
     this.analytics.getMatomoVisitorId().then((matomoCid) => {
     this.orders.topup(c.id, {
@@ -398,21 +343,13 @@ export class TopUpPage implements OnInit {
       utm: Object.keys(utm).length ? utm : undefined,
     }).subscribe({
       next: (res) => {
-        // Backend применил пригласительный бонус — он потрачен (резервируется
-        // созданием заявки). Синхронизируем локального юзера, чтобы до
-        // следующего /auth/me предпросмотр скидки больше нигде не показывался.
         if ((res.topup.referral_bonus ?? 0) > 0) {
           const cur = this.auth.user();
           if (cur) this.auth.user.set({ ...cur, referral_bonus_applied: true });
         }
-        // Событие покупки не шлём на создании. Если промокод покрыл всю сумму —
-        // backend сразу ставит топап paid (реальное пополнение) и ведём на
-        // главную; фиксируем Яндекс-цель здесь. Иначе цель выстрелит в
-        // payment.page при isPaid(). Matomo-пополнение отправит backend при paid.
         if (res.topup.status === 'paid') {
           this.analytics.reachGoalTopUp(res.topup.id);
           this.toast.success('Карта пополняется!');
-          // Бонус зачисляется отдельным пополнением — сообщаем сумму.
           const bonus = res.topup.referral_bonus ?? 0;
           if (bonus > 0) {
             this.toast.success(`На карту также зачислен пригласительный бонус ${formatReferralAmount(bonus, res.topup.currency)}`);
@@ -420,8 +357,6 @@ export class TopUpPage implements OnInit {
           this.router.navigate(['/cards']);
           return;
         }
-        // redirect-режим СБП: пейформу эквайра открываем сразу в новом окне
-        // (окно активации клика ещё живо — попап-блокер пропускает).
         if (res.topup.mode === 'redirect') openExternalLink(res.topup.url);
         this.router.navigate(['/topup', c.id, 'payment', res.topup.id]);
       },

@@ -15,10 +15,6 @@ import { symbolFor, formatAmount } from '../../core/currency/currency-symbols';
 import { RequisitesDialogComponent } from './requisites.dialog';
 import { CurrencyPickerDialogComponent } from './currency-picker.dialog';
 
-// ExtendServicePage — продление годового обслуживания карты. Структурно
-// аналогично TopUpPage, но сумма не задаётся пользователем — берётся из
-// CardProduct.annual_service_fee. После успешной оплаты Card.service_expires_at
-// продлевается на 365 дней, замороженная карта (если была) — размораживается.
 @Component({
   selector: 'app-extend-service',
   standalone: true,
@@ -63,7 +59,7 @@ import { CurrencyPickerDialogComponent } from './currency-picker.dialog';
       <app-requisites-dialog [currency]="cur" (dismissed)="requisitesFor.set(null)" (submitted)="onRequisites($event)" />
     }`,
   styles: [`
-    .wrap { padding: var(--space-md); max-width: 480px; margin: 0 auto; padding-bottom: var(--space-xl); }
+    .wrap { padding: var(--space-md); max-width: 480px; margin: 0 auto; padding-bottom: 110px; }
     h2 { text-align: center; }
     .hint { text-align: center; color: var(--color-muted); margin-bottom: var(--space-lg); }
     .fee {
@@ -102,14 +98,11 @@ export class ExtendServicePage implements OnInit {
   protected readonly showPicker = signal(false);
   protected readonly currencies = signal<PaymentCurrency[]>([]);
   protected readonly requisitesFor = signal<PaymentCurrency | null>(null);
-  // sbpOnly — единственный доступный метод — СБП: логотип СБП на кнопке.
   protected readonly sbpOnly = computed(() => {
     const list = this.currencies();
     return list.length === 1 && isSbpProvider(list[0].provider) && isMethodAvailable(list[0]);
   });
   protected readonly amount = computed(() => this.product()?.annual_service_fee ?? 0);
-  // loading — на время создания ServiceRenewalOrder. Блокирует кнопки
-  // оплаты, чтобы избежать дубликата заявки.
   protected readonly loading = signal(false);
 
   ngOnInit(): void {
@@ -150,7 +143,6 @@ export class ExtendServicePage implements OnInit {
     if (this.gateVerification()) return;
     const list = this.currencies();
     const avail = list.filter(isMethodAvailable);
-    // Одна валюта в списке — выбор метода оплаты не показываем: сразу её флоу.
     if (list.length === 1 && avail.length === 1) {
       this.selectCurrency(avail[0]);
       return;
@@ -159,7 +151,6 @@ export class ExtendServicePage implements OnInit {
   }
   selectCurrency(c: PaymentCurrency): void {
     this.showPicker.set(false);
-    // СБП (kassaai / platega): реквизитов плательщика нет — сразу счёт.
     if (isSbpProvider(c.provider)) {
       this.create(c.id, {});
       return;
@@ -186,7 +177,6 @@ export class ExtendServicePage implements OnInit {
     const c = this.card();
     if (!c) return;
     this.loading.set(true);
-    // matomo_cid + utm — для серверной атрибуции конверсии (см. checkout.page).
     const utm = this.analytics.getUtm();
     this.analytics.getMatomoVisitorId().then((matomoCid) => {
     this.orders.extendService(c.id, {
@@ -197,8 +187,6 @@ export class ExtendServicePage implements OnInit {
       utm: Object.keys(utm).length ? utm : undefined,
     }).subscribe({
       next: (res) => {
-        // redirect-режим СБП: пейформу эквайра открываем сразу в новом окне
-        // (окно активации клика ещё живо — попап-блокер пропускает).
         if (res.renewal.mode === 'redirect') openExternalLink(res.renewal.url);
         this.router.navigate(['/cards', c.id, 'extend-service', 'payment', res.renewal.id]);
       },

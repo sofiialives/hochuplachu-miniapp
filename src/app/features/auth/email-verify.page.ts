@@ -65,9 +65,8 @@ import { EMAIL_REGEX, extractApiError } from '../../core/errors/api-error';
   styles: [`
     .title { font-size: 22px; font-family: 'Syncopate Cyr'; text-transform: uppercase;} 
     .wrap {
-      padding: 0 16px;
+      padding: var(--space-md) 52px var(--space-xl);
       max-width: 1200px; margin: 0 auto;
-      padding-bottom: 110px;
     }
     .hint { color: rgba(0, 0, 0, 1); font-size: 14px; margin-top: 6px; margin-bottom: 16px; }
     .cta { margin-top: var(--space-lg); display: flex; flex-direction: column; gap: var(--space-sm); align-items: stretch; }
@@ -87,6 +86,9 @@ import { EMAIL_REGEX, extractApiError } from '../../core/errors/api-error';
       animation: confirm-spin .8s linear infinite;
     }
     @keyframes confirm-spin { to { transform: rotate(360deg); } }
+    @media (max-width: 1023px) {
+      .wrap { padding-left: 16px; padding-right: 16px; }
+    }
         @media (min-width: 1024px) {
       .wrap { padding-left: 120px; padding-right: 120px; }
       .hint { font-size: 24px; margin-top: 26px; margin-bottom: 26px; }
@@ -108,10 +110,10 @@ export class EmailVerifyPage implements OnDestroy {
   protected readonly loading = signal(false);
   protected readonly emailValid = computed(() => EMAIL_REGEX.test(this.email().trim()));
 
-  /** Токен ожидающего telegram-подтверждения + таймер поллинга. */
+  
   private approvalToken: string | null = null;
   private pollTimer: ReturnType<typeof setInterval> | null = null;
-  /** Защита от параллельных запросов, если предыдущий poll ещё в полёте. */
+  
   private pollInFlight = false;
 
   ngOnDestroy(): void {
@@ -168,8 +170,6 @@ export class EmailVerifyPage implements OnDestroy {
     this.auth.verifyCode(this.email().trim().toLowerCase(), this.code()).subscribe({
       next: (res) => {
         this.loading.set(false);
-        // У аккаунта привязан Telegram — сессии ещё нет, ждём «Разрешить»
-        // в чате с ботом и опрашиваем статус подтверждения.
         if (res.telegram_confirm && res.approval_token) {
           this.approvalToken = res.approval_token;
           this.step.set('confirm');
@@ -201,10 +201,6 @@ export class EmailVerifyPage implements OnDestroy {
     this.pollTimer = setInterval(() => this.pollOnce(), 2000);
   }
 
-  // stopPolling гасит ТОЛЬКО таймер. approvalToken здесь трогать нельзя:
-  // startPolling начинается с stopPolling, и обнуление токена превращало бы
-  // каждый pollOnce в no-op (guard `if (!token)`). Токен сбрасывает
-  // cancelConfirm — единственная точка отказа от ожидания.
   private stopPolling(): void {
     if (this.pollTimer !== null) {
       clearInterval(this.pollTimer);
@@ -231,13 +227,11 @@ export class EmailVerifyPage implements OnDestroy {
           case 'expired':
             this.abortConfirm('Время подтверждения истекло. Запросите новый код.');
             break;
-          // pending — ждём дальше
         }
       },
       error: (err) => {
         this.pollInFlight = false;
         const e = extractApiError(err);
-        // Сетевые сбои и rate-limit молча переживаем — следующий тик повторит.
         if (e.code === 'APPROVAL_NOT_FOUND' || e.code === 'LOGIN_BLOCKED') {
           this.abortConfirm(e.message ?? 'Не удалось подтвердить вход');
         }

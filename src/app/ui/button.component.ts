@@ -4,10 +4,6 @@ import { Component, input, output } from '@angular/core';
   selector: 'app-button',
   standalone: true,
   host: { '[class.full]': 'full()' },
-  // Сознательно эмитим именно (clicked), а не полагаемся на bubbling нативного
-  // (click). Так шаблоны единообразны с app-pay-button и app-referral-banner,
-  // и нельзя случайно повесить (clicked) на app-button и получить тихий no-op
-  // (был такой баг с кнопкой «Зачислить» в реф-выводе).
   template: `<button
     [type]="type()"
     [disabled]="disabled() || loading()"
@@ -42,9 +38,7 @@ import { Component, input, output } from '@angular/core';
       letter-spacing: 0;
     }
     button:disabled { opacity: .6; cursor: not-allowed; }
-    /* Primary — фирменный градиент лендинга + тёмный on-primary текст.
-       Градиент и тени — производные от --color-primary (color-mix в токенах),
-       поэтому бренд с другим primary красится сам. */
+    
     button.variant-primary {
       background: rgba(255, 186, 38, 1); color: var(--color-on-primary);
     }
@@ -81,10 +75,7 @@ import { Component, input, output } from '@angular/core';
       background: var(--color-primary-active);
       transform: none;
     }
-    /* Раньше у этого компонента не было десктопного медиа-запроса вообще
-       — один размер на всех ширинах. База выше уменьшена под мобильный
-       масштаб (375-580px) — здесь явно возвращены прежние (исходные)
-       размеры для ≥1024px, чтобы десктоп не изменился. */
+    
     @media (min-width: 1024px) {
       button {
         font-size: 14px;

@@ -25,21 +25,6 @@ import { formatAmount, symbolFor } from '../../core/currency/currency-symbols';
 
 type PendingAction = 'pay' | 'free' | 'promo';
 
-// ServiceCheckoutPage — «/services/:slug/checkout?login=&amount=|denomination=»
-// (query — deep-link с лендинга; страница БЕЗ authGuard — его returnUrl терял
-// бы query). Сводка заказа, промокод, метод оплаты, итог.
-// Виды: gift_card — только ?denomination=; subscription — ?login= И
-// ?denomination= (план включается на аккаунт); account_topup — ?login=&amount=.
-// Email у авторизованного НЕ спрашиваем ВООБЩЕ — паритет с выпуском карты:
-// чек/коды уходят на адрес аккаунта (его подставляет бэк, `deliveryEmailFor`),
-// а если адреса нет — покупка всё равно проходит, коды остаются в приложении.
-// Поле в форме видит только гость: ему адрес нужен как логин.
-// account_topup: ?amount= — сумма ЗАЧИСЛЕНИЯ (контракт бэка), «К оплате» =
-// amount + наценка; пользователю она показана как оценка «~ N» — в форме он
-// вводил именно сумму оплаты (см. service-detail).
-// Гостевой email-flow как на чекауте карт (pendingAction переживает диалог);
-// gateVerification/strict-редирект НЕ вызывается. Валидация логина — через
-// POST /services/validate-login перед созданием заказа.
 @Component({
   selector: 'app-service-checkout',
   standalone: true,
@@ -167,7 +152,7 @@ type PendingAction = 'pay' | 'free' | 'promo';
     }
 `,
   styles: [`
-    .wrap { padding: var(--space-md); max-width: 560px; margin: 0 auto; padding-bottom: var(--space-xl); display: flex; flex-direction: column; gap: var(--space-lg); }
+    .wrap { padding: 0 16px; max-width: 560px; margin: 0 auto; padding-bottom: 110px; display: flex; flex-direction: column; gap: var(--space-lg); }
     h2 { text-align: center; margin: 0; }
 
     .summary {
@@ -190,7 +175,7 @@ type PendingAction = 'pay' | 'free' | 'promo';
       color: var(--color-primary-ink); font-size: 13px; font-weight: 500; cursor: pointer;
     }
     .s-edit:hover { text-decoration: underline; }
-    /* Подсказка о клампе суммы deep-link'а (визуальный язык kzt-warning). */
+    
     .s-note { margin: 0; padding: 8px 12px; background: #fff7e6; color: #663300; border-radius: var(--rounded-md); font-size: 12px; line-height: 1.4; }
 
     .order {
@@ -240,12 +225,10 @@ export class ServiceCheckoutPage implements OnInit {
 
   protected readonly product = signal<ServiceProduct | null>(null);
   protected readonly notFound = signal(false);
-  // Параметры заказа — из query (?login=&amount= | ?denomination=): deep-link
-  // с лендинга; параметры живут в query и переживают email-диалог.
   protected readonly login = signal('');
   protected readonly amount = signal(0);
   protected readonly denomination = signal<ServiceDenomination | null>(null);
-  /** Подсказка о скорректированной сумме deep-link'а (кламп по лимитам). */
+  
   protected readonly amountNote = signal('');
 
   protected readonly promoCode = signal('');
@@ -271,19 +254,16 @@ export class ServiceCheckoutPage implements OnInit {
   });
 
   protected readonly isUnit = computed(() => isUnitTopup(this.product()));
-  /** Виду нужен логин аккаунта (пополнение, подписка). */
+  
   protected readonly needsLogin = computed(() => serviceNeedsLogin(this.product()?.kind));
-  /** Что получит покупатель: «1 000 ₽» на счёт либо «50 ⭐» товаром. */
+  
   protected readonly creditedLine = computed(() => {
     const p = this.product();
     if (!p) return '';
     if (isUnitTopup(p)) return topupAmountLabel(this.amount(), p, formatAmount);
-    // У денежного пополнения это ОЦЕНКА (курс на стороне сервиса плавает) —
-    // ровно та же, что пользователь видел в форме.
     return `~ ${formatAmount(topupCreditedDisplay(this.basePrice(), p.fee_pct), p.amount_currency)}`;
   });
-  /** Цена до промо: gift_card — цена номинала; account_topup — по формуле
-   *  продукта (штучная либо «сумма + комиссия»). */
+  
   protected readonly basePrice = computed(() => {
     const p = this.product();
     if (!p) return 0;
@@ -309,8 +289,6 @@ export class ServiceCheckoutPage implements OnInit {
           const denomId = qp.get('denomination') ?? '';
           const d = visibleDenominations(p).find((x) => x.id === denomId) ?? null;
           const login = (qp.get('login') ?? '').trim();
-          // Позиция не передана/неизвестна — возвращаем к выбору; у подписки
-          // так же обязателен логин (без него заказ всё равно отобьётся).
           if (!d || (serviceNeedsLogin(p.kind) && !login)) {
             void this.router.navigate(['/services', this.slug], { replaceUrl: true });
             return;
@@ -324,10 +302,6 @@ export class ServiceCheckoutPage implements OnInit {
             void this.router.navigate(['/services', this.slug], { replaceUrl: true });
             return;
           }
-          // Deep-link с суммой вне лимитов продукта: клампим до границы и
-          // показываем подсказку (тексты — как на service-detail: в сумме
-          // К ОПЛАТЕ, её пользователь и вводил), иначе невалидная сумма
-          // доезжала бы до ошибки бэкенда на создании заказа.
           if (p.min_amount > 0 && amount < p.min_amount) {
             amount = p.min_amount;
             this.amountNote.set(`Минимум — ${formatAmount(topupPayFor(p.min_amount, p), p.issue_currency)}, ${isUnitTopup(p) ? 'количество увеличено' : 'сумма увеличена'}`);
@@ -353,13 +327,7 @@ export class ServiceCheckoutPage implements OnInit {
     if (this.emailError()) this.emailError.set('');
   }
 
-  /** Гостю нужен email до любого действия, которое требует сессии (зеркало
-   *  `requireAuth` чекаута карт). true = flow запущен, выходим. Авторизованного
-   *  НЕ гейтим: адрес доставки бэкенд берёт из аккаунта, а его отсутствие
-   *  покупку не блокирует — паритет с выпуском карты. Порядок ветвей важен:
-   *  поле email видит только гость, поэтому его валидация идёт ПОСЛЕ проверки
-   *  сессии — иначе у авторизованного пустой сигнал не проходил бы регексп и
-   *  кнопки гасились молча (ошибку рисовать негде). */
+  
   private requireEmail(action: PendingAction): boolean {
     if (this.auth.isAuthenticated()) return false;
     const value = this.email().trim().toLowerCase();
@@ -409,7 +377,6 @@ export class ServiceCheckoutPage implements OnInit {
     if (this.requireEmail('promo')) return;
     this.promoLoading.set(true);
     this.promoError.set('');
-    // Цена сервиса зависит от номинала/суммы — сумму и валюту передаём сами.
     this.promoApi.validate({
       code: this.promoCode(), scope: 'issue',
       product_type: 'service', product_id: p.id,
@@ -482,8 +449,6 @@ export class ServiceCheckoutPage implements OnInit {
       }).subscribe({
         next: (res) => {
           this.loading.set(false);
-          // redirect-СБП: авто-открытие пейформы — best-effort (окно
-          // активации клика ещё живо); payment-страница даст fallback-кнопку.
           if (res.order.mode === 'redirect') openExternalLink(res.order.url);
           void this.router.navigate(['/services/orders', res.order.id, 'payment']);
         },
@@ -507,7 +472,7 @@ export class ServiceCheckoutPage implements OnInit {
     });
   }
 
-  /** Заголовок страницы по виду продукта. */
+  
   protected headline(kind: ServiceProduct['kind']): string {
     switch (kind) {
       case 'account_topup': return 'Пополнение';
@@ -519,7 +484,7 @@ export class ServiceCheckoutPage implements OnInit {
   protected chargeSymbol(): string {
     return symbolFor(this.product()?.issue_currency ?? '');
   }
-  /** Подпись номинала: имя товара от поставщика либо сумма с валютой. */
+  
   protected denomLabel(d: ServiceDenomination, denomCurrency: string): string {
     return denominationLabel(d, denomCurrency, (v, c) => formatAmount(v, c));
   }

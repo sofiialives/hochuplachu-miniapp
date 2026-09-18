@@ -122,8 +122,7 @@ interface DayGroup {
   `,
   styles: [`
     .wrap {
-      padding: 0 16px;
-      padding-bottom: 110px;
+      padding: 0 16px; padding-bottom: 110px;
       max-width: 1200px; margin: 0 auto;
     }
     h1 { margin: 0 0 2px; }
@@ -135,7 +134,7 @@ interface DayGroup {
     .emoji { font-size: 28px; line-height: 1; }
     .head-body { min-width: 0; }
     .meta { font-size: 14px; color: rgba(0, 0, 0, 1); }
-    .meta b { color: var(--color-primary-ink); }
+    .meta b {font-family: 'Gilroy'; color: var(--color-primary-ink); font-weight: 400; }
     .lead { font-size: 14px; color: rgba(0, 0, 0, 1); margin-bottom: 20px; }
 
     .filters { display: flex; flex-direction: column; gap: 8px; margin-bottom: var(--space-md); }
@@ -167,8 +166,8 @@ interface DayGroup {
     .row-days { font-weight: 400; font-size: 13px; }
     .row-sub { font-size: 13px; color: rgba(0, 0, 0, 1); }
     .row-price { display: flex; flex-direction: row; align-items: baseline; gap: 8px; }
-    .row-price b { font-weight: 500; font-size: 17px; color: var(--color-primary-ink); }
-    .per { font-size: 12px; color: rgba(0, 0, 0, 1); }
+    .row-price b { font-family: 'Gilroy'; font-weight: 500; font-size: 17px; color: var(--color-primary-ink); }
+    .per { font-family: 'Gilroy'; font-weight: 400; font-size: 12px; color: rgba(0, 0, 0, 1); }
     .chev { position: absolute; top: 16px; right: 14px; color: var(--color-muted); font-size: 22px; }
 
     .grp { margin-bottom: 16px; box-shadow: 0px 26.44px 62.98px -21.64px rgba(0, 0, 0, 0.15); border-radius: var(--rounded-lg); overflow: hidden; }
@@ -204,6 +203,8 @@ interface DayGroup {
 
     @media (min-width: 1024px) {
       .wrap { padding-left: 120px; padding-right: 120px; }
+      .chip { font-size: 17px; }
+      .grp-title { font-size: 19px; }
 
       .head-row {
         display: flex; flex-direction: row; align-items: flex-start;

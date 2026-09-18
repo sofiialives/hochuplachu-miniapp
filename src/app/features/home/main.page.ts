@@ -14,12 +14,6 @@ import { ReferralBanner } from '../profile/referral-banner';
 import { ReferralDialog } from '../profile/referral.dialog';
 import { formatAmount } from '../../core/currency/currency-symbols';
 
-// MainPage — главная-агрегатор «/»: hero карт (акцент), реф-баннер, секции
-// eSIM и Сервисы по GET /catalog/sections + каталогам. Редиректов с «/» нет —
-// авто-резюм KYC в app-shell привязан к этому пути.
-//
-// .card (только eSIM) 1:1 из esim-directions.component.ts. .svc-card и
-// app-service-hero-card — свои независимые стили (не унифицированы с .card).
 @Component({
   selector: 'app-main',
   standalone: true,
@@ -65,12 +59,12 @@ import { formatAmount } from '../../core/currency/currency-symbols';
             </a>
           </div>
           @if (isAuthed()) {
-            <app-referral-banner (clicked)="showReferral.set(true)" />
+            <app-referral-banner (clicked)="showReferral.set(true)" [stacked]="true" />
           }
         </div>
       } @else {
         @if (isAuthed()) {
-          <app-referral-banner (clicked)="showReferral.set(true)" />
+          <app-referral-banner (clicked)="showReferral.set(true)" [stacked]="true" />
         }
       }
 
@@ -164,27 +158,18 @@ import { formatAmount } from '../../core/currency/currency-symbols';
   styles: [`
     .wrap {
       padding: 0 16px;
-      /* 110px снизу — футер теперь position:fixed (bottom-nav.component.ts,
-         bottom:20px) и перестал сам резервировать себе место в потоке
-         документа; без этого последний контент страницы оказывался под
-         ним. Высота нав-бара + его отступ от низа + запас сверху. */
+      
       padding-bottom: 110px;
       max-width: 1200px; margin: 0 auto;
       display: flex; flex-direction: column;
     }
     h2 { font-size: 24px; min-width: 0; }
-    /* min-width:0 — без него flex-item (h2 внутри .sec-head) по
-       умолчанию не сжимается меньше своего контента (min-width:auto) —
-       именно это толкало .sec-link за пределы экрана на обычной
-       мобилке, а не только совсем узкой (<375px). Уменьшенный шрифт —
-       для мобилки вообще, не только <375px: 24px крупного display-шрифта
-       капсом рядом с "Все тарифы →" не помещался и на обычных мобильных
-       ширинах (375-767px), не только на самых узких. */
+    
     @media (max-width: 767px) {
       h2 { font-size: 19px; }
     }
 
-    /* ===== Hero карт ===== */
+    
     .hero {
       display: flex; align-items: center; gap: 10px;
       padding: 14px 14px;
@@ -195,11 +180,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     }
     a.hero { transition: transform var(--dur-quick) var(--ease-out), box-shadow var(--dur-quick) ease; }
     a.hero:hover { transform: translateY(-2px); box-shadow: var(--shadow-card-hover); }
-    /* По просьбе владельца — кнопка ОСТАЁТСЯ справа от текста (не
-       уходит под него колонкой): вместо смены раскладки текст/иконки/
-       кнопка просто УМЕНЬШЕНЫ настолько, чтобы помещаться в ряд даже на
-       узких мобильных экранах. app-button variant="primary" (сама
-       кнопка) уже уменьшена в button.component.ts. */
+    
     .hero--promo { background-color: white; box-shadow: 0px 26.44px 62.98px -21.64px rgba(0, 0, 0, 0.15); }
     .hero-body { flex: 1; min-width: 0; }
     .hero-title { font-family: var(--font-display); font-size: 15px; font-weight: 700; line-height: 1.2; }
@@ -213,7 +194,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     }
     @keyframes main-spin { to { transform: rotate(360deg); } }
     @media (prefers-reduced-motion: reduce) { .hero-spin { animation: none; } }
-    /* Мини-стопка карт в hero. */
+    
     .hero-visual { position: relative; width: 72px; height: 48px; flex: 0 0 72px; }
     .mini-card {
       position: absolute; inset: 0;
@@ -227,17 +208,13 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       z-index: -1;
     }
 
-    /* ===== Секции ===== */
+    
     .sec-head {
       display: flex; align-items: center; justify-content: space-between;
       margin-top: 0;
       gap: 4px 12px;
     }
-    /* По просьбе владельца — h2 и .sec-link остаются В РЯД (не колонкой),
-       «Все тарифы →» должно быть НАПРОТИВ заголовка, а не под ним.
-       h2 сам переносится на 2 строки при нехватке места (min-width:0 на
-       h2 ниже это разрешает), .sec-link не переносится (white-space:
-       nowrap) и просто ужимается по своему компактному размеру. */
+    
     .sec-link { color: rgba(137, 137, 137, 1); font-size: 14px; font-weight: 500; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
     .sec-link:hover { text-decoration: underline; }
     .top-row {
@@ -260,33 +237,14 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     .soon-title { font-weight: 600; }
     .soon-sub { color: var(--color-muted); font-size: 13px; margin-top: 4px; }
 
-    /* ===== eSIM + Сервисы — .card 1:1 из esim-directions.component.ts =====
-       Тот же класс, те же правила, те же 4 адаптивных состояния карточки
-       (<375 / 375–499 / 500–1023 / ≥1024), переиспользуется здесь для
-       .esim-grid и .svc-grid — раньше это были два похожих, но не идентичных
-       набора правил (.esim-card / .svc-card) без переноса брейкпоинтов;
-       теперь сам «.card» и его брейкпоинты скопированы дословно.
-       БАЗА (320–374px): 2-колоночная сетка внутри карточки (иконка+что-то
-       сверху, название снизу — карточке хватает ширины). */
+    
     .esim-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 36px; margin-top: 20px }
-    /* Мобилка: данные приходят с запасом (до 8, под десктоп), но видно
-       строго 4 — карточки 5–8 скрыты, пока не наступит десктопный брейкпоинт. */
+    
     .esim-grid .card:nth-child(n+5) { display: none; }
-    /* .svc-grid — Steam-плашка (app-service-hero-card) теперь ПРЯМОЙ элемент
-       этого же грида, а не отдельный блок над ним: на мобиле она занимает
-       всю ширину (grid-column: 1/-1) — 100%, ниже сами услуги идут рядами
-       по 3. На десктопе грид становится 5-колоночным, плашка растягивается
-       на 2 колонки — в её же строке остаются места ещё для 3 сервисов,
-       следующая строка — уже 5 сервисов подряд. */
+    
     .svc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 20px}
     .svc-grid app-service-hero-card { grid-column: 1 / -1; }
-    /* Мобилка: было 3 колонки — карточкам не хватало ширины (тот же
-       класс проблем, что и с esim-grid). 2 колонки. Hero-плашка — 1-й
-       ребёнок грида и занимает всю ширину, поэтому «показать 2 полных
-       ряда обычных сервисов» (4 штуки, 2×2) = скрыть детей начиная с
-       6-го (1 hero + 4 сервиса = дети 1..5) — было n+8 (под 3 колонки,
-       6 сервисов = 2 ряда по 3), теперь меньше, чтобы не обрывать ряд
-       посередине нечётным количеством карточек. */
+    
     .svc-grid .svc-card:nth-child(n+6) { display: none; }
 
     .card {
@@ -328,9 +286,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       border-radius: var(--rounded-pill);
     }
 
-    /* svc-card — НЕ использует общий .card (это отдельный, самостоятельный
-       стиль плитки сервиса — просто по центру: иконка сверху, название под
-       ней). .card 1:1 из esim-directions.component.ts — только для eSIM. */
+    
     .svc-card {
       position: relative;
       display: flex; flex-direction: column; align-items: center; gap: 8px;
@@ -355,9 +311,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       font-size: 13px; font-weight: 500; line-height: 1.25; text-align: center;
       display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
     }
-    /* Цвет и шрифт — 1:1 с .badge из esim-directions.component.ts (жёлтый
-       фон, чёрный текст, Syncopate Cyr, капс); позиция своя — верхний левый
-       угол, как и была, её не трогаю. */
+    
     .svc-hot {
       position: absolute; top: 12px; left: 8px;
       padding: 4px; border-radius: var(--rounded-pill);
@@ -365,7 +319,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       font-family: 'Syncopate Cyr'; font-size: 6px; text-transform: uppercase;
     }
 
-    /* ===== ≥1024px: десктопные размеры ===== */
+    
     @media (min-width: 1024px) {
       .card { grid-template-columns: 60px 1fr; column-gap: 10px; row-gap: 8px; padding: 16px; }
       .ico { height: 30px; }
@@ -376,21 +330,17 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       .badge { font-size: 7px; padding: 5px 9px; }
       .wrap { padding: 0 120px; }
 
-
-      /* На телефоне eSIM всегда 2 в ряд, строго 4 карточки; здесь — 4 в ряд,
-         открываем все 8 (ровно 2 полных ряда по 4). */
+      
       .esim-grid { grid-template-columns: repeat(4, 1fr); }
       .esim-grid .card:nth-child(n+5) { display: grid; }
 
-      /* Steam растягивается на 2 колонки из 5, а не на всю ширину строки —
-         рядом с ним в той же строке помещаются ещё 3 сервиса, второй ряд —
-         оставшиеся 5. Открываем все 8 услуг (были скрыты 8+ на мобиле). */
+      
       .svc-grid { grid-template-columns: repeat(5, 1fr); }
       .svc-grid app-service-hero-card { grid-column: span 2; }
       .svc-grid .svc-card:nth-child(n+8) { display: flex; }
     }
 
-    /* ===== Скелетоны ===== */
+    
     .skel-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); margin-bottom: 36px; }    .skel {
       display: block; height: 92px; border-radius: var(--rounded-lg);
       background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface));
@@ -406,16 +356,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     @keyframes main-skel { to { transform: translateX(100%); } }
     @media (prefers-reduced-motion: reduce) { .skel::after { animation: none; } }
 
-    /* ===== Мобильный масштаб — ВЕСЬ диапазон до десктопа (<1024px), не
-       только самые узкие экраны. Раньше это правило стояло на
-       max-width:374px — работало только НИЖЕ 375px, а на 375-580px (весь
-       заявленный мобильный диапазон) кнопка и текст .hero--promo
-       оставались в ряд, текст по-прежнему выдавливался в узкую колонку.
-       Один и тот же компактный дизайн должен работать одинаково во ВСЁМ
-       диапазоне 375-1023px, не только в его самом узком крае.
-       Размещено В САМОМ КОНЦЕ файла НАРОЧНО: при равной специфичности
-       CSS-правило побеждает то, что идёт ПОЗЖЕ по тексту — медиа-запрос
-       сам по себе приоритета не даёт. */
+    
     @media (max-width: 1023px) {
       .esim-grid { grid-template-columns: repeat(2, 1fr); }
       .svc-grid { grid-template-columns: repeat(2, 1fr); }
@@ -433,18 +374,11 @@ export class MainPage implements OnInit, OnDestroy {
   private readonly platformId = inject(PLATFORM_ID);
 
   protected readonly isAuthed = this.auth.isAuthenticated;
-  // Карты — из глобального кэша (app-shell освежает его на каждом заходе
-  // на '/'), поэтому отдельного skeleton'а hero не требуется.
   protected readonly cards = this.cardsApi.cardsCache;
   protected readonly showReferral = signal(false);
   protected readonly sections = signal<CatalogSections | null>(null);
-  // Секция eSIM показывает НАПРАВЛЕНИЯ (страны), а не отдельные тарифы:
-  // каталог провайдера — тысячи позиций, четыре случайных пакета из него на
-  // главной ничего не говорили, да и тащить его целиком ради превью незачем.
   protected readonly esimDirections = signal<EsimDirection[] | null>(null);
   protected readonly serviceProducts = signal<ServiceProduct[] | null>(null);
-  // issuingOrderId — оплаченная заявка на выпуск, карты ещё нет (см.
-  // orders.api.ts). Виджет статуса живёт и здесь, и на /cards.
   protected readonly issuingOrderId = signal('');
   private issuePollTimer: ReturnType<typeof setInterval> | null = null;
 
@@ -453,21 +387,12 @@ export class MainPage implements OnInit, OnDestroy {
   protected readonly esimLoading = computed(() => this.esimAvailable() && this.esimDirections() === null);
   protected readonly servicesLoading = computed(() => this.servicesAvailable() && this.serviceProducts() === null);
 
-  // topEsim — до 8 (2 ряда по 4 на десктопе); на мобиле CSS (.esim-grid
-  // .card:nth-child(n+5)) прячет 5–8, показывая строго 4.
   protected readonly topEsim = computed<EsimDirection[]>(() =>
     (this.esimDirections() ?? []).slice(0, 8),
   );
-  // heroService — сервис отдельного блока (Steam), берётся ИЗ общего списка
-  // serviceProducts() по слагу (не отдельным HTTP-запросом).
   protected readonly heroService = computed<ServiceProduct | null>(
     () => (this.serviceProducts() ?? []).find((p) => p.slug === HERO_SERVICE_SLUG) ?? null,
   );
-  // gridServices — до SERVICES_TOP (8) обычных плиток без Steam (тот ушёл в
-  // heroService выше). На десктопе видно все 8 (Steam+3 в первой строке грида,
-  // 5 — во второй); на мобиле CSS (.svc-grid .svc-card:nth-child(n+6)) прячет
-  // с 5-й плитки и дальше, оставляя строго 2 ряда по 2 (сетка на мобиле —
-  // 2 колонки, было 3, не помещалось).
   protected readonly gridServices = computed<ServiceProduct[]>(() => {
     const list = (this.serviceProducts() ?? []).filter((p) => !p.disable_purchase);
     const rest = this.heroService() ? list.filter((p) => p.slug !== HERO_SERVICE_SLUG) : list;
@@ -500,22 +425,17 @@ export class MainPage implements OnInit, OnDestroy {
           this.loadServices();
         }
       },
-      // Сеть упала — считаем разделы недоступными (заглушки), карты остаются.
       error: () => this.sections.set({ cards: 'available', esim: 'coming_soon', services: 'coming_soon' }),
     });
     if (this.auth.isAuthenticated()) {
-      // Кэш карт освежает app-shell; здесь только следим за выпуском.
       this.startIssuePollIfNeeded();
     }
   }
 
-  /** Сколько плиток сервисов показывает главная. Ровно столько и просим у
-   *  бэкенда — плюс одну про запас на Steam, который уходит в отдельный блок
-   *  и в сетке не повторяется. */
+  
   private static readonly SERVICES_TOP = 8;
 
   private loadServices(): void {
-    // limit 9: +1 с запасом на Steam, который уйдёт в hero-плашку.
     this.servicesApi.products({ limit: MainPage.SERVICES_TOP + 1, offset: 0 }).subscribe({
       next: (res) => this.serviceProducts.set(res.products ?? []),
       error: () => this.serviceProducts.set([]),
@@ -526,8 +446,6 @@ export class MainPage implements OnInit, OnDestroy {
     if (this.issuePollTimer) clearInterval(this.issuePollTimer);
   }
 
-  // startIssuePollIfNeeded — тот же ритм и правила, что у home.page: флаг
-  // протухает на терминальных статусах/404, карта появилась — флаг снимаем.
   private startIssuePollIfNeeded(): void {
     if (!isPlatformBrowser(this.platformId)) return;
     const id = readIssuingOrderId();

@@ -64,8 +64,7 @@ import { GuideTargetDirective } from '../features/guides/guide-target.directive'
            <span class="nav-underline" aria-hidden="true"></span>
     </div>`,
   styles: [`
-    /* Сам .nav — просто визуальный бар, позиционирование (fixed) теперь
-       на .wrap ниже. */
+    
     .nav {
       view-transition-name: bottom-nav;
       background: rgba(255, 255, 255, 1);
@@ -73,14 +72,7 @@ import { GuideTargetDirective } from '../features/guides/guide-target.directive'
       padding: 10px 16px;
       display: flex; flex-direction: column; align-items: center;
     }
-    /* position:fixed, 20px от низа экрана — по явному запросу владельца
-       (раньше сидел в обычном потоке документа, у низа страницы просто
-       потому что был последним элементом). ВАЖНО: теперь футер выпал из
-       потока — страницы ПОД ним нуждаются в нижнем padding (высота нав-
-       бара + 20px + отступ), иначе последний контент экрана будет
-       перекрыт футером. Этот padding нужно добавить на каждой странице
-       отдельно (обычно на .wrap той страницы) — этот компонент сам не
-       может знать высоту контента других страниц. */
+    
     .wrap {
       position: fixed;
       left: 0; right: 0; bottom: 20px;
@@ -89,19 +81,12 @@ import { GuideTargetDirective } from '../features/guides/guide-target.directive'
       max-width: 1200px; margin: 0 auto;
       display: flex; flex-direction: column;
     }
-    /* <1024px — тот же паттерн, что на главной/сервисах: 52px с боков
-       фиксированно на узких экранах почти не оставляет места контенту. */
-
     .bar {
       display: flex; justify-content: space-between; align-items: center;
       width: 100%;
     }
-    /* Декоративная черта под баром — 6px высота, border-radius 72px
-       (полная пилюля), ширина примерно под 3 центральные иконки. */
-    /* Декоративная черта ПОСЛЕ футера (не внахлёст — margin-top:12px, а
-       не отрицательный margin) — 6px высота, border-radius 72px (полная
-       пилюля). На мобиле ширина под 3 центральные иконки, на десктопе —
-       под все 5 (см. медиа-запрос ниже). */
+    
+    
     .nav-underline {
       position: relative;
       z-index: 1;
@@ -122,25 +107,23 @@ import { GuideTargetDirective } from '../features/guides/guide-target.directive'
       transition: color var(--dur-quick) ease, background var(--dur-quick) ease, padding var(--dur-quick) ease;
     }
     a span { display: none; }
-    /* Иконки — fill="currentColor" в разметке, цвет управляется отсюда
-       через CSS color (наследуется в SVG). Неактивная — серая. */
+    
     .ico { width: 24px; height: 24px; flex: 0 0 24px; color: inherit; }
-    /* Активный пункт — кремовая подложка вокруг иконки, сама иконка —
-       насыщенный жёлтый (контраст держится за счёт разницы кремовый/
-       насыщенный, а не одинаковых значений). */
+    
     a.active {
       color: rgba(255, 186, 38, 1);
       padding: 6px 12px;
       background: rgba(255, 245, 222, 1);
       border-radius: 128px;
     }
+    a.active span { color: var(--color-ink); }
 
-    /* ===== Десктоп — текст 4px справа от иконки ===== */
+    
     @media (min-width: 1024px) {
       a { flex-direction: row; gap: 4px; }
       a span { display: inline; }
       .wrap { padding-left: 120px; padding-right: 120px; }
-      /* На десктопе черта под всеми 5 иконками, а не под тремя. */
+      
       .nav-underline { width: 80%; max-width: none; }
     }
   `],

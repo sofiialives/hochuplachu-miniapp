@@ -3,9 +3,6 @@ import { BackBarComponent } from '../../ui/back-bar.component';
 import { PullToRefreshComponent } from '../../ui/pull-to-refresh.component';
 import { MyEsimsComponent } from './my-esims.component';
 
-// MyEsimsPage — «/esim/my»: полный список купленных eSIM. На «/esim» тот же
-// компонент стоит под лимитом (последние две + ссылка сюда) — как «Последние
-// операции» и «/history» на странице карт.
 @Component({
   selector: 'app-my-esims-page',
   standalone: true,
@@ -19,7 +16,7 @@ import { MyEsimsComponent } from './my-esims.component';
   </app-pull-to-refresh>`,
   styles: [`
     .wrap {
-      padding: var(--space-md) var(--space-md) var(--space-xl);
+      padding: 0 16px 110px;
       max-width: 640px; margin: 0 auto;
       display: flex; flex-direction: column; gap: var(--space-md);
     }

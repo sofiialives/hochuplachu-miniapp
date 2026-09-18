@@ -168,10 +168,7 @@ import { GuideService } from '../guides/guide.service';
   styles: [`
     .wrap {
       padding: 0 16px;
-      /* 110px снизу — футер теперь position:fixed (bottom-nav.component.ts,
-         bottom:20px) и перестал сам резервировать себе место в потоке
-         документа; без этого последний контент страницы оказывался под
-         ним. Высота нав-бара + его отступ от низа + запас сверху. */
+      
       padding-bottom: 110px;
       max-width: 1200px; margin: 0 auto;
       display: flex; flex-direction: column;
@@ -215,9 +212,7 @@ import { GuideService } from '../guides/guide.service';
     .name { text-align: center; margin-bottom: 4px; text-transform: uppercase; font-size: 20px; font-family: "Syncopate Cyr" }
     .email { text-align: center; color: rgba(228, 228, 228, 1); margin-bottom: 20px; }
 
-    /* Плейсхолдер-черта вместо email на мобиле, когда почта не привязана.
-       164px — фиксированная ширина, не зависит от текста ("—" — один символ,
-       без width полоска была бы почти невидимой). */
+    
     .email-dash::before {
       content: '';
       display: block;
@@ -228,19 +223,15 @@ import { GuideService } from '../guides/guide.service';
       margin: 20px 0;
     }
 
-    /* Кнопка «Войти по email» внутри .id-col — ТОЛЬКО десктоп (на месте
-       .email-dash). На мобиле скрыта, там своя отдельная кнопка ниже
-       (.email-login). */
+    
     .email-login-desktop { display: none; }
 
-    /* Кнопка «Войти по email» под шапкой профиля — МОБИЛЬНАЯ версия.
-       ::ng-deep пробивает инкапсуляцию app-button — своего [padding]-инпута
-       у компонента нет, а перекрасить паддинг снаружи иначе нельзя. */
+    
     .email-login {
       display: flex; justify-content: center;
       margin: calc(-1 * var(--space-md)) 0 var(--space-xl);
     }
-    .email-login ::ng-deep button { padding: 16px 32px; height: auto; font-size: 20px; border-radius: 20px; }
+    .email-login ::ng-deep button { padding: 20px 40px; height: auto; font-size: 20px; border-radius: 20px; }
 
     .menu { display: flex; flex-direction: column; gap: 8px; margin-bottom: var(--space-xl); }
     .row {
@@ -361,15 +352,14 @@ import { GuideService } from '../guides/guide.service';
       .avatar img, .avatar .ph { width: 144px; height: 144px; font-size: 32px; }
       .email { margin-bottom: 0; }
 
-      /* Дашборд-черта прячется, десктопная кнопка внутри .id-col занимает её место */
+      
       .email-dash { display: none; }
       .email-login { display: none; }
       .email-login-desktop {
         display: flex; justify-content: center;
       }
         .name { font-size: 28px; }
-      .email-login-desktop ::ng-deep button { padding: 24px 44px; height: auto; font-size: 20px; border-radius: 20px; }
-
+      .email-login-desktop ::ng-deep button { padding: 16px 32px; height: auto; font-size: 18px; border-radius: 16px; }
   `],
 })
 export class ProfilePage implements OnInit {
@@ -382,9 +372,6 @@ export class ProfilePage implements OnInit {
   protected readonly verification = inject(VerificationService);
   protected readonly guide = inject(GuideService);
 
-  // hasNoCards — null пока список карт не загружен (кнопку гайда в это время
-  // не показываем вовсе, а не мигаем ею). Гайд «как купить карту» не нужен
-  // тому, у кого карта уже есть.
   protected readonly hasNoCards = signal<boolean | null>(null);
 
   ngOnInit(): void {
@@ -417,7 +404,7 @@ export class ProfilePage implements OnInit {
     this.emailLoginOpen.set(false);
     this.toast.success('Email привязан');
     this.cardsApi.myCards().subscribe({
-      error: () => { /* не критично — обновится при следующем заходе на «/» */ },
+      error: () => {  },
     });
   }
 

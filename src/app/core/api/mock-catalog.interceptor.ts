@@ -257,7 +257,7 @@ const MOCK_CARD_PRODUCTS = [
   {
     id: 'mock-card-subs',
     name: 'Карта для подписок',
-    description: 'Оплачивайте зарубежные подписки — Netflix, Spotify, ChatGPT — без танцев с бубном.',
+    description: 'С возможностью привзяать Apple Pay и Google Pay',
     deposit_fee_pct: 3,
     issue_price: 490, issue_currency: 'RUB',
     annual_service_fee: 0,

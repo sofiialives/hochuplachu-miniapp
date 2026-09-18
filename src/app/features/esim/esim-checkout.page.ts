@@ -18,18 +18,8 @@ import { CurrencyPickerDialogComponent } from '../cards/currency-picker.dialog';
 import { openExternalLink } from '../../core/utils/open-external';
 import { formatAmount, symbolFor } from '../../core/currency/currency-symbols';
 
-/** Действие, отложенное до подтверждения email. */
 type PendingAction = 'pay' | 'free' | 'promo';
 
-// EsimCheckoutPage — «/esim/:id/checkout» (композиция референса
-// esim-preorder.png): сводка тарифа, промокод, метод оплаты, итог.
-// БЕЗ authGuard — гейт внутри (гостевой email-flow как на чекауте карт;
-// pendingAction переживает диалог кода). gateVerification/strict-редирект
-// НЕ вызывается (решение №4 дизайна).
-// Email у авторизованного НЕ спрашиваем ВООБЩЕ — паритет с выпуском карты:
-// QR уходит на адрес аккаунта (его подставляет бэк, `deliveryEmailFor`), а
-// если адреса нет — покупка всё равно проходит, QR остаётся в приложении.
-// Поле в форме видит только гость: ему адрес нужен как логин.
 @Component({
   selector: 'app-esim-checkout',
   standalone: true,
@@ -147,7 +137,7 @@ type PendingAction = 'pay' | 'free' | 'promo';
         (dismissed)="onCodeDismissed()" />
     }`,
   styles: [`
-    .wrap { padding: var(--space-md); max-width: 560px; margin: 0 auto; padding-bottom: var(--space-xl); display: flex; flex-direction: column; gap: var(--space-lg); }
+    .wrap { padding: 0 16px; max-width: 560px; margin: 0 auto; padding-bottom: 110px; display: flex; flex-direction: column; gap: var(--space-lg); }
     h2 { text-align: center; margin: 0; }
 
     .summary {
@@ -218,7 +208,7 @@ export class EsimCheckoutPage implements OnInit {
 
   protected readonly product = signal<EsimProduct | null>(null);
   protected readonly loadFailed = signal(false);
-  /** Тариф есть в каталоге, но скрыт от покупки (disable_purchase). */
+  
   protected readonly unavailable = signal(false);
   protected readonly promoCode = signal('');
   protected readonly promoApplied = signal<PromoValidation | null>(null);
@@ -253,10 +243,6 @@ export class EsimCheckoutPage implements OnInit {
     this.esimApi.product(id).subscribe({
       next: (r) => {
         const p = r.product ?? null;
-        // disable_purchase — заглушка вместо формы чекаута (паритет с
-        // service-checkout). Отдельного поля available/coming_soon в DTO нет:
-        // тариф без резолвящегося провайдера бэк отдаёт как 404 — такой уходит
-        // в ветку loadFailed.
         if (p?.disable_purchase) {
           this.unavailable.set(true);
           return;
@@ -276,13 +262,7 @@ export class EsimCheckoutPage implements OnInit {
     if (this.emailError()) this.emailError.set('');
   }
 
-  /** Гостю нужен email до любого действия, которое требует сессии (зеркало
-   *  `requireAuth` чекаута карт). true = flow запущен, выходим. Авторизованного
-   *  НЕ гейтим: адрес доставки бэкенд берёт из аккаунта, а его отсутствие
-   *  покупку не блокирует — паритет с выпуском карты. Порядок ветвей важен:
-   *  поле email видит только гость, поэтому его валидация идёт ПОСЛЕ проверки
-   *  сессии — иначе у авторизованного пустой сигнал не проходил бы регексп и
-   *  кнопки гасились молча (ошибку рисовать негде). */
+  
   private requireEmail(action: PendingAction): boolean {
     if (this.auth.isAuthenticated()) return false;
     const value = this.email().trim().toLowerCase();
@@ -309,8 +289,7 @@ export class EsimCheckoutPage implements OnInit {
     return true;
   }
 
-  /** Сессия установлена — методы перегружаем (условные валюты зависят от
-   *  юзера) и доигрываем отложенное действие тем же кликом. */
+  
   protected onAuthenticated(): void {
     this.showCodeDialog.set(false);
     this.continuePending();
@@ -334,7 +313,6 @@ export class EsimCheckoutPage implements OnInit {
     if (this.requireEmail('promo')) return;
     this.promoLoading.set(true);
     this.promoError.set('');
-    // Цена eSIM фиксирована на продукте — бэк резолвит её сам по product_id.
     this.promoApi.validate({
       code: this.promoCode(), scope: 'issue',
       product_type: 'esim', product_id: p.id,
@@ -403,12 +381,7 @@ export class EsimCheckoutPage implements OnInit {
       }).subscribe({
         next: (res) => {
           this.loading.set(false);
-          // redirect-СБП: пейформа эквайра — сразу в новом окне (окно
-          // активации клика ещё живо — попап-блокер пропускает); страница
-          // оплаты покажет «ожидание платежа» с кнопкой-фолбэком.
           if (res.order.mode === 'redirect') openExternalLink(res.order.url);
-          // Free-заявка тоже уходит на payment-страницу: она поллит до
-          // ТЕРМИНАЛЬНОГО статуса и покажет QR, когда eSIM выпустится.
           void this.router.navigate(['/esim/orders', res.order.id, 'payment']);
         },
         error: (e) => {

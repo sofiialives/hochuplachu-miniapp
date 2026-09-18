@@ -141,7 +141,12 @@ import { WithdrawRequestDialog } from './withdraw-request.dialog';
     .hint { color: rgba(0, 0, 0, 1); text-align: center; font-size: 14px; }    .cta { display: flex; flex-direction: column; gap: var(--space-sm); margin-top: var(--space-md); }
     .toggle { color: rgba(255, 186, 38, 1); text-decoration: underline; font-size: 14px; }    .rules { color: var(--color-body); font-size: 14px; padding-left: 20px; }
     .rules li + li { margin-top: 6px; }
-    .stats { display: flex; gap: var(--space-md); padding: var(--space-md); margin-top: var(--space-md); background: var(--color-surface-card); border-radius: var(--rounded-md); font-size: 14px; }
+    .stats { display: flex; flex-wrap: wrap; gap: 8px; padding: var(--space-md); margin-top: var(--space-md); background: var(--color-surface); border: 1px solid var(--color-hairline); border-radius: var(--rounded-lg); font-size: 12px; }
+    .stats > div { flex: 1 1 100px; min-width: 0; }
+    :host ::ng-deep h3 { font-size: 26px; }
+    @media (min-width: 1024px) {
+      :host ::ng-deep h3 { font-size: 32px; }
+    }
 
     .withdraw { margin-top: var(--space-lg); display: flex; flex-direction: column; gap: var(--space-sm); }
     .withdraw h4 { margin: 0 0 4px; font-size: 14px; color: var(--color-muted); font-weight: 500; }
@@ -149,7 +154,7 @@ import { WithdrawRequestDialog } from './withdraw-request.dialog';
     .history { margin-top: var(--space-lg); }
     .history h4 { margin: 0 0 var(--space-sm); font-size: 14px; color: var(--color-muted); font-weight: 500; }
     .history ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
-    .history li { padding: 10px 12px; background: var(--color-surface-card); border-radius: var(--rounded-md); font-size: 14px; }
+    .history li { padding: 14px 16px; background: var(--color-surface); border: 1px solid var(--color-hairline); border-radius: var(--rounded-lg); font-size: 14px; }
     .history .line-1 { display: flex; justify-content: space-between; align-items: center; }
     .history .line-2 { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; color: var(--color-muted); font-size: 12px; }
     .history .amount { font-weight: 500; color: var(--color-ink); }
@@ -164,20 +169,15 @@ export class ReferralDialog implements OnInit {
   private readonly toast = inject(ToastService);
   private readonly auth = inject(AuthService);
   readonly closed = output<void>();
-  /** Партнёрская ветка условий — тот же признак, что в referral-banner. */
+  
   protected readonly isPartner = computed(() => this.auth.user()?.referral_type === 'partner');
   protected readonly info = signal<ReferralInfo | null>(null);
   protected readonly payouts = signal<ReferralPayoutRow[]>([]);
   protected readonly pending = signal<ReferralPendingSum[]>([]);
   protected readonly expanded = signal(false);
-  // withdrawDialogFor — открытый WithdrawDialog для конкретной валюты, либо null.
-  // Каждая валюта — отдельный диалог, потому что и сумма, и список карт зависят
-  // от выбранной валюты.
   protected readonly withdrawDialogFor = signal<ReferralPendingSum | null>(null);
-  // requestDialogFor — партнёрская ветка: диалог ЗАЯВКИ на вывод (реквизиты,
-  // решает оператор) вместо мгновенного зачисления на карту.
   protected readonly requestDialogFor = signal<ReferralPendingSum | null>(null);
-  /** Заявки партнёра на вывод (грузятся только партнёру). */
+  
   protected readonly withdrawals = signal<ReferralWithdrawalRow[]>([]);
 
   protected readonly refereeBonusAmount = computed(() => this.info()?.referee_bonus?.amount ?? 0);
@@ -188,7 +188,7 @@ export class ReferralDialog implements OnInit {
     this.loadWithdrawals();
   }
 
-  /** Заявки на вывод — только партнёру (у остальных их не бывает). */
+  
   private loadWithdrawals(): void {
     if (!this.isPartner()) return;
     this.api.withdrawals().subscribe({
@@ -199,7 +199,6 @@ export class ReferralDialog implements OnInit {
 
   protected payoutStatusLabel(status: ReferralPayoutRow['status']): string {
     if (status === 'paid') return 'зачислено';
-    // reserved — начисление зарезервировано открытой заявкой на вывод.
     if (status === 'reserved') return 'в выплате';
     return 'ожидает';
   }
@@ -214,7 +213,7 @@ export class ReferralDialog implements OnInit {
     return formatReferralAmount(w.amount, w.currency);
   }
 
-  /** Успешная заявка: начисления ушли в reserved — перечитываем оба списка. */
+  
   protected onRequestSuccess(): void {
     this.requestDialogFor.set(null);
     this.loadPayouts();
@@ -242,8 +241,6 @@ export class ReferralDialog implements OnInit {
   }
 
   openWithdraw(p: ReferralPendingSum): void {
-    // Партнёр выводит реальные деньги заявкой (бэк отбивает ему прямой
-    // /referral/withdraw), обычный рефовод — мгновенно на свою карту.
     if (this.isPartner()) {
       this.requestDialogFor.set(p);
     } else {
@@ -256,9 +253,6 @@ export class ReferralDialog implements OnInit {
   }
 
   onWithdrawSuccess(): void {
-    // Дополнительная перезагрузка не нужна — после редиректа на success-страницу
-    // диалог демонтируется. Если пользователь вернётся в реф-диалог — он откроется
-    // заново и подтянет актуальные payouts через ngOnInit.
     this.withdrawDialogFor.set(null);
     this.closed.emit();
   }
@@ -269,7 +263,7 @@ export class ReferralDialog implements OnInit {
         this.payouts.set(r.payouts ?? []);
         this.pending.set(r.pending ?? []);
       },
-      error: () => { /* история необязательна */ },
+      error: () => {  },
     });
   }
 

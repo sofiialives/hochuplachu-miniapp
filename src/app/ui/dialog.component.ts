@@ -27,16 +27,13 @@ import { Component, input, output } from '@angular/core';
       background: var(--color-surface);
       border-top-left-radius: var(--rounded-xl);
       border-top-right-radius: var(--rounded-xl);
-      max-height: 90vh; overflow: auto;
-      /* Было 52px с боков на мобилке — тот же паттерн, что чинили на
-         главной/сервисах: фиксированный крупный паддинг на узких экранах
-         съедал слишком много места. 16px мобилка, 120px десктоп
-         (медиа-запрос ниже, не тронут). position:relative нужен как
-         якорь для абсолютно позиционированного .close. */
+      max-height: 90vh; overflow-y: auto; overflow-x: hidden;
+      
       padding: var(--space-lg) 16px calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
       box-shadow: 0 -8px 32px rgba(0,0,0,.18);
       animation: dlg-up .34s var(--ease-spring) both;
     }
+    .body { overflow-wrap: break-word; word-break: break-word; }
     .sheet--wide { max-width: 820px; }
     @keyframes dlg-fade { from { opacity: 0; } }
     @keyframes dlg-up { from { transform: translateY(48px); opacity: .4; } }
@@ -51,48 +48,38 @@ import { Component, input, output } from '@angular/core';
     .head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: var(--space-md); }
     h3 { font-family:"Syncopate Cyr"; text-transform: uppercase; font-size: 22px; min-width: 0;}
     .close {
-      position: absolute; top: 32px; right: 32px;
+      position: absolute; top: var(--space-lg); right: 16px;
       width: 36px; height: 36px; border-radius: var(--rounded-pill);
-      background: var(--color-surface-card); color: var(--color-ink);
-      font-size: 24px; line-height: 1;
+      background: var(--color-surface-card);
+      font-size: 24px; line-height: 1; color: rgba(137, 137, 137, 1);
     }
     @media (max-width: 450px) {
       .head { padding-right: 56px; }
       h3 { font-size: 19px; }
     }
     @media (min-width: 1024px) {
-      .sheet { padding-left: 120px; padding-right: 120px; }
-      h3 { font-size: 44px; }
-      .head { display: grid; grid-template-columns: 36px 1fr 36px; align-items: center; gap: 12px; }
-      h3 { grid-column: 2; text-align: center; }
-      /* position:static — у .close была ЖЁСТКАЯ position:absolute с
-         top:32px/right:32px из базовых стилей (нужна на мобиле, где
-         .head — обычный flex без своей сетки), которая здесь НЕ
-         переопределялась. absolute полностью выключает элемент из
-         grid-раскладки — он продолжал висеть по старым координатам,
-         а не там, где его пытался поставить grid-column:3, из-за чего
-         съезжался с центрированным длинным заголовком. */
-      .close { grid-column: 3; position: static; }
+      h3 { font-size: 32px; }
+      .head { align-items: center }
+      .close { width: 61px; height: 61px }
+      .body { font-size: 15px; }
     }
   `],
 })
 export class DialogComponent {
   readonly title = input('');
   readonly closable = input(true);
-  /** Расширенный лист — для содержимого с таблицами. */
+  
   readonly wide = input(false);
   readonly dismissed = output<void>();
 
-  /** Нажатие началось на самой подложке, а не внутри диалога. */
+  
   private pressedOnBackdrop = false;
 
   onPointerDown(e: PointerEvent): void {
     this.pressedOnBackdrop = e.target === e.currentTarget;
   }
 
-  /* Закрываем по pointerup, а не по click: click всплывает с ОБЩЕГО предка
-     точек нажатия и отпускания, поэтому выделение текста, начатое в форме и
-     законченное за её пределами, приходило на .backdrop и закрывало диалог. */
+  
   onPointerUp(e: PointerEvent): void {
     const pressed = this.pressedOnBackdrop;
     this.pressedOnBackdrop = false;

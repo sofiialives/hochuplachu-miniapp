@@ -433,15 +433,9 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
     </section>
   </app-pull-to-refresh>`,
   styles: [`
-    /* Mobile-first: всё одной колонкой, выровнено по ширине ~480px.
-       Каталог-режим — шире (760px), чтобы строка с визуалом + текстом +
-       метриками + стрелкой нормально поместилась горизонтально. */
+    
     .wrap {
       padding: 0 16px;
-      /* 110px снизу — футер теперь position:fixed (bottom-nav.component.ts,
-         bottom:20px) и перестал сам резервировать себе место в потоке
-         документа; без этого последний контент страницы оказывался под
-         ним. Высота нав-бара + его отступ от низа + запас сверху. */
       padding-bottom: 110px;
       max-width: 1200px; margin: 0 auto;
       display: flex; flex-direction: column;
@@ -457,10 +451,7 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
       margin: 16px 0 14px;
     }
 
-    /* ===== Карусель выпущенных карт =====
-       Нативный горизонтальный scroll с scroll-snap. Свайпы пальцем
-       работают на всех тач-устройствах; на десктопе — drag-to-scroll
-       через pointer-события (см. on*PointerDown/Move/Up). */
+    
     .hero-strip {
       --slide-w: clamp(220px, 75vw, 320px);
       display: flex;
@@ -475,9 +466,7 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
       margin: 0 calc(-1 * var(--space-md));
     }
     .hero-strip::-webkit-scrollbar { display: none; }
-    /* Mouse drag-to-scroll: grab курсор на устройствах с pointer'ом
-       (десктоп). Тач-устройства игнорируют hover-медиа — там нативный
-       scroll, курсор не нужен. */
+    
     @media (hover: hover) and (pointer: fine) {
       .hero-strip { cursor: grab; }
       .hero-strip.dragging { cursor: grabbing; scroll-snap-type: none; scroll-behavior: auto; }
@@ -498,12 +487,10 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
     }
     .slide .bank { width: 100%; pointer-events: none; }
     .slide--current { opacity: 1; transform: scale(1); cursor: default; }
-    /* Кнопка «Показать детали» должна реагировать на клик на текущей карте,
-       даже когда .bank внутри .slide заглушён pointer-events: none. */
+    
     .slide--current .bank { pointer-events: auto; }
 
-    /* Dots-индикатор под каруселью — pill для активной, кружок для остальных.
-       Тап по точке = переключение карты (синхронно со скроллом hero-strip). */
+    
     .dots {
       display: flex; gap: 8px; justify-content: center; align-items: center;
       margin: 0 0 var(--space-md);
@@ -522,7 +509,7 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
       cursor: default;
     }
 
-    /* Тёмная карта-визуал — соотношение сторон ~1.65:1 (по референсу пользователя). */
+    
     .bank {
       position: relative;
       aspect-ratio: 1.65 / 1;
@@ -536,10 +523,7 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
       display: flex; flex-direction: column;
       container-type: inline-size;
     }
-    /* Scrim — двусторонний градиент для читаемости текста на ЛЮБОЙ картинке
-       (включая ярко-жёлтые/розовые admin-фоны). Сверху лёгкое затемнение
-       под бренд, снизу более глубокое под PAN/иконки. Плюс лёгкий highlight
-       в верхнем правом — фирменный «глянец» пластика. */
+    
     .bank::after {
       content: ""; position: absolute; inset: 0;
       background:
@@ -555,15 +539,7 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
       display: flex; align-items: center; justify-content: space-between;
       gap: var(--space-sm);
     }
-    /* Логотип несёт название бренда в себе, поэтому подписи рядом нет и
-       коробка под него НЕ квадратная: фиксируем высоту, ширину даём с запасом
-       под широкий локап (у «Хочу Плачу!» ~2.6:1), а mask-size: contain +
-       позиция слева рисуют знак любой пропорции в натуральную высоту — без
-       растяжения и обрезки. Белый цвет — не декор: карта тёмная
-       (градиент + scrim), и чёрные буквы логотипа на ней
-       бы утонули; фирменный акцент (лапка) при этом остаётся своим цветом —
-       перекрашиваются только тёмные заливки, см. BrandLogoComponent.
-       Те же правила — в CardTileComponent (каталог). */
+    
     .brand-logo {
       height: clamp(22px, 8cqi, 34px); width: clamp(62px, 22.4cqi, 95px);
     }
@@ -580,13 +556,11 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
     .reveal:hover { opacity: 1; }
     .reveal.loading { cursor: progress; opacity: .7; }
     .reveal svg { width: clamp(16px, 4.2cqi, 20px); height: clamp(16px, 4.2cqi, 20px); }
-    /* Spinner — крутящийся 3/4-circle, transform-origin центр SVG. Используем
-       inline keyframes здесь же; styles[] компонента scope'нут под :host,
-       глобально keyframes не утекут. */
+    
     .reveal svg.spin { animation: home-reveal-spin .9s linear infinite; transform-origin: 50% 50%; }
     @keyframes home-reveal-spin { to { transform: rotate(360deg); } }
 
-    /* Тело карты — заполняет оставшуюся высоту, баланс сверху, PAN — внизу. */
+    
     .bank-body {
       position: relative; z-index: 1;
       flex: 1;
@@ -606,10 +580,7 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
     .field .v.mono { font-family: var(--font-mono); letter-spacing: .06em; }
     .field .v.pan { font-size: clamp(20px, 6cqi, 26px); }
 
-    /* ===== Skeleton-карта (грузится список карт) =====
-       Та же геометрия, что у .bank/.no-card, чтобы после загрузки контент
-       встал ровно на место skeleton'а без прыжка layout'а. Заливка и плашки —
-       приглушённый брендовый primary, поверх — бегущий блик (shimmer). */
+    
     .skel-card {
       aspect-ratio: 1.65 / 1;
       width: 100%;
@@ -657,9 +628,7 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
     .skel-line--lg { width: clamp(120px, 44cqi, 190px); height: clamp(24px, 7cqi, 32px); }
     .skel-line--md { width: clamp(150px, 60cqi, 250px); height: clamp(18px, 6cqi, 26px); }
 
-    /* ===== Плейсхолдер-карта (ЛК без выпущенных карт) =====
-       Повторяет геометрию .bank (aspect-ratio, радиус), но нарочно «пустая»:
-       пунктирная рамка + мягкая поверхность вместо тёмного градиента. */
+    
     .no-card {
       border-radius: 20px;
       border: 2px solid rgba(205, 205, 205, 1); 
@@ -675,7 +644,7 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
     .no-card-sub { font-size: 13px; color: var(--color-muted); }
     .no-card .primary-link { margin-top: 6px; }
 
-    /* Имя карт-продукта под визуалом. */
+    
     .product-label {
       text-align: center;
       font-family: var(--font-display, inherit);
@@ -683,7 +652,7 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
       color: var(--color-ink);
     }
 
-    /* ===== Доп. инфа по карте — отдельная панель НИЖЕ визуала. ===== */
+    
     .extra {
       display: flex; flex-direction: column;
       background: var(--color-surface);
@@ -718,9 +687,7 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
     .ex-link:hover { background: var(--color-surface-card); }
     .ex-link .chev { font-size: 20px; line-height: 1; opacity: .7; }
 
-    /* ===== Плашка «Ограниченное использование» =====
-       Тон такой же, как у --expired CTA продления: красный канвас + красный
-       бордер. Без CTA-кнопки — состояние, а не действие. */
+    
     .limited-banner {
       display: flex; flex-direction: column; gap: 4px;
       padding: var(--space-md);
@@ -732,7 +699,7 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
     .limited-banner__title { font-weight: 600; font-size: 15px; }
     .limited-banner__sub { font-size: 13px; color: var(--color-muted); }
 
-    /* ===== CTA продления годового обслуживания ===== */
+    
     .renew-cta {
       display: flex; flex-direction: column; gap: 6px;
       padding: var(--space-md);
@@ -764,21 +731,15 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
     .renew-cta--expired .renew-cta__btn { background: var(--color-danger, #c0392b); color: #fff; }
     .renew-cta__note { font-size: 12px; color: var(--color-muted); text-align: center; margin-top: 4px; }
 
-    /* ===== Каталог карт-продуктов (когда выпущенных нет) =====
-       Шире обычного .wrap (480px), потому что строка горизонтальная и
-       вмещает карту + три метрики + стрелку. */
+    
     .catalog {width: 100%; }
-    /* Шапка каталога: заголовок к левому краю, для гостей — кнопка входа к
-       правому (space-between; авто-ширина кнопки). Прямой ребёнок .wrap
-       (flex-column → stretch на всю ширину), те же края, что у нижней кнопки.
-       На узких экранах wrap уводит кнопку на строку ниже. */
+    
     .catalog-head { display: flex; align-items: center; justify-content: center; margin-bottom: 28px; }
     .catalog-head h1 { padding: 0; margin: 0; font-size: 24px;  }
     .catalog-login { flex: 0 0 auto; }
-    /* Перенос текста кнопки — только на узких экранах */
+    
     .cta-br { display: none; }
-    /* Узкие экраны: заголовок мельче + кнопка входа держится СПРАВА (nowrap),
-       а её текст переносится в 2 строки по центру, чтобы всё влезло в строку. */
+    
     @media (max-width: 560px) {
       .catalog-head { flex-wrap: nowrap; gap: var(--space-sm); }
       .catalog-head h1 { font-size: 19px; }
@@ -796,14 +757,10 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
       .catalog-head h1 { font-size: 21px; }
       .catalog-login ::ng-deep button { padding: 7px 12px; }
     }
-    /* padding-top компенсирует popular-badge, который смещён на -14px над
-       первой карточкой — иначе бейдж залезает под h1. */
+    
     .grid { display: flex; flex-direction: column; gap: var(--space-lg); padding-top: 14px; }
 
-      /* .catalog-row — mobile-first: одна колонка, .cat-visual (карта+текст)
-       сверху, .cat-info (жёлтая плашка) снизу на всю ширину. Явные
-       grid-column/row на ОБОИХ — без этого грид на любой ширине мог
-       авто-расставить жёлтую плашку сбоку, а не строкой снизу. */
+      
     .catalog-row {
       position: relative;
       display: grid;
@@ -854,7 +811,7 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
       filter: drop-shadow(0 12px 24px color-mix(in srgb, var(--page-h, var(--color-ink)) 30%, transparent));
     }
 
-    /* .cat-visual — карта + заголовок/описание, строка 1 на любой ширине. */
+    
     .cat-visual {
       grid-column: 1; grid-row: 1;
       display: flex; flex-direction: column; align-items: center; gap: var(--space-md); margin: 46px 0 32px 0;
@@ -878,9 +835,7 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
       color: rgba(0, 0, 0, 1);
     }
     .cat-info-head { display: flex; align-items: center; text-align: center; flex-direction: column; gap: 12px; margin-top: 26px; }
-    /* Цвет заголовка и описания — heading_color продукта из мока (--page-h),
-       не фиксированный чёрный: чтобы карта визуально совпадала со своим
-       собственным брендингом. */
+    
     .cat-name {
       font-size: clamp(26px, 2vw, 32px);
       color: var(--page-h, var(--color-ink));
@@ -892,9 +847,7 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
       display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
     }
 
-    /* .cat-metrics — два блока через space-between: слева «Стоимость» (4px
-       до значения) + 12px ниже «Курс пополнения» (4px до значения),
-       справа «Валюта карты» (4px до значения). */
+    
     .cat-metrics {
       display: flex;
       justify-content: space-between;
@@ -933,27 +886,23 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
       justify-content: flex-start;
     }
 
-    /* ===== Десктоп (≥1024px) ===== */
+    
     @media (min-width: 1024px) {
+      .catalog-head h1 { font-size: 36px; }
       .catalog-row { grid-template-columns: 344px 1fr; }
-      .cat-visual {padding: 54px 120px;  grid-column: 1 / -1; flex-direction: row; align-items: center; text-align: left; gap: 120px; }
-      .cat-tile { width: 344px; max-width: 344px; flex-shrink: 0; }
+      .cat-visual {padding: 36px 60px;  grid-column: 1 / -1; flex-direction: row; align-items: center; text-align: left; gap: 60px; }
+      .cat-tile { width: 240px; max-width: 240px; flex-shrink: 0; }
       .cat-info-head { align-items: flex-start; text-align: left; margin-top: 0; }
       .cat-name, .cat-desc { text-align: left; }
       .cat-info { grid-column: 1 / -1; }
-      /* Жёлтая полоса с метриками — тот же левый отступ 120px, что и у
-         текстового блока справа от карты, чтобы «Стоимость»/«Курс
-         пополнения» стартовали строго под названием/описанием, а не от
-         края карточки. */
+      
       .cat-info--band { padding: 24px 120px; }
 
-      /* Курс пополнения — отдельной строкой ПОД ценой/валютой, на всю
-         ширину, а не третьей колонкой сбоку. */
+      
 
     }
 
-
-    /* ===== Последние операции (срез /transactions) ===== */
+    
     .recent {
       display: flex; flex-direction: column;
       background: var(--color-surface);
@@ -977,7 +926,7 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
     .rtx-skel { height: 40px; margin: 6px 0; border-radius: var(--rounded-sm); }
     .recent-more { align-self: center; }
 
-    /* ===== Утилити ===== */
+    
     .link-btn {
       align-self: center;
       color: var(--color-primary-ink);
@@ -989,11 +938,11 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
     .primary-link ::ng-deep button { padding: 14px 28px; height: auto; font-size: 15px; border-radius: 16px; }
 
            @media (min-width: 1024px) {
-      .primary-link ::ng-deep button { padding: 24px 56px; font-size: 32px; }
+      .primary-link ::ng-deep button { padding: 18px 42px; font-size: 28px; }
       .wrap { padding-left: 120px; padding-right: 120px; }  
       .email-dash::before {
           width: 216px; margin: 36px 0 12px;}
-      .no-card-ico { width: 202px; height: 202px;}
+      .no-card-ico { width: 160px; height: 160px;}
       .no-card {
         border-radius: 30px;
       border: 2px solid rgba(205, 205, 205, 1); 
@@ -1004,9 +953,7 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
       margin-bottom: 28px;
       }
 
-      /* Жёлтый низ (.cat-info) остаётся отдельной строкой на всю ширину
-         снизу карточки — без этого грид на широких экранах авто-расставляет
-         его рядом с визуалом вместо строки снизу. Только здесь, десктоп-only. */
+      
       .catalog-row { grid-template-rows: auto auto; }
       .cat-visual { grid-column: 1 / -1; grid-row: 1; display: flex; align-items: center; gap: var(--space-lg); }
       .cat-info { grid-column: 1 / -1; grid-row: 2; }
@@ -1028,29 +975,15 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   goVerification(): void { void this.router.navigate(['/verification']); }
   private readonly platformId = inject(PLATFORM_ID);
   protected readonly serviceName = this.cfg.brand.service_name;
-  /** Цвет надписи в логотипе на карте — тот же, которым набран текст карты. */
+  
   protected readonly inkColor = 'var(--color-on-dark, #fff)';
 
-  // catalog — пробрасывается из route `data: { catalog: true }` через
-  // withComponentInputBinding(). На «/» = false (показываем карты);
-  // на «/cards/new» = true (показываем каталог + BackBar делает кнопку «Назад»).
   readonly catalog = input<boolean>(false);
 
   protected readonly products = signal<CardProduct[]>([]);
-  // availableProducts — продукты, которые сейчас разрешены к выпуску. Бэкенд
-  // всё равно возвращает запись из /cards/products даже если выпуск отключён
-  // (нам это нужно для карусели уже выпущенных карт — резолв
-  // image_url/gradient по card_product_id). Поэтому отдельный
-  // вывод для каталога и подсчёта бейджей-победителей.
   protected readonly availableProducts = computed<CardProduct[]>(() =>
     this.products().filter((p) => !p.disable_purchase),
   );
-  // badges — выделяем по одному продукту в трёх классических ролях
-  // pricing-сетки: «Дешевле всех» (минимальная цена), «Лучший» курс
-  // (минимальная карточная наценка), «Выбор большинства» (всё остальное).
-  // При равенстве — побеждает первая попавшаяся (сохраняя порядок sort_order).
-  // Один продукт = один бейдж: cheapest исключаем из подбора bestRate,
-  // обе исключаем из подбора popular.
   protected readonly badges = computed<Record<string, 'best-price' | 'best-rate' | 'most-popular'>>(() => {
     const list = this.availableProducts();
     if (list.length === 0) return {};
@@ -1077,13 +1010,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
   protected readonly cards = signal<UserCard[]>([]);
-  // recentTx — последние 3 операции (клиентский срез /transactions);
-  // null = ещё грузятся (скелетон).
   protected readonly recentTx = signal<CardTransaction[] | null>(null);
-  // currentId — id выбранной (центральной) карты в карусели. Двигается со
-  // скроллом через IntersectionObserver, кликом по dot или по соседнему
-  // слайду. Используется для всего, что зависит от текущей карты:
-  // .product-label, .renew-cta, .extra, кнопка «Пополнить».
   protected readonly currentId = signal<string>('');
   protected readonly current = computed<UserCard | null>(() => {
     const id = this.currentId();
@@ -1094,39 +1021,20 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   protected readonly showReferral = signal(false);
   protected readonly isAuthed = computed(() => this.auth.isAuthenticated());
   protected readonly loading = signal(true);
-  // loadFailed — GET /cards упал (не 401), а кэш пуст: показываем нейтральную
-  // плашку с «Повторить» вместо ложного «У вас ещё нет виртуальных карт».
   protected readonly loadFailed = signal(false);
-  // issuingOrderId — оплаченная заявка на выпуск, карта по которой ещё не
-  // создана backend'ом (card-строка появляется только на card.issued; см.
-  // storeIssuingOrderId в orders.api.ts). Пока флаг жив и карт 0 — плейсхолдер
-  // показывает «Карта выпускается…» и поллит GET /orders/:id.
   protected readonly issuingOrderId = signal('');
   private issuePollTimer: ReturnType<typeof setInterval> | null = null;
-  // isCatalogView — true когда показываем каталог-карточек (гость на «/»
-  // или явный режим /cards/new). Используется для расширения .wrap до 760px.
   protected readonly isCatalogView = computed(() => this.catalog() || !this.isAuthed());
-  // detailsMap — кеш PAN/CVV/expiry на сессию (PAN не меняется, повторно
-  // дёргать бэк не нужно). Очищается только на logout — Home переинициализируется.
   private readonly detailsMap = signal<Record<string, CardDetails | undefined>>({});
-  // revealedIds — какие карты в режиме «детали показаны». Отдельно от кеша,
-  // чтобы «Скрыть» → «Показать» работало мгновенно из памяти без сетевого
-  // запроса. detailsFor(c) возвращает кеш ТОЛЬКО если карта в revealedIds.
   private readonly revealedIds = signal<Set<string>>(new Set());
-  // loadingDetailsIds — карты, для которых сейчас летит POST /cards/:id/details.
-  // Используется и для индикатора в кнопке, и для блокировки повторного клика.
   private readonly loadingDetailsIds = signal<Set<string>>(new Set());
 
   @ViewChild('strip', { static: false }) private stripRef?: ElementRef<HTMLElement>;
   private observer?: IntersectionObserver;
   private initialScrollDone = false;
-  // Подавляем реакцию IntersectionObserver на программный скролл (клик по
-  // соседнему слайду / initial scroll) — иначе observer тут же откатит выбор.
   private suppressObserverUntil = 0;
 
   constructor() {
-    // Когда подъехал список карт И есть DOM — выставляем начальный скролл
-    // на текущую карту (как правило, первая).
     effect(() => {
       const list = this.cards();
       if (list.length === 0) return;
@@ -1149,8 +1057,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  // loadRecentTx — последние 3 операции для блока под картами. Ошибка
-  // не критична: пустой список просто прячет блок.
   private loadRecentTx(): void {
     this.txApi.list().subscribe({
       next: (r) => this.recentTx.set((r?.items ?? []).slice(0, 3)),
@@ -1167,10 +1073,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     return `${day}, ${d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`;
   }
 
-  // loadCards — начальная (и retry-) загрузка списка карт. При ошибке НЕ
-  // рисуем ложное «нет карт»: берём глобальный кэш (мог наполниться
-  // параллельным refreshCards app-shell) и, если и он пуст, показываем
-  // нейтральную плашку с «Повторить» (loadFailed).
   protected loadCards(): void {
     this.cardsApi.myCards().subscribe({
       next: (res) => {
@@ -1186,10 +1088,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // applyCards — единая точка обновления списка карт: чинит инвариант
-  // currentId (пустой или указывающий на исчезнувшую карту → первая карта,
-  // иначе при переходе 0→1 не отрисуются ни визуал, ни плейсхолдер) и, как
-  // только карты реально появились, снимает флаг «выпускается».
   private applyCards(cards: UserCard[]): void {
     this.cards.set(cards);
     if (cards.length === 0) return;
@@ -1197,9 +1095,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     this.clearIssuingState();
   }
 
-  // startIssuePollIfNeeded — если в localStorage лежит оплаченная заявка на
-  // выпуск, показываем «Карта выпускается…» и ждём появления карты. Поллинг
-  // раз в 5с — тот же ритм, что у payment.page.
   private startIssuePollIfNeeded(): void {
     if (!isPlatformBrowser(this.platformId)) return;
     const id = readIssuingOrderId();
@@ -1212,14 +1107,10 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
             this.clearIssuingState();
             this.loadCards();
           } else if (order.status !== 'paid' && order.status !== 'issuing') {
-            // failed/canceled/прочий терминальный статус — выпуска не будет,
-            // возвращаем обычный плейсхолдер с CTA.
             this.clearIssuingState();
           }
         },
         error: (err) => {
-          // 404/403 — заявки нет или она чужая (на этом браузере сменился
-          // аккаунт): флаг протух, снимаем. Транзитивные сбои — ждём тик.
           const st = (err as { status?: number })?.status ?? 0;
           if (st === 404 || st === 403) this.clearIssuingState();
         },
@@ -1235,11 +1126,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     clearIssuingOrderId();
   }
 
-  // onPullRefresh — обработчик pull-to-refresh: перетягиваем актуальные
-  // данные о выпущенных картах (главное — баланс) и каталог продуктов.
-  // Параллельно: оба запроса независимы; finishRefresh() вызывается когда
-  // оба завершились (успешно или нет), чтобы спиннер не скрывался раньше
-  // времени.
   protected onPullRefresh(ptr: PullToRefreshComponent): void {
     let pending = 2;
     const done = (): void => { if (--pending === 0) ptr.finishRefresh(); };
@@ -1285,32 +1171,24 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   money(v: number | string | null | undefined, c: string | null | undefined): string { return formatAmount(v, c); }
   symbol(c: string | null | undefined): string { return symbolFor(c); }
   symBefore(c: string | null | undefined): boolean { return isPrefixSymbolCurrency(c); }
-  // formatBalance — округление до сотых вниз (truncate), чтобы убрать FP-шум
-  // вроде 10.010000000000002. Никогда не показываем лишние знаки.
   protected formatBalance(n: number): string {
     if (!isFinite(n)) return '0.00';
     return (Math.floor(n * 100) / 100).toFixed(2);
   }
   toggleDetails(c: UserCard, ev: Event): void {
     ev.stopPropagation();
-    // Игнорируем повторный клик пока запрос ещё в полёте — иначе спам
-    // открыл бы 5 параллельных POST'ов и из-за разных ответов скакал бы UI.
     if (this.loadingDetailsIds().has(c.id)) return;
     const revealed = this.revealedIds();
-    // Скрыть — мгновенно, кеш PAN сохраняем для следующего «Показать».
     if (revealed.has(c.id)) {
       const next = new Set(revealed);
       next.delete(c.id);
       this.revealedIds.set(next);
       return;
     }
-    // Уже есть в кеше (показывали ранее, потом скрыли) — открываем без сети.
     if (this.detailsMap()[c.id]) {
       this.revealedIds.set(new Set(revealed).add(c.id));
       return;
     }
-    // Первое открытие — летим в бэк. Помечаем loading чтобы кнопка показала
-    // спиннер и игнорировала повторные клики до завершения запроса.
     this.loadingDetailsIds.set(new Set(this.loadingDetailsIds()).add(c.id));
     this.cardsApi.details(c.id).subscribe({
       next: (d) => {
@@ -1325,12 +1203,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // ===== Карусель карт-визуалов =====
-  // Полностью повторяет механики product-detail.page.ts: нативный
-  // scroll-snap + IntersectionObserver для синхронизации currentId со
-  // скроллом, mouse drag-to-scroll на десктопе через pointer-события,
-  // dots-индикатор для тапа по точке.
-
   private scrollToCurrent(smooth: boolean): void {
     const strip = this.stripRef?.nativeElement;
     if (!strip) return;
@@ -1338,18 +1210,10 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     if (!id) return;
     const el = strip.querySelector<HTMLElement>(`[data-cid="${cssEscape(id)}"]`);
     if (!el) return;
-    // Программный скролл — observer может сработать раньше времени, гасим
-    // его на ~600мс, чтобы анимация успела завершиться.
     this.suppressObserverUntil = Date.now() + 600;
     if (smooth) {
       el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     } else {
-      // НЕ используем el.offsetLeft напрямую — он относительно offsetParent,
-      // которым у .hero-strip без position: relative оказывается не сама полоса,
-      // а внешний предок (на home — это body/app-root). Из-за этого формула
-      // даёт огромный target (>maxScroll), браузер кламит до max, и из-за
-      // scroll-behavior: smooth каруcель плавно уезжает в самый правый край.
-      // Берём позицию слайда относительно strip через getBoundingClientRect.
       const stripRect = strip.getBoundingClientRect();
       const elRect = el.getBoundingClientRect();
       const slideLeftInStrip = elRect.left - stripRect.left + strip.scrollLeft;
@@ -1380,28 +1244,11 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
 
   protected onSlideClick(id: string, ev: Event): void {
     ev.preventDefault();
-    // Если только что закончили mouse-drag — клик на слайде не должен
-    // переключать карту (это завершение жеста, не отдельный тап).
     if (this.stripJustDragged) return;
     if (id === this.currentId()) return;
     this.selectId(id, true);
   }
 
-  // ===== Mouse drag-to-scroll по карусели (desktop) =====
-  // Тач-устройства листают карусель нативно (CSS overflow + scroll-snap),
-  // но для мыши такого нативного поведения нет. Ловим pointer-события
-  // на самой strip-ленте.
-  //
-  // Важно: pointer capture устанавливаем ЛЕНИВО, только после порога
-  // движения (>6px). До этого click-событие нормально долетает до слайда
-  // (по спеке pointer capture перехватывает click на capturing element —
-  // если зацепить capture в pointerdown, простой клик на слайде перестанет
-  // работать).
-  //
-  // Пока drag активен — IntersectionObserver полностью выключен через
-  // suppressObserverUntil, иначе промежуточные слайды успевают сменить
-  // currentId, и подсветка/контент под каруcелью прыгают во время
-  // перетаскивания.
   private stripPending = false;
   private stripDragging = false;
   private stripDragStartX = 0;
@@ -1411,7 +1258,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
 
   protected onStripPointerDown(e: PointerEvent): void {
     if (e.pointerType !== 'mouse') return;
-    // Игнорируем нажатия не-левой кнопки (контекстное меню и т.п.).
     if (e.button !== 0) return;
     const strip = this.stripRef?.nativeElement;
     if (!strip) return;
@@ -1427,12 +1273,9 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     const dx = e.clientX - this.stripDragStartX;
     if (!this.stripDragging) {
       if (Math.abs(dx) < HomePage.STRIP_DRAG_THRESHOLD) return;
-      // Порог перейден — официально стартуем drag. Захватываем pointer
-      // (теперь pointerup точно придёт сюда даже если курсор уходит
-      // за strip), глушим observer, переводим CSS в режим dragging.
       this.stripDragging = true;
       strip.classList.add('dragging');
-      try { strip.setPointerCapture(e.pointerId); } catch { /* ignore */ }
+      try { strip.setPointerCapture(e.pointerId); } catch {  }
       this.suppressObserverUntil = Number.POSITIVE_INFINITY;
     }
     strip.scrollLeft = this.stripDragStartScrollLeft - dx;
@@ -1445,21 +1288,18 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     this.stripDragging = false;
     const strip = this.stripRef?.nativeElement;
     if (strip && wasDragging) {
-      try { strip.releasePointerCapture(e.pointerId); } catch { /* ignore */ }
+      try { strip.releasePointerCapture(e.pointerId); } catch {  }
       strip.classList.remove('dragging');
     }
     if (!wasDragging) {
-      // Чистый клик без drag — let (click) на слайде сам отработает.
       return;
     }
-    // Подавляем последующий click на слайде (release завершает drag, не тап).
     this.stripJustDragged = true;
     setTimeout(() => { this.stripJustDragged = false; }, 0);
     if (!strip) {
       this.suppressObserverUntil = 0;
       return;
     }
-    // Находим слайд, чей центр ближе всего к центру strip — туда и едем.
     const stripRect = strip.getBoundingClientRect();
     const centerX = stripRect.left + stripRect.width / 2;
     const slides = Array.from(strip.querySelectorAll<HTMLElement>('[data-cid]'));
@@ -1471,8 +1311,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       const d = Math.abs(c - centerX);
       if (d < bestDist) { bestDist = d; bestId = slide.getAttribute('data-cid'); }
     }
-    // Программный скролл + selectId сами выставят suppressObserverUntil на
-    // ~600мс, а до этого момента observer остаётся «навсегда» подавлен.
     if (bestId && bestId !== this.currentId()) {
       this.selectId(bestId, true);
     } else if (bestId === this.currentId()) {
@@ -1489,14 +1327,12 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     this.stripDragging = false;
     const strip = this.stripRef?.nativeElement;
     if (strip && wasDragging) {
-      try { strip.releasePointerCapture(e.pointerId); } catch { /* ignore */ }
+      try { strip.releasePointerCapture(e.pointerId); } catch {  }
       strip.classList.remove('dragging');
       this.suppressObserverUntil = Date.now() + 600;
     }
   }
 
-  // pickCard — единая точка переключения карты (используется dots-индикатором).
-  // Тот же путь, что у клика по слайду карусели, плюс плавный scrollIntoView.
   protected pickCard(id: string, ev?: Event): void {
     ev?.preventDefault();
     if (id === this.currentId()) return;
@@ -1511,10 +1347,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  // serviceCtaFor — показываем большой CTA «Продлить обслуживание», если до
-  // окончания службы осталось ≤7 дней ИЛИ карта уже frozen (backend замораживает
-  // карты с истёкшим service_expires_at). Возвращает null, если CTA не нужен —
-  // тогда @if в шаблоне не рендерит блок.
   protected serviceCtaFor(c: UserCard): { expired: boolean; daysLeft: number } | null {
     const frozenByService = c.status === 'frozen';
     if (!c.service_expires_at && !frozenByService) return null;
@@ -1531,13 +1363,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     return null;
   }
 
-  // bankImage / bankGradient — отдаются в [appCachedBg] директиву: картинка
-  // тянется через Cache Storage (см. ImageCacheService), переживает reload.
-  // Если imageUrl у продукта нет — директива поставит только градиент,
-  // в т.ч. через CSS-пресеты .bank[data-gradient="..."] из стилей.
-  //
-  // Дизайн (image_url/gradient) хранится только в CardProduct; у выпущенной
-  // карты этих полей нет — резолвим через card_product_id.
   protected bankImage(c: UserCard): string | null {
     return this.productOf(c)?.image_url ?? null;
   }
@@ -1553,30 +1378,16 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   protected cardCurrency(c: UserCard): string {
     return this.productOf(c)?.card_currency ?? '';
   }
-  // isTopUpDisabled — карта принадлежит продукту с DisableTopup=true. Влияет
-  // на UI в двух местах: баннер «Ограниченное использование» под картой и
-  // disabled-состояние app-pay-button в роли кнопки «Пополнить». Резолв через
-  // productOf, чтобы продукт переживал отсутствие в availableProducts (см.
-  // комментарий к availableProducts).
   protected isTopUpDisabled(c: UserCard): boolean {
     return !!this.productOf(c)?.disable_topup;
   }
-  // productOf — продукт выпущенной карты: из него берутся фон и градиент
-  // визуала, валюта и запрет пополнения. Ищем по всему списку products, а не
-  // по availableProducts (см. комментарий к нему).
   private productOf(c: UserCard): CardProduct | undefined {
     return this.products().find((pp) => pp.id === c.card_product_id);
   }
-  // binCountryOf — страна выпуска BIN карты. Дискриминатор заглушки
-  // billing-адреса. Берётся с самой карты (у продукта BIN'ов может быть
-  // несколько); у legacy-карт поле пустое — фолбэк на первый BIN продукта
-  // (под него они и выпускались). Пусто → billing-диалог не покажет адрес
-  // (fail-closed).
   protected binCountryOf(c: UserCard): string {
     return c.issuer_country || productBins(this.productOf(c))[0]?.country || '';
   }
 
-  // daysWord — склонение «дня» / «дней» по числу.
   protected daysWord(n: number): string {
     const mod10 = n % 10;
     const mod100 = n % 100;
@@ -1587,9 +1398,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 }
 
-// CSS.escape — не везде, делаем простую защиту от спецсимволов в селекторе.
-// ULID-id состоит из [0-9A-Z], никаких опасных символов нет, но защитимся
-// на случай других форматов id в будущем.
 function cssEscape(s: string): string {
   if (typeof CSS !== 'undefined' && typeof CSS.escape === 'function') return CSS.escape(s);
   return s.replace(/["'\\\n\r\t]/g, '\\$&');

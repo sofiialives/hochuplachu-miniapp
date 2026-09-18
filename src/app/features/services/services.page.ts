@@ -8,13 +8,6 @@ import { CatalogApi, CatalogSections } from '../../core/api/catalog.api';
 import { HERO_SERVICE_SLUG, ServiceKind, ServicesApi, ServiceProduct } from '../../core/api/services.api';
 import { ServiceHeroCard } from './service-hero-card';
 
-// ServicesPage — «/services»: Steam отдельным блоком, остальной каталог —
-// сеткой плиток СТРАНИЦАМИ («Загрузить ещё») с поиском на бэкенде.
-// coming_soon → заглушка «Раздел в разработке».
-//
-// Почему страницами: каталог провайдера — шестьсот категорий, одним ответом
-// это мегабайты JSON и стена плиток. Отсюда же серверный поиск — искать в
-// пришедших 24 плитках значило бы искать не в каталоге.
 @Component({
   selector: 'app-services-page',
   standalone: true,
@@ -97,23 +90,17 @@ import { ServiceHeroCard } from './service-hero-card';
   styles: [`
     .wrap {
       padding: 0 16px;
-      /* 110px снизу — футер теперь position:fixed (bottom-nav.component.ts,
-         bottom:20px) и перестал сам резервировать себе место в потоке
-         документа; без этого последний контент страницы оказывался под
-         ним. Высота нав-бара + его отступ от низа + запас сверху. */
+      
       padding-bottom: 110px;
       max-width: 1200px; margin: 0 auto;
       display: flex; flex-direction: column;
     }
     h1 { margin: 0; padding: 0; }
 
-    /* Плитка сервиса — тот же приём, что у направлений eSIM: картинка сверху,
-       подпись снизу. Отдельного вида под пополнения и подписки нет: все три
-       живут в одной сетке и отличаются только подписью. */
+    
     .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
     .grid app-service-hero-card { grid-column: 1 / -1; }
-    /* Пока ответ поиска в пути — прежние плитки гаснут, но остаются на месте:
-       подменять их скелетоном значило бы дёргать вёрстку на каждое слово. */
+    
     .grid--busy { opacity: .5; transition: opacity var(--dur-quick) ease; }
     .input-search { margin-top: 10px; }
     .svc {
@@ -131,8 +118,7 @@ import { ServiceHeroCard } from './service-hero-card';
     .svc:hover { transform: translateY(-2px); border-color: var(--color-primary); box-shadow: var(--shadow-card-hover); }
     .svc--disabled { opacity: .6; pointer-events: none; }
     .svc-ico { width: 56px; height: 56px; border-radius: 14px; object-fit: contain; }
-    /* Заглушка первой буквой: у части гифткарт обложки у провайдера нет
-       вовсе, и пустое место ломало бы ритм сетки. */
+    
     .svc-ico--stub {
       display: flex; align-items: center; justify-content: center;
       background: var(--color-primary-soft); color: var(--color-primary-ink);
@@ -161,7 +147,7 @@ import { ServiceHeroCard } from './service-hero-card';
     .soon-sub { color: var(--color-muted); font-size: 13px; margin-top: 4px; }
 
     .skel-list { display: flex; flex-direction: column; gap: var(--space-sm); }
-    /* Скелетон повторяет сетку плиток, иначе список «прыгает» при загрузке. */
+    
     .skel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-sm); }
     @media (max-width: 480px) { .skel-grid { grid-template-columns: repeat(2, 1fr); } }
     .skel-grid .skel { height: 124px; }
@@ -182,29 +168,19 @@ import { ServiceHeroCard } from './service-hero-card';
     @media (prefers-reduced-motion: reduce) { .skel::after { animation: none; } }
     @media (min-width: 1024px) {
       .wrap { padding: 0 120px; }
-      /* Steam на 2 колонки из 5 — рядом помещаются ещё 3 плитки в той же
-         строке, следующая строка уже из 5 (точь-в-точь main.page.ts). */
+      
       .grid { grid-template-columns: repeat(5, 1fr); }
       .grid app-service-hero-card { grid-column: span 2; }
     }
-
-    /* Мобильный масштаб — весь диапазон до десктопа (<1024px), не
-       только самые узкие экраны: 52px паддинга с каждой стороны много
-       для всего мобильного диапазона (375-580px), не только для 320px.
-       Размещено в конце файла НАРОЧНО — при равной специфичности
-       CSS-правило побеждает то, что идёт ПОЗЖЕ по тексту, а не то, что
-       "внутри медиа-запроса"; если бы это стояло раньше .wrap/.grid,
-       безусловные правила выше молча перебивали бы его. */
   `],
 })
 export class ServicesPage implements OnInit, OnDestroy {
   private readonly catalogApi = inject(CatalogApi);
   private readonly servicesApi = inject(ServicesApi);
 
-  /** Размер страницы каталога. Столько же по умолчанию отдаёт бэкенд. */
+  
   private static readonly PAGE = 24;
-  /** Пауза перед запросом поиска: покупатель печатает «play station» ~10
-   *  нажатиями, и без неё это десять запросов каталога. */
+  
   private static readonly SEARCH_DEBOUNCE_MS = 300;
 
   protected readonly sections = signal<CatalogSections | null>(null);
@@ -212,25 +188,17 @@ export class ServicesPage implements OnInit, OnDestroy {
   protected readonly query = signal('');
   protected readonly hasMore = signal(false);
   protected readonly loadingMore = signal(false);
-  /** searching — ответ поиска в пути. Список при этом НЕ обнуляется: прежние
-   *  плитки остаются на месте приглушёнными, иначе секция мигала бы
-   *  скелетоном на каждое введённое слово. */
+  
   protected readonly searching = signal(false);
   private searchTimer: ReturnType<typeof setTimeout> | null = null;
   private reqId = 0;
 
   protected readonly sectionAvailable = computed(() => this.sections()?.services === 'available');
 
-  // hero — Steam берётся ИЗ уже загруженного products(), не отдельным
-  // запросом: раньше productBySlug мог не найти совпадение (мок вообще не
-  // обрабатывал единичный /services/products/:slug) и блок пропадал
-  // навсегда. При поиске это же выражение само прячет hero, если Steam не
-  // попал в результаты — find() просто ничего не находит.
   protected readonly hero = computed<ServiceProduct | null>(
     () => (this.products() ?? []).find((p) => p.slug === HERO_SERVICE_SLUG) ?? null,
   );
 
-  // visible — сетка без того сервиса, который уже стоит отдельным блоком.
   protected readonly visible = computed<ServiceProduct[]>(() => {
     const list = this.products() ?? [];
     return this.hero() ? list.filter((p) => p.slug !== HERO_SERVICE_SLUG) : list;
@@ -248,7 +216,7 @@ export class ServicesPage implements OnInit, OnDestroy {
     if (this.searchTimer) clearTimeout(this.searchTimer);
   }
 
-  /** Ввод в поиске: запрос уходит на бэкенд с паузой, страница сбрасывается. */
+  
   protected onQuery(v: string): void {
     this.query.set(v);
     this.searching.set(true);
@@ -262,11 +230,6 @@ export class ServicesPage implements OnInit, OnDestroy {
     this.load((this.products() ?? []).length);
   }
 
-  // load — страница каталога. offset=0 заменяет список, остальные дописывают.
-  // Скелетон (products=null) ставится ТОЛЬКО на первой загрузке: при поиске
-  // список остаётся прежним до ответа, иначе вёрстка прыгает на каждое слово.
-  // reqId отсекает ответы обогнавших друг друга запросов: при быстром наборе
-  // ответ на «play» мог прийти после ответа на «play station».
   private load(offset: number, initial = false): void {
     const id = ++this.reqId;
     if (initial) this.products.set(null);
@@ -289,7 +252,7 @@ export class ServicesPage implements OnInit, OnDestroy {
     });
   }
 
-  /** Подпись вида под названием сервиса. */
+  
   protected kindLabel(kind: ServiceKind): string {
     switch (kind) {
       case 'account_topup': return 'Пополнение';
