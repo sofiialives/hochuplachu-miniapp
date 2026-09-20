@@ -703,7 +703,7 @@ import {
       font-size: 28px;
       color: rgba(114, 86, 22, 1);
       margin-bottom: 0;
-      line-height: 1;
+      line-height: 0.7;
     }
 
     .price .sym:first-child {

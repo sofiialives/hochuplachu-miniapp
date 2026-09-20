@@ -21,7 +21,7 @@ import { Component, input, output } from '@angular/core';
       display: flex; align-items: center; justify-content: center; gap: 10px;
       background: rgba(255, 186, 38, 1); color: var(--color-on-primary);
       border-radius: var(--rounded-lg);
-      font-size: 14px; font-weight: 700;
+      font-size: 14px; font-weight: 400;
       transition:
         box-shadow var(--dur-quick) ease,
         transform var(--dur-quick) var(--ease-out),

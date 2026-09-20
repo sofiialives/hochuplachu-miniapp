@@ -994,10 +994,10 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
      * var(--color-primary-ink) остальных .link-btn вроде "Показать всю
      * историю"). */
     .link-btn.add-card { color: rgba(255, 186, 38, 1); }
-    .primary-link ::ng-deep button { padding: 14px 28px; height: auto; font-size: 15px; border-radius: 16px; }
+    .primary-link ::ng-deep button { padding: 14px 28px; height: auto; font-size: 15px; border-radius: 16px; font-weight: 400;}
 
            @media (min-width: 1024px) {
-      .primary-link ::ng-deep button { padding: 18px 42px; font-size: 20px; }
+      .primary-link ::ng-deep button { padding: 18px 42px; font-size: 20px; font-weight: 400;}
       .wrap { padding-left: 120px; padding-right: 120px; }  
       .email-dash::before {
           width: 216px; margin: 36px 0 12px;}
