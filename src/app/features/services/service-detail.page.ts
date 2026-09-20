@@ -315,7 +315,8 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     }
 
     .denom-value {
-      font-weight: 600;
+    font-family: 'Gilroy'
+      font-weight: 500;
       font-size: 18px;
       color: var(--color-ink);
     }
@@ -376,11 +377,13 @@ import { formatAmount } from '../../core/currency/currency-symbols';
 
     .f-hint {
       margin: 0;
-      font-size: 12px;
-      color: var(--color-muted);
       display: flex;
       align-items: center;
       gap: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(0, 0, 0, 1);
+      margin-top: 20px;
     }
 
     .f-hint-ico {
@@ -403,7 +406,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       }
 
       .f-hint {
-        font-size: 10px;
+        font-size: 16px;
       }
 
       .f-hint-ico {

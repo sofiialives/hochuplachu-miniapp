@@ -183,8 +183,10 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     
     .hero--promo { background-color: white; box-shadow: 0px 26.44px 62.98px -21.64px rgba(0, 0, 0, 0.15); }
     .hero-body { flex: 1; min-width: 0; }
-    .hero-title { font-family: var(--font-display); font-size: 15px; font-weight: 700; line-height: 1.2; }
-    .hero-sub { color: rgba(0, 0, 0, 1); font-size: 12px; margin-top: 3px; }
+    .hero-title { font-family: 'Syncopate Cyr';
+      text-transform: uppercase;
+      font-size: 12px; }
+    .hero-sub { color: rgba(0, 0, 0, 1); font-size: 12px; }
     .hero-cta { text-decoration: none; flex: 0 0 auto; }
     .hero-arr { color: var(--color-muted); font-size: 22px; }
     .hero-spin {
@@ -329,6 +331,8 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       .from { font-size: 11px; padding: 8px 11px; }
       .badge { font-size: 7px; padding: 5px 9px; }
       .wrap { padding-right: 120px; padding-left: 120px }
+      .hero-title { 
+      font-size: 16px; }
 
       
       .esim-grid { grid-template-columns: repeat(4, 1fr); }
