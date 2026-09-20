@@ -123,7 +123,21 @@ import { formatAmount } from '../../core/currency/currency-symbols';
                 [error]="amountError()">
               </app-input>
 
-              @if (limitsNote()) {
+              @if (isUnit()) {
+                @if (minPay() > 0 || maxPay() > 0) {
+                  <p class="f-hint">
+                    Количество
+                    @if (minPay() > 0) {
+                      от {{ minPay() }}
+                      <img class="f-hint-ico" src="/assets/star.png" alt="" />
+                    }
+                    @if (maxPay() > 0) {
+                      до {{ maxPay() }}
+                      <img class="f-hint-ico" src="/assets/star.png" alt="" />
+                    }
+                  </p>
+                }
+              } @else if (limitsNote()) {
                 <p class="f-hint">{{ limitsNote() }}</p>
               }
 
@@ -139,7 +153,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
                         <span class="preset-num">{{ v }}</span>
                         <img
                           class="preset-ico"
-                          src="/assets/services/star.png"
+                          src="/assets/star.png"
                           alt="" />
                       } @else {
                         {{ presetLabel(v) }}
@@ -308,6 +322,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
 
     .denom-price {
       color: rgba(114, 86, 22, 1);
+      font-family: 'Gilroy', sans-serif;
       font-size: 15px;
     }
 
@@ -363,6 +378,15 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       margin: 0;
       font-size: 12px;
       color: var(--color-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .f-hint-ico {
+      width: 14px;
+      height: 14px;
+      flex: 0 0 14px;
     }
 
     @media (min-width: 1024px) {
@@ -375,11 +399,17 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       }
 
       .f-label {
-        font-size: 11px;
+        font-size: 16px;
       }
 
       .f-hint {
         font-size: 10px;
+      }
+
+      .f-hint-ico {
+        width: 11px;
+        height: 11px;
+        flex: 0 0 11px;
       }
 
       /*
@@ -435,7 +465,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
 
   color: var(--color-ink);
 
-  font-family: inherit;
+  font-family: 'Gilroy', sans-serif;
 
   font-size: 16px;
 

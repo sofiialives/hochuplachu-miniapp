@@ -10,6 +10,7 @@ import { KycApi } from '../../core/api/kyc.api';
 import { BackBarComponent } from '../../ui/back-bar.component';
 import { ButtonComponent } from '../../ui/button.component';
 import { CopyButtonComponent } from '../../ui/copy-button.component';
+import { DialogComponent } from '../../ui/dialog.component';
 import { EsimInstallComponent } from '../esim/esim-install.component';
 import { CcRequisitesComponent } from './cc-requisites.component';
 import { symbolFor, formatAmount } from '../../core/currency/currency-symbols';
@@ -58,7 +59,7 @@ interface KindOps {
 @Component({
   selector: 'app-payment',
   standalone: true,
-  imports: [BackBarComponent, ButtonComponent, QRCodeComponent, CcRequisitesComponent, CopyButtonComponent, EsimInstallComponent],
+  imports: [BackBarComponent, ButtonComponent, QRCodeComponent, CcRequisitesComponent, CopyButtonComponent, EsimInstallComponent, DialogComponent],
   template: `<app-back-bar />
     @if (order(); as o) {
       <section class="wrap">
@@ -347,8 +348,19 @@ interface KindOps {
           }
         }
       </section>
+    }
+    @if (showPostPaymentGuide()) {
+      <app-dialog title="Оплата прошла!" (dismissed)="dismissPostPaymentGuide()">
+        <p class="guide-text">
+          Вот вы и оплатили! А как пользоваться другими сервисами — покажет наш бот
+          <a href="https://t.me/hochuplachuguidesbot" target="_blank" rel="noopener">Хочу Плачу! | Гайды</a>.
+        </p>
+        <app-button variant="primary" [full]="true" (clicked)="dismissPostPaymentGuide()">Понятно</app-button>
+      </app-dialog>
     }`,
   styles: [`
+    .guide-text { color: var(--color-body); margin: 0 0 var(--space-lg); font-size: 15px; line-height: 1.5; }
+    .guide-text a { color: var(--color-primary-ink); font-weight: 600; }
     .wrap { padding: var(--space-md); max-width: 560px; margin: 0 auto; padding-bottom: 110px; overflow-x: hidden; }
     h2 { text-align: center; }
     h3 { font-size: 16px; margin: 0 0 8px; }
@@ -540,6 +552,13 @@ export class PaymentPage implements OnInit, OnDestroy {
   // pending_kyc: запрос активной KYC-сессии / признак «сессия истекла».
   protected readonly kycLoading = signal(false);
   protected readonly kycSessionGone = signal(false);
+
+  // Модалка «как пользоваться сервисами» — вместо прежнего пошагового гайда.
+  // Показывается ОДИН раз, только после успешной оплаты ВЫПУСКА КАРТЫ
+  // (kind === 'card'), поскольку именно с этого момента пользователю
+  // становятся доступны остальные сервисы (эсим/топапы/подарочные карты).
+  protected readonly showPostPaymentGuide = signal(false);
+  private postPaymentGuideShown = false;
 
   protected kind: OrderKind = 'card';
   private ops!: KindOps;
@@ -906,6 +925,10 @@ export class PaymentPage implements OnInit, OnDestroy {
 
   protected goTo(link: string[]): void { void this.router.navigate(link); }
 
+  protected dismissPostPaymentGuide(): void {
+    this.showPostPaymentGuide.set(false);
+  }
+
   protected goHome(): void {
     switch (this.kind) {
       case 'esim':
@@ -1071,7 +1094,15 @@ export class PaymentPage implements OnInit, OnDestroy {
       if (o.status === 'paid' || o.status === 'issuing') {
         storeIssuingOrderId(this.id);
       }
-      if (this.isSuccess()) this.analytics.reachGoalCardPurchase(this.id);
+      if (this.isSuccess()) {
+        this.analytics.reachGoalCardPurchase(this.id);
+        // Показываем модалку «как пользоваться сервисами» один раз, сразу
+        // после первой успешной оплаты выпуска карты.
+        if (!this.postPaymentGuideShown) {
+          this.postPaymentGuideShown = true;
+          this.showPostPaymentGuide.set(true);
+        }
+      }
     }
     if (this.kind === 'topup' && this.isSuccess()) {
       this.maybeToastReferralBonus(o as TopUp);
@@ -1172,4 +1203,3 @@ export class PaymentPage implements OnInit, OnDestroy {
   // СБП-инвойс (kassaai / platega) — общая карточка QR в шаблоне.
   protected readonly isSbp = isSbpProvider;
 }
-

@@ -30,7 +30,8 @@ import { Component, input, output } from '@angular/core';
       border-radius: var(--rounded-md);
       background: var(--color-surface);
       color: var(--color-ink);
-      
+
+      font-family: 'Gilroy', sans-serif;
       font-size: 16px;
       font-weight: 600;
       border: 1.5px solid rgba(211, 211, 211, 1);

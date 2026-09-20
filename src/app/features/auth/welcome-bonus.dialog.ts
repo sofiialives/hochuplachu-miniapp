@@ -26,7 +26,7 @@ import { formatReferralAmount } from '../../core/referral/referral-format';
   styles: [`
     .amount {
       text-align: center;
-      font-family: var(--font-display);
+      font-family: 'Gilroy', sans-serif;
       font-size: 34px;
       font-weight: 700;
       color: var(--color-primary-ink);

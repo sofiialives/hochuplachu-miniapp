@@ -16,8 +16,6 @@ import { AuthService } from '../core/auth/auth.service';
         </svg>
         <span>Назад</span>
       </button>
-    } @else {
-      <span class="spacer"></span>
     }
     <a class="brand" href="/" aria-label="На главную">
       @if (tintColor()) {
@@ -26,26 +24,40 @@ import { AuthService } from '../core/auth/auth.service';
         <img [src]="logoUrl" [alt]="serviceName" />
       }
     </a>
-    <span class="spacer"></span>
   </header>`,
   styles: [`
     
     
     .bar {
-      display: flex; align-items: center; justify-content: space-between;
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
       box-sizing: border-box;
-      
-      padding: 52px 22px 24px;
+
+      padding: 52px 16px 24px;
       min-height: calc(
         max(var(--tg-safe-area-inset-top, 0px), env(safe-area-inset-top, 0px))
         + var(--tg-content-safe-area-inset-top, 72px)
       );
       background: transparent;
-      max-width: 760px; margin: 0 auto; width: 100%;
+      max-width: 1200px; margin: 0 auto; width: 100%;
     }
+    /*
+     * .back вынута из потока (position:absolute), чтобы .brand всегда была
+     * ровно по центру .bar, независимо от того, есть кнопка "Назад" или нет
+     * и какой у неё текст/ширина. Контейнером позиционирования для
+     * position:absolute служит padding-box родителя (.bar), а не его
+     * содержимое — то есть left отсчитывается от САМОГО края .bar, а не от
+     * края внутри её padding. Поэтому left задаём равным padding у .bar
+     * (16px на мобилке, 120px на десктопе), а не 0 — иначе кнопка вылезала
+     * бы вплотную к краю экрана мимо контейнера.
+     */
     .back {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
       display: inline-flex; align-items: center; gap: 4px;
-      
+
       padding: 8px 14px 8px 4px; border-radius: var(--rounded-pill);
       background: var(--color-surface-card); color: var(--color-ink);
       font-weight: 500; font-size: 14px;
@@ -71,8 +83,13 @@ import { AuthService } from '../core/auth/auth.service';
   }
 
   .bar {
-    padding: 52px 0 68px;
+    padding: 52px 120px 68px;
   }
+
+  .back {
+    left: 120px;
+  }
+}
   `],
 })
 export class BackBarComponent {

@@ -22,8 +22,6 @@ import { InputComponent } from '../../ui/input.component';
 import { RequisitesDialogComponent } from './requisites.dialog';
 import { CurrencyPickerDialogComponent } from './currency-picker.dialog';
 import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/currency/currency-symbols';
-import { GuideTargetDirective } from '../guides/guide-target.directive';
-import { GuideClickTargetDirective } from '../guides/guide-click-target.directive';
 
 type PendingAction = 'pay' | 'free' | 'promo';
 
@@ -34,7 +32,6 @@ type PendingAction = 'pay' | 'free' | 'promo';
     BackBarComponent, PayButtonComponent, ButtonComponent,
     CardTileComponent, PromoInputComponent, InputComponent,
     RequisitesDialogComponent, CurrencyPickerDialogComponent, EmailCodeDialog,
-    GuideTargetDirective, GuideClickTargetDirective,
   ],
   template: `<app-back-bar />
     @if (product(); as p) {
@@ -42,7 +39,7 @@ type PendingAction = 'pay' | 'free' | 'promo';
         <div class="right-side">
           <h2>Оформление</h2>
 
-          <div class="right-col" appGuideTarget="checkout-pay">
+          <div class="right-col">
             <div class="order">
               <app-promo-input
                 [(code)]="promoCode"
@@ -96,7 +93,7 @@ type PendingAction = 'pay' | 'free' | 'promo';
                 Получить карту бесплатно
               </app-button>
             } @else {
-              <app-pay-button appGuideClickTarget="checkout-pay" [disabled]="!agreed()" [loading]="loading()" [loadingLabel]="busyLabel()" [sbpLogo]="sbpOnly()" (clicked)="onPayClicked()" />
+              <app-pay-button [disabled]="!agreed()" [loading]="loading()" [loadingLabel]="busyLabel()" [sbpLogo]="sbpOnly()" (clicked)="onPayClicked()" />
             }
           </div>
         </div>

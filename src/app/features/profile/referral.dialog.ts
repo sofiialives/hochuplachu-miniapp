@@ -141,7 +141,7 @@ import { WithdrawRequestDialog } from './withdraw-request.dialog';
     .hint { color: rgba(0, 0, 0, 1); text-align: center; font-size: 14px; }    .cta { display: flex; flex-direction: column; gap: var(--space-sm); margin-top: var(--space-md); }
     .toggle { color: rgba(255, 186, 38, 1); text-decoration: underline; font-size: 14px; }    .rules { color: var(--color-body); font-size: 14px; padding-left: 20px; }
     .rules li + li { margin-top: 6px; }
-    .stats { display: flex; flex-wrap: wrap; gap: 8px; padding: var(--space-md); margin-top: var(--space-md); background: var(--color-surface); border: 1px solid var(--color-hairline); border-radius: var(--rounded-lg); font-size: 12px; }
+    .stats { display: flex; flex-wrap: wrap; gap: 8px; padding: var(--space-md); margin-top: var(--space-md); background: var(--color-surface); border: 1px solid var(--color-hairline); border-radius: var(--rounded-lg); font-size: 12px; font-family: 'Gilroy', sans-serif; }
     .stats > div { flex: 1 1 100px; min-width: 0; }
     :host ::ng-deep h3 { font-size: 26px; }
     @media (min-width: 1024px) {
@@ -157,7 +157,7 @@ import { WithdrawRequestDialog } from './withdraw-request.dialog';
     .history li { padding: 14px 16px; background: var(--color-surface); border: 1px solid var(--color-hairline); border-radius: var(--rounded-lg); font-size: 14px; }
     .history .line-1 { display: flex; justify-content: space-between; align-items: center; }
     .history .line-2 { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; color: var(--color-muted); font-size: 12px; }
-    .history .amount { font-weight: 500; color: var(--color-ink); }
+    .history .amount { font-weight: 500; color: var(--color-ink); font-family: 'Gilroy', sans-serif; }
     .history .status { font-size: 12px; padding: 2px 8px; border-radius: 999px; background: color-mix(in srgb, var(--color-warning, #b97900) 14%, transparent); color: var(--color-warning, #b97900); }
     .history .status.paid { background: color-mix(in srgb, var(--color-success, #2e7d32) 14%, transparent); color: var(--color-success, #2e7d32); }
     .history .status.rejected { background: color-mix(in srgb, var(--color-error, #c62828) 14%, transparent); color: var(--color-error, #c62828); }

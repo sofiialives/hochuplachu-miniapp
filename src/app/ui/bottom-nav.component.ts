@@ -1,12 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../core/auth/auth.service';
-import { GuideTargetDirective } from '../features/guides/guide-target.directive';
 
 @Component({
   selector: 'app-bottom-nav',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, GuideTargetDirective],
+  imports: [RouterLink, RouterLinkActive],
   template: `
     <div class="wrap">
     <nav class="nav">
@@ -17,7 +16,7 @@ import { GuideTargetDirective } from '../features/guides/guide-target.directive'
         </svg>
         <span>Главная</span>
       </a>
-      <a appGuideTarget="nav-cards" routerLink="/cards" routerLinkActive="active">
+      <a routerLink="/cards" routerLinkActive="active">
         <svg class="ico" width="24" height="20" viewBox="0 0 24 20" fill="none" aria-hidden="true">
           <path d="M24 15.4853C24 16.4331 23.6207 17.342 22.9456 18.0122C22.2705 18.6823 21.3548 19.0588 20.4 19.0588H3.6C2.64522 19.0588 1.72955 18.6823 1.05442 18.0122C0.379285 17.342 0 16.4331 0 15.4853V7.14706H24V15.4853ZM15.6 11.9118C15.2817 11.9118 14.9765 12.0373 14.7515 12.2607C14.5264 12.484 14.4 12.787 14.4 13.1029C14.4 13.4189 14.5264 13.7218 14.7515 13.9452C14.9765 14.1686 15.2817 14.2941 15.6 14.2941H19.2C19.5183 14.2941 19.8235 14.1686 20.0485 13.9452C20.2736 13.7218 20.4 13.4189 20.4 13.1029C20.4 12.787 20.2736 12.484 20.0485 12.2607C19.8235 12.0373 19.5183 11.9118 19.2 11.9118H15.6ZM20.4 0C21.3548 0 22.2705 0.376496 22.9456 1.04666C23.6207 1.71683 24 2.62577 24 3.57353V4.76471H0V3.57353C0 2.62577 0.379285 1.71683 1.05442 1.04666C1.72955 0.376496 2.64522 0 3.6 0H20.4Z" fill="currentColor"/>
         </svg>

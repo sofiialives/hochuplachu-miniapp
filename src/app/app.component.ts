@@ -6,7 +6,6 @@ import { Location } from '@angular/common';
 import { filter, take } from 'rxjs/operators';
 import { ToastsView } from './features/common/toasts.view';
 import { AuthService } from './core/auth/auth.service';
-import { GuideOverlayComponent } from './features/guides/guide-overlay.component';
 
 // Минимальный type-stub Telegram.WebApp.BackButton — мы трогаем только
 // эти три метода, остальное игнорируем чтобы не тянуть @types/telegram.
@@ -21,10 +20,9 @@ interface TgWebApp { BackButton?: TgBackButton; platform?: string }
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, ToastsView, GuideOverlayComponent],
+  imports: [RouterOutlet, ToastsView],
   template: `<router-outlet />
-    <app-toasts />
-    <app-guide-overlay />`,
+    <app-toasts />`,
   styles: [`
     :host { display: flex; flex: 1; flex-direction: column; min-height: 100vh; }
   `],

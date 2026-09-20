@@ -25,7 +25,6 @@ import {
 } from '../../core/currency/currency-symbols';
 import { MarkdownLinkPipe } from '../../shared/pipes/markdown-link.pipe';
 import { CachedBgDirective } from '../../core/utils/cached-bg.directive';
-import { GuideTargetDirective } from '../guides/guide-target.directive';
 import {
   SERVICE_ATTR_LABELS,
   ServiceAttr,
@@ -44,7 +43,6 @@ import {
     RouterLink,
     MarkdownLinkPipe,
     CachedBgDirective,
-    GuideTargetDirective,
   ],
   template: `
     <div
@@ -54,7 +52,12 @@ import {
       appCachedBgMode="page"
     ></div>
 
-    <div class="page-paw" aria-hidden="true"></div>
+    <div
+      class="page-paw"
+      aria-hidden="true"
+      [style.--page-paw-bg]="pawColor()"
+      [style.--page-paw-opacity]="pawOpacity()"
+    ></div>
 
     <app-back-bar [tintColor]="product()?.heading_color || null" />
 
@@ -242,7 +245,6 @@ import {
                 class="cta-action"
               >
                 <app-button
-                  appGuideTarget="product-cta"
                   variant="primary"
                   [full]="true"
                 >
@@ -285,6 +287,32 @@ import {
                   </div>
                 </li>
               }
+
+              <li class="cta-li">
+                @if (p.disable_purchase) {
+                  <div class="cta-action cta-action--list">
+                    <app-button
+                      variant="primary"
+                      [full]="true"
+                      [disabled]="true"
+                    >
+                      Выпуск карты временно недоступен
+                    </app-button>
+                  </div>
+                } @else {
+                  <a
+                    [routerLink]="['/cards', p.id, 'checkout']"
+                    class="cta-action cta-action--list"
+                  >
+                    <app-button
+                      variant="primary"
+                      [full]="true"
+                    >
+                      Выпустить карту
+                    </app-button>
+                  </a>
+                }
+              </li>
             </ul>
 
             @for (lst of (p.lists ?? []); track lst[0]) {
@@ -419,6 +447,15 @@ import {
       z-index: 100;
     }
 
+    /*
+     * Раньше "background .45s ease" анимировал переход между разными
+     * background-image (градиент ↔ картинка) — браузер не умеет плавно
+     * интерполировать это, из-за чего в момент смены карты .page-bg на
+     * долю секунды показывал fallback/пустое (белое) состояние, которое
+     * было видно сквозь полупрозрачные края лапы поверх — и выглядело
+     * как "лапа перекрасилась в белый". Transition убран — фон меняется
+     * мгновенно, без промежуточного флеша.
+     */
     .page-bg {
       position: fixed;
       inset: 0;
@@ -426,10 +463,22 @@ import {
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      transition: background .45s ease;
       pointer-events: none;
     }
 
+    /*
+     * По макету заливка лапы — это не картинка со своим "вшитым" серым
+     * цветом (233,233,233 у оригинального PNG), а силуэт, залитый
+     * ровно цветом карты (rgba(0,0,0,1) / rgba(255,255,255,1) /
+     * rgba(38,38,38,1) — pawColor() выставляет его в --page-paw-bg
+     * инлайн) — но у самого слоя в Фигме отдельно задан Opacity ~10%
+     * (не видно в свойствах Fill, только в панели слоя), из-за этого
+     * лапа на макете выглядит мягкой/приглушённой, а не плоским
+     * пятном сплошного цвета. Здесь то же самое: силуэт вырезается
+     * маской из PNG (mask-image), красится в сплошной --page-paw-bg,
+     * а opacity: .1 на самом .page-paw даёт тот же приглушённый вид,
+     * как в макете (проверено измерением пикселей скриншота макета).
+     */
     .page-paw {
       position: fixed;
       z-index: 0;
@@ -438,8 +487,18 @@ import {
       width: 320px;
       height: 100%;
       transform: translateX(-50%);
-      background: url('/assets/bg-paw.png') no-repeat center bottom / contain;
+      background-color: var(--page-paw-bg, rgba(0, 0, 0, 1));
+      -webkit-mask-image: url('/assets/bg-paw.png');
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-position: center bottom;
+      -webkit-mask-size: contain;
+      mask-image: url('/assets/bg-paw.png');
+      mask-repeat: no-repeat;
+      mask-position: center bottom;
+      mask-size: contain;
+      opacity: var(--page-paw-opacity, .1);
       pointer-events: none;
+      transition: none;
     }
 
     app-back-bar {
@@ -891,6 +950,87 @@ import {
       background: rgba(200, 200, 200, 1);
     }
 
+    /*
+     * MOBILE:
+     * acc-toggle (Условия / Запрещённые операции / доп. группы p.lists)
+     * на мобильной версии убран целиком — вместо аккордеонов кнопка
+     * "Выпустить карту" переезжает внутрь списка .list.ok как последний
+     * пункт (см. .cta-li / .cta-action--list ниже). На desktop все эти
+     * блоки возвращаются к прежнему виду (см. media-запрос ниже).
+     */
+    .acc-toggle,
+    .grouped,
+    .list.bad {
+      display: none;
+    }
+
+    /*
+     * MOBILE:
+     * "плавающая" кнопка в side-block больше не используется — вместо неё
+     * работает копия внутри .list.ok (.cta-li). На desktop возвращаем
+     * обратно (см. media-запрос ниже).
+     */
+    .side-block .cta-action {
+      display: none;
+    }
+
+    /*
+     * .cta-li вынесен из потока (position: absolute) и лежит на всю
+     * ширину контейнера списка (.list.ok — position: relative, задаёт
+     * контекст позиционирования). Снизу у .list.ok увеличен
+     * padding-bottom, чтобы под абсолютную кнопку было зарезервировано
+     * место и она не наезжала на последний реальный li.
+     */
+    .list.ok {
+      position: relative;
+      padding-bottom: 44px;
+    }
+
+    .cta-li {
+      list-style: none;
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+
+    .cta-action--list {
+      display: block;
+      position: static;
+      left: auto;
+      right: auto;
+      bottom: auto;
+      z-index: auto;
+      width: 100%;
+      padding: 0;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+
+    .cta-action--list > * {
+      display: block;
+      width: 100%;
+      max-width: none;
+      margin: 0;
+    }
+
+    /*
+     * Кнопка внутри списка — на всю ширину списка (в отличие от
+     * side-block версии на desktop, у которой фиксированная ширина).
+     * padding-top увеличен относительно padding-bottom по просьбе.
+     */
+    :host ::ng-deep .cta-action--list app-button button {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding-top: 24px;
+      padding-bottom: 24px;
+      font-weight: 500;
+      font-size: 16px;
+    }
+
     @media (min-width: 1024px) {
       .wrap {
         display: grid;
@@ -898,7 +1038,7 @@ import {
         grid-template-rows: auto 1fr;
         column-gap: 52px;
         align-items: stretch;
-        max-width: 1100px;
+        max-width: 1200px;
         padding: 0 120px;
         padding-bottom: 110px;
         row-gap: 30px;
@@ -964,7 +1104,7 @@ import {
         grid-row: 2;
         align-self: stretch;
         height: 100%;
-        gap: 4px;
+        gap: 8px;
       }
 
       .side-block {
@@ -975,6 +1115,7 @@ import {
       }
 
       .side-block .cta-action {
+        display: block;
         margin-top: auto;
         margin-bottom: 0;
       }
@@ -1035,7 +1176,8 @@ import {
        * Subscription:
        * тёмный фон.
        *
-       * Во всех случаях текст белый.
+       * Travel: текст ЧЁРНЫЙ (фон у неё белый — белый текст был бы не
+       * виден). Premium / Subscription: текст белый (тёмный фон).
        */
       .wrap.is-travel .list.ok {
         background: rgba(255, 255, 255, 1);
@@ -1049,8 +1191,6 @@ import {
         color: rgba(255, 255, 255, 1);
       }
 
-      .wrap.is-travel .list.ok .li-card > span:last-child,
-      .wrap.is-travel .list.ok .li-card .muted,
       .wrap.is-premium .list.ok .li-card > span:last-child,
       .wrap.is-premium .list.ok .li-card .muted,
       .wrap.is-subscription .list.ok .li-card > span:last-child,
@@ -1074,12 +1214,43 @@ import {
 
       /*
        * DESKTOP:
-       * acc-toggle также получает цвет карты.
-       * На mobile эти правила не применяются.
+       * возвращаем акк-тоггл блоки (Условия / Запрещённые операции /
+       * доп. группы) и прячем мобильную копию кнопки внутри .list.ok —
+       * на desktop кнопка снова живёт только в .side-block (см. выше).
+       */
+      .acc-toggle {
+        display: flex;
+      }
+
+      .grouped,
+      .list.bad {
+        display: block;
+      }
+
+      .cta-li {
+        display: none;
+      }
+
+      /*
+       * DESKTOP: .cta-li скрыт (кнопка снова живёт в .side-block),
+       * поэтому запас снизу под неё тут не нужен — иначе внизу
+       * карточки .list.ok оставалось пустое место.
+       */
+      .list.ok {
+        padding-bottom: 12px;
+      }
+
+      /*
+       * DESKTOP:
+       * acc-toggle также получает цвет карты. Отступы между элементами
+       * .list-col идут ТОЛЬКО через gap:8px у .list-col — свой margin у
+       * .acc-toggle убран, иначе margin+gap складывались и зазор между
+       * двумя acc-toggle оказывался вдвое больше, чем между .list.ok и
+       * первым acc-toggle.
        */
       .acc-toggle {
         padding: 9px 14px;
-        margin: 0 0 4px;
+        margin: 0;
       }
 
       .wrap.is-travel .acc-toggle {
@@ -1097,10 +1268,23 @@ import {
         color: rgba(255, 255, 255, 1);
       }
 
-      .wrap.is-travel .acc-toggle .chev,
       .wrap.is-premium .acc-toggle .chev,
       .wrap.is-subscription .acc-toggle .chev {
         color: rgba(255, 255, 255, 1);
+      }
+
+      /*
+       * DESKTOP: список list-col обычно короче side-block (у которого
+       * кнопка прижата к низу через margin-top:auto) — из-за этого их
+       * контент визуально заканчивался на разной высоте, хотя сами
+       * колонки уже были одной высоты (align-items:stretch). "Условия"
+       * есть всегда — прижимаем её (и всё что рендерится после неё:
+       * "Запрещённые операции", если есть) к низу list-col тем же
+       * приёмом, что и кнопку в side-block.
+       */
+      .acc-toggle:has(+ .cond),
+      button.acc-toggle:nth-last-of-type(1) {
+        margin-top: auto;
       }
 
       .pay-row {
@@ -1328,6 +1512,50 @@ export class ProductDetailPage implements OnInit, AfterViewInit, OnDestroy {
   protected isPremiumCard(p: CardProduct): boolean {
     return p.id === 'mock-card-premium';
   }
+
+  /*
+   * Цвет лапы (.page-paw) фиксирован для каждого типа карты и не
+   * зависит от фона .page-bg под ней — подписки: rgba(38, 38, 38, 1),
+   * премиум: rgba(255, 255, 255, 1), путешествия (дефолт):
+   * rgba(0, 0, 0, 1).
+   */
+  protected readonly pawColor = computed<string | null>(() => {
+    const p = this.product();
+
+    if (!p) {
+      return null;
+    }
+
+    if (this.isSubscriptionCard(p)) {
+      return 'rgba(38, 38, 38, 1)';
+    }
+
+    if (this.isPremiumCard(p)) {
+      return 'rgba(255, 255, 255, 1)';
+    }
+
+    return 'rgba(0, 0, 0, 1)';
+  });
+
+  /*
+   * Непрозрачность лапы: по макету у путешествий/премиум слой лапы
+   * приглушён (opacity ~10%, отдельно от заливки). У карты подписок
+   * этого приглушения нет — там лапа рисуется в полную силу заливки
+   * (opacity: 1).
+   */
+  protected readonly pawOpacity = computed<number | null>(() => {
+    const p = this.product();
+
+    if (!p) {
+      return null;
+    }
+
+    if (this.isSubscriptionCard(p)) {
+      return 1;
+    }
+
+    return 0.1;
+  });
 
   protected readonly pageBgImage = computed<string | null>(
     () => this.product()?.bg_image_url || null,

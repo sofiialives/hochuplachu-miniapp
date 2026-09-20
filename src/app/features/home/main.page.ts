@@ -328,7 +328,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       .cnt { font-size: 11px; }
       .from { font-size: 11px; padding: 8px 11px; }
       .badge { font-size: 7px; padding: 5px 9px; }
-      .wrap { padding: 0 120px; }
+      .wrap { padding-right: 120px; padding-left: 120px }
 
       
       .esim-grid { grid-template-columns: repeat(4, 1fr); }

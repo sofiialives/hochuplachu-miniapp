@@ -13,7 +13,6 @@ import { AnalyticsService } from './core/analytics/analytics.service';
 import { AuthService } from './core/auth/auth.service';
 import { SectionPreloadStrategy } from './core/routing/section-preload.strategy';
 import { VerificationService } from './core/verification/verification.service';
-import { GuideService } from './features/guides/guide.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -22,18 +21,8 @@ export const appConfig: ApplicationConfig = {
     // View Transitions API; сама анимация задана CSS'ом в global.scss
     // (::view-transition-old/new). Браузеры без поддержки просто не анимируют.
     // @angular/animations не используется (deprecated в v21) — всё движение CSS.
-    // onViewTransitionCreated — пропускаем анимацию перехода, если СЕЙЧАС
-    // активен гайд (GuideService.active()) — НЕЗАВИСИМО от роута. Причина
-    // глубже, чем просто «мигает пустой каталог»: bottom-nav несёт
-    // view-transition-name:'bottom-nav' (см. bottom-nav.component.ts) — а
-    // ЛЮБОЙ элемент с view-transition-name на время перехода вытаскивается
-    // браузером в СВОЙ отдельный слой View Transitions API, который по
-        // спецификации рендерится ПОВЕРХ ВСЕГО документа целиком (как нативный
-    // UI браузера) — независимо от z-index чего угодно на странице. Именно
-    // поэтому подсветка гайда (z-index:1000, обычный position:fixed) не
-    // могла закрыть футер во время перехода — он на секунду физически
-    // покидал обычный документ. Плюс отдельно — переход на каталог
-    // (data:{catalog:true}) снимает «снимок» нового экрана ДО того, как
+    // onViewTransitionCreated — пропускаем анимацию перехода на каталог
+    // (data:{catalog:true}): снимок нового экрана снимается ДО того, как
     // асинхронный listProducts() успевает ответить — снимок получается
     // пустым, и получалось «мигание» пустого каталога поверх старого.
     // withPreloading — чанки разделов bottom-nav догружаются в фоне (роуты с
@@ -43,7 +32,6 @@ export const appConfig: ApplicationConfig = {
       withComponentInputBinding(),
       withViewTransitions({
         onViewTransitionCreated: ({ transition, to }) => {
-          if (inject(GuideService).active()) { transition.skipTransition(); return; }
           // to — КОРНЕВОЙ snapshot дерева маршрутов, а data:{catalog:true}
           // висит на ВЛОЖЕННОМ дочернем роуте (cards/new под ''). Спускаемся
           // до самого глубокого потомка, чтобы проверить data РЕАЛЬНО

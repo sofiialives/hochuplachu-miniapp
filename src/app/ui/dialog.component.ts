@@ -8,7 +8,12 @@ import { Component, input, output } from '@angular/core';
       <header class="head">
         <h3>{{ title() }}</h3>
         @if (closable()) {
-          <button class="close" (click)="dismissed.emit()" aria-label="Закрыть">×</button>
+          <button class="close" (click)="dismissed.emit()" aria-label="Закрыть">
+            <svg viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect y="11.668" width="16.5" height="1.22222" transform="rotate(-45 0 11.668)" fill="currentColor"/>
+              <rect width="16.5" height="1.22222" transform="matrix(-0.707107 -0.707107 -0.707107 0.707107 12.5312 11.668)" fill="currentColor"/>
+            </svg>
+          </button>
         }
       </header>
       <div class="body"><ng-content /></div>
@@ -51,7 +56,13 @@ import { Component, input, output } from '@angular/core';
       position: absolute; top: var(--space-lg); right: 16px;
       width: 36px; height: 36px; border-radius: var(--rounded-pill);
       background: var(--color-surface-card);
-      font-size: 24px; line-height: 1; color: rgba(137, 137, 137, 1);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(137, 137, 137, 1);
+    }
+
+    .close svg {
+    width: 22px;
+    height: 16px
     }
     @media (max-width: 450px) {
       .head { padding-right: 56px; }
@@ -60,8 +71,12 @@ import { Component, input, output } from '@angular/core';
     @media (min-width: 1024px) {
       h3 { font-size: 32px; }
       .head { align-items: center }
-      .close { width: 61px; height: 61px }
+      .close { width: 52px; height: 52px }
       .body { font-size: 15px; }
+          .close svg {
+    width: 22px;
+    height: 22px
+    }
     }
   `],
 })

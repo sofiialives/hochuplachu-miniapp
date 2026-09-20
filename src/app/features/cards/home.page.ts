@@ -36,7 +36,6 @@ import { ToastService } from '../../core/notifications/toast.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { RuntimeConfigService } from '../../core/config/runtime-config.service';
 import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/currency/currency-symbols';
-import { GuideTargetDirective } from '../guides/guide-target.directive';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -45,7 +44,6 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
     BillingAddressDialog, ReferralBanner, ReferralDialog, RouterLink,
     BackBarComponent, CardTileComponent, RateQuoteComponent, CachedBgDirective,
     PullToRefreshComponent, VerificationBanner, BrandLogoComponent,
-    GuideTargetDirective,
   ],
   template: `<app-pull-to-refresh #ptr (refresh)="onPullRefresh(ptr)">
     <app-back-bar [showBack]="catalog()" />
@@ -374,8 +372,7 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
                  appCachedBgMode="page"
                  [style.--page-h]="p.heading_color || null"
                  [style.--page-body]="p.body_color || null"
-                 [style.--color-primary]="p.cta_color || null"
-                 [appGuideTarget]="isFirst ? 'catalog-row' : null">
+                 [style.--color-primary]="p.cta_color || null">
                 @if (badgeOf(p.id); as b) {
                   <span class="popular-badge">{{ badgeText(b) }}</span>
                 }
@@ -758,7 +755,7 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
       .catalog-login ::ng-deep button { padding: 7px 12px; }
     }
     
-    .grid { display: flex; flex-direction: column; gap: var(--space-lg); padding-top: 14px; }
+    .grid { display: flex; flex-direction: column; gap: 24px; padding-top: 14px; }
 
       
     .catalog-row {
@@ -935,10 +932,10 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
       font-weight: 500;
     }
     .link-btn:hover { text-decoration: underline; }
-    .primary-link ::ng-deep button { padding: 14px 28px; height: auto; font-size: 15px; border-radius: 16px; }
+    .primary-link ::ng-deep button { padding: 18px 52px; height: auto; font-size: 16px; border-radius: 16px; }
 
            @media (min-width: 1024px) {
-      .primary-link ::ng-deep button { padding: 18px 42px; font-size: 28px; }
+      .primary-link ::ng-deep button { padding: 22px 66px; font-size: 20px; }
       .wrap { padding-left: 120px; padding-right: 120px; }  
       .email-dash::before {
           width: 216px; margin: 36px 0 12px;}
@@ -952,6 +949,7 @@ import { GuideTargetDirective } from '../guides/guide-target.directive';
       padding: 36px 0;
       margin-bottom: 28px;
       }
+      .grid { gap: 38px; }
 
       
       .catalog-row { grid-template-rows: auto auto; }

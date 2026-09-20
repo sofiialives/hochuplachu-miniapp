@@ -12,7 +12,6 @@ import { errorMessage } from '../../core/errors/api-error';
 import { ReferralDialog } from './referral.dialog';
 import { EmailLinkDialog } from '../auth/email-link.dialog';
 import { VerificationService } from '../../core/verification/verification.service';
-import { GuideService } from '../guides/guide.service';
 
 @Component({
   selector: 'app-profile',
@@ -145,13 +144,6 @@ import { GuideService } from '../guides/guide.service';
         </div>
       }
       
-      @if (hasNoCards()) {
-        <button type="button" class="row row-guide" (click)="guide.start()">
-          <div class="text text-guide"><p>Запустить гайд обучение</p></div>
-          <span class="arr">›</span>
-        </button>
-      }
-
       @if (isStaff()) {
         <a class="admin" href="/admin">Открыть админ-панель →</a>
       }
@@ -370,8 +362,6 @@ export class ProfilePage implements OnInit {
   private readonly chatwoot = inject(ChatwootService);
   private readonly toast = inject(ToastService);
   protected readonly verification = inject(VerificationService);
-  protected readonly guide = inject(GuideService);
-
   protected readonly hasNoCards = signal<boolean | null>(null);
 
   ngOnInit(): void {
