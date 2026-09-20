@@ -703,6 +703,7 @@ import {
       font-size: 28px;
       color: rgba(114, 86, 22, 1);
       margin-bottom: 0;
+      line-height: 1;
     }
 
     .price .sym:first-child {
@@ -713,7 +714,7 @@ import {
       width: 112px;
       height: 2px;
       background: rgba(200, 200, 200, 1);
-      margin: 18px auto;
+      margin: 16px auto;
     }
 
     .rate {
@@ -1500,6 +1501,7 @@ import {
 
       .page-paw {
         width: 600px;
+        top: 10%;
       }
     }
   `],
