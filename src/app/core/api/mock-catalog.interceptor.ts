@@ -42,14 +42,21 @@ function envelope<T>(data: T): { ok: true; data: T } {
   return { ok: true, data };
 }
 
-// email_linked: false и email: undefined — специально, чтобы в профиле
-// появилась кнопка «Войти по email» (см. needsEmailLogin() в profile.page.ts,
-// она смотрит именно на email_linked, а не на наличие telegram_id).
+// email_linked: true — иначе EmailLinkDialog в app-shell.ts всплывает
+// автоматически поверх ЛЮБОЙ страницы, как только в /cards появляется хотя
+// бы одна карта (needsEmailLink = cards.length > 0 && !email_linked) — а с
+// добавлением мок-выпущенной карты (MOCK_USER_CARDS) это условие всегда
+// истинно. Раньше здесь было false — специально, чтобы в профиле была
+// видна кнопка «Войти по email» (needsEmailLogin() в profile.page.ts) — но
+// это конфликтует с показом выпущенной карты. Если понадобится снова
+// посмотреть кнопку «Войти по email» в профиле — верните false здесь И
+// уберите/закомментируйте MOCK_USER_CARDS ниже (или очистите её до []),
+// иначе модалка будет всплывать сразу при заходе в приложение.
 const MOCK_USER = {
   id: 'mock-user-1',
   telegram_id: 123456789,
-  email: undefined,
-  email_linked: false,
+  email: 'test@hochuplachu.mock',
+  email_linked: true,
   can_relink_email: true,
   first_name: 'Тест',
   last_name: 'Тестов',
@@ -221,6 +228,28 @@ const MOCK_REFERRAL_WITHDRAWALS = { items: [] };
 
 const MOCK_REFERRAL_CONFIG = { referrer_reward: 200, referee_bonus: 100, currency: 'RUB' };
 
+// Курсы способов оплаты для /payment/methods (scope=issue|topup,
+// product_type=card|esim|service) — ИМЕННО эта ручка кормит
+// CurrencyService.issueMethods(), от которого зависит <app-rate-quote>
+// («Курс пополнения» на карточке продукта/каталоге). Раньше этой ручки в
+// моке не было вообще — запрос улетал в реальный (недоступный в этом
+// деплое) бэкенд, падал, issueMethods() так и оставался пустым, и
+// app-rate-quote просто не рендерился (`@if (quotes().length > 0)`) —
+// отсюда была видна только статичная подпись «Курс пополнения», а сам
+// курс — никогда. rate здесь — «сколько получатель получает за 1 юнит
+// receive-валюты» (см. previewRate/RateQuoteComponent): у RUB_SBP это
+// ~1/курс₽, у USDT_TRX — курс, близкий к 1.
+const MOCK_PAYMENT_METHODS = [
+  {
+    id: 'RUB_SBP', currency_short_name: 'RUB', short_name: 'RUB', name: 'СБП',
+    symbol: '₽', type: 'fiat', rate: 0.0104, provider: 'kassaai', available: true,
+  },
+  {
+    id: 'USDT_TRX', currency_short_name: 'USDT', short_name: 'USDT', name: 'USDT (TRC20)',
+    symbol: '$', type: 'crypto', rate: 0.99, provider: 'cc', available: true,
+  },
+];
+
 // Карты — отдельная от catalog/sections ручка (та управляет только видимостью
 // разделов на главной, а сам список карточек для покупки едет отдельно).
 // gradient принимает пресеты blue/dark/gold (см. комментарий в CardProduct)
@@ -230,17 +259,17 @@ const MOCK_CARD_PRODUCTS = [
   {
     id: 'mock-card-travel',
     name: 'Карта для путешествий',
-    description: 'Платите картой в поездках без ограничений — работает там, где обычные карты блокируют.',
+    description: 'С возможностью привзяать Apple Pay и Google Pay.',
     deposit_fee_pct: 3,
-    issue_price: 990, issue_currency: 'RUB',
+    issue_price: 2999, issue_currency: 'RUB',
     annual_service_fee: 0,
-    validity_years: 3,
+    validity_years: 2,
     card_currency: 'USD',
     providers: [{ provider: 'buvei', bin_id: 'mock-bin-travel', country: 'HK', label: 'Travel BIN' }],
     perks: [
-      ['✈️', 'Работает в 190+ странах'],
-      ['🏨', 'Оплата отелей и авиабилетов без комиссии банка'],
-      ['🔄', 'Мгновенное пополнение'],
+      ['Плати картой оффлайн', 'Поддержка Apple Pay и Google Pay'],
+      ['ОПЛАТА СЕРВИСОВ В APP STORE И ICLOUD', 'Поддержка Apple Pay и Google Pay'],
+      ['ОПЛАТА СЕРВИСОВ В APP STORE И ICLOUD', 'Поддержка Apple Pay и Google Pay'],
     ],
     lists: [['Booking.com', 'Airbnb', 'Skyscanner', 'Aviasales']],
     forbidden: null,
@@ -259,15 +288,15 @@ const MOCK_CARD_PRODUCTS = [
     name: 'Карта для подписок',
     description: 'С возможностью привзяать Apple Pay и Google Pay',
     deposit_fee_pct: 3,
-    issue_price: 490, issue_currency: 'RUB',
+    issue_price: "2999", issue_currency: 'RUB',
     annual_service_fee: 0,
-    validity_years: 3,
+    validity_years: 2,
     card_currency: 'USD',
     providers: [{ provider: 'buvei', bin_id: 'mock-bin-subs', country: 'SG', label: 'Subscriptions BIN' }],
     perks: [
-      ['🔁', 'Держит регулярные платежи без блокировок'],
-      ['💳', 'Минимальный порог пополнения'],
-      ['🌍', 'Принимается везде, где нужен зарубежный биллинг'],
+      ['Плати картой оффлайн', 'Поддержка Apple Pay и Google Pay'],
+      ['ОПЛАТА СЕРВИСОВ В APP STORE И ICLOUD', 'Поддержка Apple Pay и Google Pay'],
+      ['ОПЛАТА СЕРВИСОВ В APP STORE И ICLOUD', 'Поддержка Apple Pay и Google Pay'],
     ],
     lists: [['Netflix', 'Spotify', 'ChatGPT Plus', 'YouTube Premium']],
     forbidden: null,
@@ -286,27 +315,49 @@ const MOCK_CARD_PRODUCTS = [
     name: 'Карта Premium',
     description: 'Повышенные лимиты, приоритетная поддержка и нулевая комиссия на пополнение.',
     deposit_fee_pct: 0,
-    issue_price: 2990, issue_currency: 'RUB',
+    issue_price: 2999, issue_currency: 'RUB',
     annual_service_fee: 990,
     validity_years: 5,
     card_currency: 'USD',
     providers: [{ provider: 'buvei', bin_id: 'mock-bin-premium', country: 'GB', label: 'Premium BIN' }],
     perks: [
-      ['👑', 'Без комиссии на пополнение'],
-      ['📈', 'Повышенный месячный лимит покупок'],
-      ['🎧', 'Приоритетная поддержка 24/7'],
+      ['Плати картой оффлайн', 'Поддержка Apple Pay и Google Pay'],
+      ['ОПЛАТА СЕРВИСОВ В APP STORE И ICLOUD', 'Поддержка Apple Pay и Google Pay'],
+      ['ОПЛАТА СЕРВИСОВ В APP STORE И ICLOUD', 'Поддержка Apple Pay и Google Pay'],
     ],
     lists: [['Любые зарубежные сервисы', 'Премиум-поддержка']],
     forbidden: null,
     image_url: 'assets/mock/card-premium.png', gradient: 'dark',
     bg_image_url: '', bg_gradient: 'rgba(54, 45, 39, 1)',
     heading_color: 'rgba(255, 255, 255, 1)', body_color: 'rgba(255, 255, 255, 1)', cta_color: 'rgba(255, 186, 38, 1)',
-    tier1_attrs: ['visa'], tier2_attrs: [],
+    // Раньше tier2_attrs был пустым ([]) — под 6 плашек (как на макете
+    // Premium-карты: Booking, Airbnb, Netflix, ChatGPT, Uber, Amazon) моков
+    // не было и посмотреть раскладку с 6 иконками было нельзя.
+    tier1_attrs: ['visa'], tier2_attrs: ['booking', 'airbnb', 'netflix', 'chatgpt', 'uber', 'amazon'],
     sort_order: 0,
     disable_purchase: false, disable_topup: false,
     min_topup_amount: 0, monthly_purchase_limit: 500000,
     tx_fee_fixed: 0, tx_fee_pct: 0,
     refund_fee_fixed: 0, refund_fee_pct: 0,
+  },
+];
+
+// Уже выпущенная карта пользователя — чтобы посмотреть, как выглядит
+// состояние "карта уже выпущена" (главная /cards, детали карты, пополнение
+// и т.д.), а не только каталог для выпуска новой. Привязана к продукту
+// mock-card-premium — можно сменить card_product_id на любой другой id из
+// MOCK_CARD_PRODUCTS, чтобы посмотреть с другим дизайном/цветом карты.
+const MOCK_USER_CARDS = [
+  {
+    id: 'mock-user-card-1',
+    card_product_id: 'mock-card-premium',
+    last4: '4242',
+    expiry_month: 9,
+    expiry_year: 2030,
+    balance: 12480,
+    status: 'active',
+    service_expires_at: '2027-09-20T00:00:00Z',
+    issuer_country: 'GB',
   },
 ];
 
@@ -338,6 +389,21 @@ export const mockCatalogInterceptor: HttpInterceptorFn = (req, next) => {
 
   if (pathname.endsWith('/esim/my')) {
     return of(new HttpResponse({ status: 200, body: envelope({ esims: [] }) }));
+  }
+
+  // GET /payment/methods?scope=issue|topup&product_type=card|esim|service —
+  // курсы способов оплаты. Отдаём один и тот же мок-набор независимо от
+  // query-параметров: CurrencyService.issueMethods() кладёт сюда только
+  // ответ scope=issue&product_type=card, но остальные страницы (topup,
+  // checkout) читают эту же ручку под другим scope/product_type — им тоже
+  // нужен непустой список, а не 404/сеть.
+  if (pathname.endsWith('/payment/methods')) {
+    return of(
+      new HttpResponse({
+        status: 200,
+        body: envelope({ methods: MOCK_PAYMENT_METHODS, receive_currency: 'USD' }),
+      }),
+    );
   }
 
   // GET /services/products/:slug — карточка ОДНОГО сервиса (не список).
@@ -405,12 +471,28 @@ export const mockCatalogInterceptor: HttpInterceptorFn = (req, next) => {
     return of(new HttpResponse({ status: 200, body: envelope({ products: MOCK_CARD_PRODUCTS }) }));
   }
 
+  // GET /cards/:id — карточка ОДНОЙ уже выпущенной карты пользователя (не
+  // каталог продуктов — та ветка выше уже отработала бы и вернулась). Нужен,
+  // чтобы можно было открыть детали уже выпущенной мок-карты, а не только
+  // увидеть её в списке на главной.
+  const userCardMatch = pathname.match(/\/cards\/([^/]+)$/);
+  if (userCardMatch && userCardMatch[1] !== 'products') {
+    const id = decodeURIComponent(userCardMatch[1]);
+    const card = MOCK_USER_CARDS.find((c) => c.id === id);
+    if (card) {
+      return of(new HttpResponse({ status: 200, body: envelope(card) }));
+    }
+    return of(new HttpResponse({ status: 404, body: envelope({ error: 'not_found' }) }));
+  }
+
   // Точное совпадение по хвосту пути, а не просто includes: иначе задело бы
   // и /cards/products (каталог, отдельная ветка выше), и /cards/:id
-  // (конкретную выпущенную карту). endsWith('/cards') ни на что из этого
-  // не среагирует — их пути заканчиваются иначе.
+  // (конкретную выпущенную карту, тоже отдельная ветка выше). endsWith('/cards')
+  // ни на что из этого не среагирует — их пути заканчиваются иначе.
+  // cards: MOCK_USER_CARDS — чтобы сразу видеть состояние "карта уже
+  // выпущена" на главной, а не только пустой каталог для выпуска новой.
   if (pathname.endsWith('/cards')) {
-    return of(new HttpResponse({ status: 200, body: envelope({ cards: [] }) }));
+    return of(new HttpResponse({ status: 200, body: envelope({ cards: MOCK_USER_CARDS }) }));
   }
 
   if (pathname.endsWith('/payment/info')) {

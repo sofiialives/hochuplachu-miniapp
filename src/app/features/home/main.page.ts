@@ -36,17 +36,26 @@ import { formatAmount } from '../../core/currency/currency-symbols';
         </div>
       }
       @if (isAuthed() && cards().length > 0) {
-        <a class="hero hero--cards" routerLink="/cards">
-          <div class="hero-visual" aria-hidden="true">
-            <div class="mini-card"></div>
-            @if (cards().length > 1) { <div class="mini-card mini-card--back"></div> }
-          </div>
-          <div class="hero-body">
-            <div class="hero-title">Мои карты</div>
-            <div class="hero-sub">{{ cardsCountLabel() }} · пополнение и реквизиты</div>
-          </div>
-          <span class="hero-arr" aria-hidden="true">→</span>
-        </a>
+        <!-- Раньше hero--cards показывался БЕЗ реф-баннера рядом — только в
+             ветке "нет карт" он был. Теперь тот же .top-row (то же
+             позиционирование/отступы, что и у hero--promo ниже), чтобы
+             баннер "с 10$ вам, 5$ другу!" был виден и когда карта уже есть. -->
+        <div class="top-row">
+          <a class="hero hero--cards" routerLink="/cards">
+            <div class="hero-visual" aria-hidden="true">
+              <div class="mini-card"></div>
+              @if (cards().length > 1) { <div class="mini-card mini-card--back"></div> }
+            </div>
+            <div class="hero-body">
+              <div class="hero-title">Мои карты</div>
+              <div class="hero-sub">{{ cardsCountLabel() }} · пополнение и реквизиты</div>
+            </div>
+            <svg class="hero-arr" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 6l6 6-6 6"></path>
+            </svg>
+          </a>
+          <app-referral-banner (clicked)="showReferral.set(true)" [stacked]="true" />
+        </div>
       } @else if (!isAuthed() || !issuingOrderId()) {
         <div class="top-row">
           <div class="hero hero--promo">
@@ -158,18 +167,18 @@ import { formatAmount } from '../../core/currency/currency-symbols';
   styles: [`
     .wrap {
       padding: 0 16px;
-      
+
       padding-bottom: 110px;
       max-width: 1200px; margin: 0 auto;
       display: flex; flex-direction: column;
     }
     h2 { font-size: 24px; min-width: 0; }
-    
+
     @media (max-width: 767px) {
       h2 { font-size: 19px; }
     }
 
-    
+
     .hero {
       display: flex; align-items: center; gap: 10px;
       padding: 14px 14px;
@@ -180,7 +189,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     }
     a.hero { transition: transform var(--dur-quick) var(--ease-out), box-shadow var(--dur-quick) ease; }
     a.hero:hover { transform: translateY(-2px); box-shadow: var(--shadow-card-hover); }
-    
+
     .hero--promo { background-color: white; box-shadow: 0px 26.44px 62.98px -21.64px rgba(0, 0, 0, 0.15); }
     .hero-body { flex: 1; min-width: 0; }
     .hero-title { font-family: 'Syncopate Cyr';
@@ -188,7 +197,29 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       font-size: 12px; }
     .hero-sub { color: rgba(0, 0, 0, 1); font-size: 12px; }
     .hero-cta { text-decoration: none; flex: 0 0 auto; }
-    .hero-arr { color: var(--color-muted); font-size: 22px; }
+    /*
+     * hero-arr раньше был текстовым "→" (font-size задавал размер стрелки).
+     * Теперь это svg-иконка фиксированного размера 18×18 — одинакового на
+     * мобилке и десктопе, только цвет свой (rgba(137,137,137,1), не
+     * дизайн-токен var(--color-muted)).
+     */
+    .hero-arr { color: rgba(137, 137, 137, 1); width: 18px; height: 18px; flex: 0 0 18px; }
+
+    /*
+     * Только для состояния «карта уже есть» (.hero--cards): свои размеры
+     * заголовка/подписи (20px / 16px, одинаково на мобилке и десктопе —
+     * поэтому селектор без media-query, специфичность выше и базовых
+     * правил, и правила внутри @media(min-width:1024px) ниже) и свой
+     * отступ 20px между визуалом карты и текстовым блоком. Flex-gap
+     * у .hero общий на все дочерние элементы (visual/body/arrow), поэтому
+     * тут gap обнулён и нужный интервал задан явно через margin-right у
+     * .hero-visual, а расстояние до стрелки сохранено отдельным margin-left.
+     */
+    .hero--cards { gap: 0; }
+    .hero--cards .hero-visual { margin-right: 20px; }
+    .hero--cards .hero-arr { margin-left: 10px; }
+    .hero--cards .hero-title { font-size: 20px; }
+    .hero--cards .hero-sub { font-size: 16px; }
     .hero-spin {
       width: 36px; height: 36px; flex: 0 0 36px;
       color: var(--color-primary-ink);
@@ -196,8 +227,9 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     }
     @keyframes main-spin { to { transform: rotate(360deg); } }
     @media (prefers-reduced-motion: reduce) { .hero-spin { animation: none; } }
-    
-    .hero-visual { position: relative; width: 72px; height: 48px; flex: 0 0 72px; }
+
+    /* hero-visual: 145×84 (было 72×48). */
+    .hero-visual { position: relative; width: 145px; height: 84px; flex: 0 0 145px; }
     .mini-card {
       position: absolute; inset: 0;
       border-radius: 8px;
@@ -210,13 +242,13 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       z-index: -1;
     }
 
-    
+
     .sec-head {
       display: flex; align-items: center; justify-content: space-between;
       margin-top: 0;
       gap: 4px 12px;
     }
-    
+
     .sec-link { color: rgba(137, 137, 137, 1); font-size: 14px; font-weight: 500; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
     .sec-link:hover { text-decoration: underline; }
     .top-row {
@@ -239,14 +271,14 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     .soon-title { font-weight: 600; }
     .soon-sub { color: var(--color-muted); font-size: 13px; margin-top: 4px; }
 
-    
+
     .esim-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 36px; margin-top: 20px }
-    
+
     .esim-grid .card:nth-child(n+5) { display: none; }
-    
+
     .svc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 20px}
     .svc-grid app-service-hero-card { grid-column: 1 / -1; }
-    
+
     .svc-grid .svc-card:nth-child(n+6) { display: none; }
 
     .card {
@@ -288,7 +320,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       border-radius: var(--rounded-pill);
     }
 
-    
+
     .svc-card {
       position: relative;
       display: flex; flex-direction: column; align-items: center; gap: 8px;
@@ -313,7 +345,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       font-size: 13px; font-weight: 500; line-height: 1.25; text-align: center;
       display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
     }
-    
+
     .svc-hot {
       position: absolute; top: 12px; left: 8px;
       padding: 4px; border-radius: var(--rounded-pill);
@@ -321,7 +353,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       font-family: 'Syncopate Cyr'; font-size: 6px; text-transform: uppercase;
     }
 
-    
+
     @media (min-width: 1024px) {
       .card { grid-template-columns: 60px 1fr; column-gap: 10px; row-gap: 8px; padding: 16px; }
       .ico { height: 30px; }
@@ -331,20 +363,20 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       .from { font-size: 11px; padding: 8px 11px; }
       .badge { font-size: 7px; padding: 5px 9px; }
       .wrap { padding-right: 120px; padding-left: 120px }
-      .hero-title { 
+      .hero-title {
       font-size: 16px; }
 
-      
+
       .esim-grid { grid-template-columns: repeat(4, 1fr); }
       .esim-grid .card:nth-child(n+5) { display: grid; }
 
-      
+
       .svc-grid { grid-template-columns: repeat(5, 1fr); }
       .svc-grid app-service-hero-card { grid-column: span 2; }
       .svc-grid .svc-card:nth-child(n+8) { display: flex; }
     }
 
-    
+
     .skel-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); margin-bottom: 36px; }    .skel {
       display: block; height: 92px; border-radius: var(--rounded-lg);
       background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface));
@@ -360,7 +392,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     @keyframes main-skel { to { transform: translateX(100%); } }
     @media (prefers-reduced-motion: reduce) { .skel::after { animation: none; } }
 
-    
+
     @media (max-width: 1023px) {
       .esim-grid { grid-template-columns: repeat(2, 1fr); }
       .svc-grid { grid-template-columns: repeat(2, 1fr); }
@@ -436,7 +468,7 @@ export class MainPage implements OnInit, OnDestroy {
     }
   }
 
-  
+
   private static readonly SERVICES_TOP = 8;
 
   private loadServices(): void {

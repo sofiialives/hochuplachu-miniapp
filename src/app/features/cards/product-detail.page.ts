@@ -135,7 +135,7 @@ import {
             ></p>
           </div>
 
-          <div class="side-block">
+          <div class="side-block" [class.side-block--wide-icons]="tier2Icons().length > 3">
             <div class="pay-row">
               @if (tier2Icons().length > 0) {
                 <ul class="tier2">
@@ -249,7 +249,6 @@ import {
                   [full]="true"
                 >
                   Выпустить карту
-                  {{ money(p.issue_price, p.issue_currency) }}
                 </app-button>
               </a>
             }
@@ -466,6 +465,10 @@ import {
       pointer-events: none;
     }
 
+        .name-accent {
+      color: var(--color-primary);
+    }
+
     /*
      * По макету заливка лапы — это не картинка со своим "вшитым" серым
      * цветом (233,233,233 у оригинального PNG), а силуэт, залитый
@@ -541,9 +544,28 @@ import {
       scroll-behavior: smooth;
       scrollbar-width: none;
       -webkit-overflow-scrolling: touch;
+      /*
+       * touch-action: none — на touch-устройствах свайп по карусели
+       * теперь целиком ведёт наш собственный onStripPointer* (см. TS) —
+       * нативный browser-скролл здесь больше не участвует и не может
+       * "проскочить" через нативный scroll-snap на резком свайпе.
+       */
+      touch-action: none;
 
       padding: var(--space-md) calc((100% - var(--slide-w)) / 2);
       margin: 0 calc(-1 * var(--space-md)) var(--space-md);
+    }
+
+    /*
+     * Пока идёт ручной drag (мышь ИЛИ touch — см. onStripPointerMove),
+     * снимаем нативный scroll-snap/smooth-scroll: они не должны спорить
+     * с ручным выставлением scrollLeft. Не привязано к media (hover:hover)
+     * — раньше это правило работало только для мыши, и на touch нативный
+     * scroll-snap продолжал действовать поверх ручного драга.
+     */
+    .hero-strip.dragging {
+      scroll-snap-type: none;
+      scroll-behavior: auto;
     }
 
     @media (hover: hover) and (pointer: fine) {
@@ -553,8 +575,6 @@ import {
 
       .hero-strip.dragging {
         cursor: grabbing;
-        scroll-snap-type: none;
-        scroll-behavior: auto;
       }
 
       .hero-strip.dragging .slide {
@@ -669,10 +689,6 @@ import {
       margin: 0;
     }
 
-    .name-accent {
-      color: var(--color-primary);
-    }
-
     .desc {
       color: rgba(0, 0, 0, 1);
       text-align: center;
@@ -696,7 +712,7 @@ import {
       width: 112px;
       height: 2px;
       background: rgba(200, 200, 200, 1);
-      margin: 30px auto;
+      margin: 22px auto;
     }
 
     .rate {
@@ -704,7 +720,7 @@ import {
       flex-direction: column;
       align-items: center;
       gap: 6px;
-      margin: 0 0 36px;
+      margin: 0 0 22px;
     }
 
     .rate-lbl {
@@ -798,6 +814,10 @@ import {
       display: flex;
       gap: 12px;
       align-items: center;
+    }
+
+    .li-card b {
+      text-transform: uppercase;
     }
 
     .list .li-card > span:last-child {
@@ -1112,12 +1132,38 @@ import {
         grid-row: 2;
         display: flex;
         flex-direction: column;
+        height: 100%;
+        /*
+         * Стрелки переключения карты позиционируются абсолютно ОТ
+         * .side-block (а не от .pay-row) — см. .arrows ниже. Это нужно,
+         * чтобы их позиция не зависела от того, в 1 или 2 ряда встали
+         * плашки оплаты внутри .pay-row.
+         */
+        position: relative;
       }
 
+      /*
+       * side-block и list-col — соседние grid-ячейки одной строки, поэтому
+       * align-items: stretch у .wrap и так растягивает их КОНТЕЙНЕРЫ до
+       * одной высоты (высота строки = высота более длинной колонки). Раньше
+       * кнопка шла обычным потоком сразу после курса — это давало стабильную
+       * позицию кнопки, но если list-col оказывался длиннее (что обычно и
+       * есть — там список условий/иконок), под кнопкой в side-block
+       * оставалось пустое место и визуально колонки не совпадали по низу.
+       * Теперь margin-top: auto снова прижимает кнопку к низу растянутого
+       * side-block — так низ кнопки всегда совпадает с низом list-col.
+       * Раньше это же решение "скакало" из-за похожего margin-top: auto на
+       * последней кнопке аккордеона ВНУТРИ list-col (см. комментарий выше) —
+       * та причина убрана отдельно, а тут скачков нет, потому что верхняя
+       * часть side-block (иконки/цена/курс) больше не завязана на высоту
+       * list-col и не меняет позицию — “плавает” только кнопка, и только
+       * когда список условий действительно меняет высоту строки.
+       */
       .side-block .cta-action {
         display: block;
         margin-top: auto;
         margin-bottom: 0;
+        transition: margin-top var(--dur-quick, .15s) ease;
       }
 
       /*
@@ -1183,7 +1229,7 @@ import {
         background: rgba(255, 255, 255, 1);
       }
       .wrap.is-premium .list.ok {
-  background: rgba(255, 255, 255, 0.1);        color: rgba(255, 255, 255, 1);
+  background: rgb(106, 88, 77);        color: rgba(255, 255, 255, 1);
       }
 
       .wrap.is-subscription .list.ok {
@@ -1241,6 +1287,24 @@ import {
       }
 
       /*
+       * Растягивание .list.ok (flex:1 + space-between) включаем ТОЛЬКО
+       * когда справа реально много плашек оплаты (больше 3 — значит 2
+       * ряда, side-block заметно выше обычного): класс
+       * .side-block--wide-icons ставится в шаблоне по tier2Icons().length
+       * > 3. Для 1-3 плашек (один ряд) side-block и так почти той же
+       * высоты, что и list-col, и растягивание тут только портило вид —
+       * большие пустые зазоры между тремя пунктами списка. Поэтому для
+       * этого случая список остаётся с обычными, "родными" отступами
+       * (padding-bottom: 22px у li, см. общее правило .list li выше).
+       */
+      .side-block--wide-icons ~ .list-col .list.ok {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      /*
        * DESKTOP:
        * acc-toggle также получает цвет карты. Отступы между элементами
        * .list-col идут ТОЛЬКО через gap:8px у .list-col — свой margin у
@@ -1260,7 +1324,7 @@ import {
       }
 
       .wrap.is-premium .acc-toggle {
-  background: rgba(255, 255, 255, 0.1);        color: rgba(255, 255, 255, 1);
+  background: rgb(106, 88, 77);        color: rgba(255, 255, 255, 1);
       }
 
       .wrap.is-subscription .acc-toggle {
@@ -1274,28 +1338,91 @@ import {
       }
 
       /*
-       * DESKTOP: список list-col обычно короче side-block (у которого
-       * кнопка прижата к низу через margin-top:auto) — из-за этого их
-       * контент визуально заканчивался на разной высоте, хотя сами
-       * колонки уже были одной высоты (align-items:stretch). "Условия"
-       * есть всегда — прижимаем её (и всё что рендерится после неё:
-       * "Запрещённые операции", если есть) к низу list-col тем же
-       * приёмом, что и кнопку в side-block.
+       * DESKTOP:
+       * развёрнутый контент аккордеона (.grouped) должен быть того же
+       * цвета, что и сама кнопка .acc-toggle этой карты — иначе при
+       * открытии список получался белым на travel и просто выпадал из
+       * цветовой схемы premium/subscription карт.
        */
-      .acc-toggle:has(+ .cond),
-      button.acc-toggle:nth-last-of-type(1) {
-        margin-top: auto;
+      .wrap.is-travel .grouped {
+        background: rgba(255, 255, 255, 1);
+        color: var(--color-ink);
       }
 
+      .wrap.is-premium .grouped {
+  background: rgb(106, 88, 77);        color: rgba(255, 255, 255, 1);
+      }
+
+      .wrap.is-subscription .grouped {
+        background: rgba(63, 63, 63, 1);
+        color: rgba(255, 255, 255, 1);
+      }
+
+      .wrap.is-premium .grouped .li-card,
+      .wrap.is-subscription .grouped .li-card {
+        color: rgba(255, 255, 255, 1);
+      }
+
+      .wrap.is-premium .grouped .kv-label,
+      .wrap.is-subscription .grouped .kv-label {
+        color: rgba(255, 255, 255, 1);
+      }
+
+      /*
+       * DESKTOP: list-col обычно короче side-block, из-за чего их
+       * контент визуально заканчивался на разной высоте, хотя сами
+       * колонки уже были одной высоты (align-items:stretch). Раньше это
+       * компенсировалось через margin-top:auto на последней кнопке
+       * аккордеона — но именно это и "двигало" кнопку и создавало
+       * большие пустые промежутки при открытии/закрытии блоков. Теперь
+       * список идёт обычным потоком без принудительного прижатия к низу:
+       * высота колонки та же (stretch), просто снизу может быть пустое
+       * место — это стабильнее, чем скачущая кнопка.
+       */
+
+      /*
+       * Отступы в side-block уменьшены, чтобы на desktop блок был
+       * примерно той же высоты, что и соседняя .list-col (раньше
+       * side-block был заметно выше, и .list-col оставлял пустое место
+       * снизу из-за stretch — см. комментарий выше про margin-top:auto).
+       */
+      /*
+       * Плашки оплаты и высота .pay-row теперь идут своим естественным
+       * потоком (без искусственной min-height) — у travel/1 ряда
+       * .pay-row невысокая, у premium/2 рядов — выше, это нормально.
+       * align-items: flex-start (вместо унаследованного с мобильной
+       * версии center) прижимает плашки к верхнему краю всегда,
+       * независимо от того, сколько рядов.
+       */
       .pay-row {
-        justify-content: space-between;
-        margin: 0 0 16px;
+        align-items: flex-start;
+        justify-content: flex-start;
+        padding-right: 132px;
+        margin: 0 0 10px;
+      }
+
+      /*
+       * Стрелки переключения карты раньше центрировались (top:50%)
+       * относительно .pay-row — а высота .pay-row как раз "плавает"
+       * (1 ряд плашек у travel / 2 ряда у premium), из-за чего стрелки
+       * прыгали и по вертикали при переключении карт. Теперь стрелки
+       * позиционируются абсолютно от .side-block (см. position:relative
+       * там выше) с ФИКСИРОВАННЫМ top — не зависят от .pay-row вообще и
+       * стоят на одном и том же месте на любой карте, сколько бы рядов
+       * плашек ни было. 7px — визуальный центр первого (всегда
+       * присутствующего) ряда плашек tier2 (68px контент + рамка ≈71px,
+       * стрелка 58px высотой → (71-58)/2 ≈ 7px отступ сверху).
+       */
+      .arrows {
+        position: absolute;
+        top: 7px;
+        right: 0;
       }
 
       .price {
         text-align: left;
         font-size: 60px;
-        margin-bottom: 16px;
+        margin-bottom: 10px;
         line-height: 1.2;
       }
 
@@ -1307,7 +1434,7 @@ import {
         align-items: flex-start;
         text-align: left;
         gap: 8px;
-        margin: 0 0 30px;
+        margin: 0 0 16px;
       }
 
       .rate-lbl {
@@ -1741,10 +1868,15 @@ export class ProductDetailPage implements OnInit, AfterViewInit, OnDestroy {
   private static readonly STRIP_DRAG_THRESHOLD = 6;
 
   protected onStripPointerDown(e: PointerEvent): void {
-    if (e.pointerType !== 'mouse') {
-      return;
-    }
-
+    // Раньше здесь был ранний return для всего, что не 'mouse' — то есть
+    // на touch (мобилка) вся эта ручная drag-логика вообще не работала, и
+    // карусель листалась чисто нативным scroll-snap браузера. Именно
+    // нативный scroll-snap при резком свайпе иногда "проскакивал" сразу
+    // через 2 карты вместо 1 (инерция/скорость флика не всегда стопится
+    // на каждой snap-точке, особенно в WebView Telegram). Теперь touch
+    // обрабатывается той же самой ручной логикой, что и мышь — а
+    // итоговый шаг в onStripPointerUp ниже жёстко ограничен ровно одной
+    // картой за жест, независимо от скорости/дистанции свайпа.
     if (e.button !== 0) {
       return;
     }
@@ -1829,41 +1961,43 @@ export class ProductDetailPage implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    const stripRect = strip.getBoundingClientRect();
-    const centerX =
-      stripRect.left + stripRect.width / 2;
+    // Раньше здесь искали БЛИЖАЙШИЙ к центру слайд среди ВСЕХ слайдов —
+    // при быстром/сильном свайпе scrollLeft мог уйти дальше, чем на одну
+    // карту, и "ближайшим" оказывался слайд через один — карусель
+    // скипала карту. Теперь смотрим только на НАПРАВЛЕНИЕ свайпа
+    // (по знаку смещения от точки, где начался drag) и всегда двигаемся
+    // ровно на 1 карту за жест — независимо от того, как далеко/быстро
+    // пользователь провёл пальцем.
+    const dx = e.clientX - this.stripDragStartX;
+    const list = this.products();
+    const idx = list.findIndex((p) => p.id === this.currentId());
 
-    const slides = Array.from(
-      strip.querySelectorAll<HTMLElement>('[data-pid]'),
-    );
-
-    let bestId: string | null = null;
-    let bestDist = Infinity;
-
-    for (const slide of slides) {
-      const r = slide.getBoundingClientRect();
-      const c = r.left + r.width / 2;
-      const d = Math.abs(c - centerX);
-
-      if (d < bestDist) {
-        bestDist = d;
-        bestId = slide.getAttribute('data-pid');
-      }
-    }
-
-    if (bestId && bestId !== this.currentId()) {
-      this.selectId(bestId, true);
-    } else if (bestId === this.currentId()) {
-      this.suppressObserverUntil =
-        Date.now() + 600;
+    if (idx < 0 || Math.abs(dx) < ProductDetailPage.STRIP_DRAG_THRESHOLD) {
+      this.suppressObserverUntil = Date.now() + 600;
 
       setTimeout(
         () => this.scrollToCurrent(true),
         0,
       );
-    } else {
-      this.suppressObserverUntil = 0;
+
+      return;
     }
+
+    const dir: 1 | -1 = dx < 0 ? 1 : -1;
+    const nextIdx = idx + dir;
+
+    if (nextIdx < 0 || nextIdx >= list.length) {
+      this.suppressObserverUntil = Date.now() + 600;
+
+      setTimeout(
+        () => this.scrollToCurrent(true),
+        0,
+      );
+
+      return;
+    }
+
+    this.selectId(list[nextIdx].id, true);
   }
 
   protected onStripPointerCancel(e: PointerEvent): void {

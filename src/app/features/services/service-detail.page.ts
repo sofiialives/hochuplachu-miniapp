@@ -370,12 +370,14 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     }
 
     .f-label {
+      font-family: 'Gilroy';
       font-size: 13px;
       font-weight: 600;
       color: rgba(0, 0, 0, 1);
     }
 
     .f-hint {
+      font-family: 'Gilroy';
       margin: 0;
       display: flex;
       align-items: center;
@@ -512,6 +514,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     }
 
     .preset {
+      font-family: 'Gilroy';
       display: inline-flex;
       align-items: center;
       gap: 4px;

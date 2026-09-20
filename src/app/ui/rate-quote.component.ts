@@ -22,7 +22,9 @@ export type RateQuoteVariant = 'plain' | 'pill';
       display: flex; gap: var(--space-md);
       justify-content: center; flex-wrap: wrap;
       color: var(--page-body, var(--color-muted));
-      font-size: 13px;
+      font-family: 'Gilroy';
+      font-size: 16px;
+      font-weight: 500;
       line-height: 1.4;
     }
     .line { white-space: nowrap; }
@@ -36,18 +38,22 @@ export type RateQuoteVariant = 'plain' | 'pill';
     }
     .rate-quote.pill .line {
       display: inline-flex; align-items: baseline; gap: 6px;
-      font-size: 17px;
+      font-family: 'Gilroy';
+      font-size: 16px;
       font-weight: 500;
-      color: rgba(0, 0, 0, 1);
+      /* Раньше было захардкожено чёрным — на тёмных карточках (premium /
+       * subscription) текст сливался с тёмным page-bg и был не виден.
+       * --page-body/--page-h выставляются родительской страницей под цвет
+       * конкретной карты (см. product-detail.page.ts), с фолбэком на
+       * прежний чёрный для мест, где эти переменные не заданы. */
+      color: var(--page-body, rgba(0, 0, 0, 1));
       white-space: nowrap;
     }
     .rate-quote.pill .ccy {
-      font-size: 17px;
+      font-family: 'Gilroy';
+      font-size: 16px;
       font-weight: 500;
-      color: rgba(0, 0, 0, 1);
-    }
-    @media (min-width: 1024px) {
-      .rate-quote.pill .line, .rate-quote.pill .ccy { font-size: 20px; }
+      color: var(--page-h, rgba(0, 0, 0, 1));
     }
   `],
 })
@@ -82,12 +88,16 @@ export class RateQuoteComponent implements OnInit {
         out.push({ label: '₽ через СБП', value: ((1 / r) * factor).toFixed(2) });
       }
     }
-    if (usdt) {
-      const r = previewRate(usdt, 1);
-      if (r > 0) {
-        out.push({ label: 'USDT TRX', value: ((1 / r) * factor).toFixed(4) });
-      }
-    }
+    // USDT TRX временно скрыт по просьбе — оставляем только курс по СБП,
+    // чтобы он точно был виден, пока по стилям блока не разберёмся отдельно.
+    // Раскомментировать, когда понадобится вернуть вторую строку курса.
+    // if (usdt) {
+    //   const r = previewRate(usdt, 1);
+    //   if (r > 0) {
+    //     out.push({ label: 'USDT TRX', value: ((1 / r) * factor).toFixed(4) });
+    //   }
+    // }
+    void usdt;
     return out;
   });
 }

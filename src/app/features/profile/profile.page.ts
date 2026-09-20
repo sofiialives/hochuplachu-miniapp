@@ -202,7 +202,7 @@ import { VerificationService } from '../../core/verification/verification.servic
 
 }
     .name { text-align: center; margin-bottom: 4px; text-transform: uppercase; font-size: 20px; font-family: "Syncopate Cyr" }
-    .email { text-align: center; color: rgba(228, 228, 228, 1); margin-bottom: 20px; }
+    .email { text-align: center; color: var(--color-ink); margin-bottom: 20px; }
 
     
     .email-dash::before {

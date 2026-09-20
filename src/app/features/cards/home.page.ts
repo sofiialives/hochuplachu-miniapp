@@ -94,7 +94,7 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
 </svg>
 <p class="email email-dash" aria-hidden="true"></p>
               <div class="no-card-title">У вас ещё нет виртуальных карт</div>
-              <a class="primary-link" routerLink="/cards/new" appGuideTarget="issue-cta">
+              <a class="primary-link" routerLink="/cards/new">
                 <app-button variant="primary">Выпустить карту</app-button>
               </a>
             </div>
@@ -363,7 +363,7 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
         </div>
         <section class="catalog">
           <div class="grid stagger-in">
-            @for (p of availableProducts(); track p.id; let isFirst = $first) {
+            @for (p of availableProducts(); track p.id) {
               <a class="catalog-row"
                  [class.catalog-row--highlighted]="!!badgeOf(p.id)"
                  [routerLink]="['/cards', p.id]"
@@ -642,11 +642,39 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
     .no-card .primary-link { margin-top: 6px; }
 
     
+    /*
+     * Размеры продублированы 1:1 с .catalog-head h1 (тот же паттерн
+     * заголовка страницы: 24px по умолчанию → 19px на узких мобильных
+     * (≤560px, см. ниже) → 36px на десктопе (≥1024px, см. media-запрос).
+     */
     .product-label {
       text-align: center;
-      font-family: var(--font-display, inherit);
-      font-size: 18px; font-weight: 600;
+      font-family: 'Syncopate Cyr';
+      font-size: 24px; font-weight: 600;
       color: var(--color-ink);
+      margin: 0 0 var(--space-md);
+    }
+    @media (max-width: 560px) {
+      .product-label { font-size: 19px; }
+    }
+
+    /*
+     * Единый вертикальный ритм для стопки блоков на "карте с топапом":
+     * product-label → limited-banner/renew-cta/extra (margin-bottom уже
+     * выше) → verification-banner → referral-banner → "Пополнить" →
+     * "+ Выпустить ещё карту" → история. Раньше .wrap не задавал gap и
+     * часть этих блоков шла впритык друг к другу без отступа.
+     */
+    app-verification-banner,
+    app-referral-banner {
+      display: block;
+      margin-bottom: var(--space-md);
+    }
+    .primary-link {
+      margin-bottom: var(--space-md);
+    }
+    .link-btn.add-card {
+      margin-bottom: var(--space-md);
     }
 
     
@@ -656,6 +684,7 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
       border: 1px solid var(--color-hairline-soft);
       border-radius: var(--rounded-md);
       padding: 4px var(--space-md);
+      margin-bottom: var(--space-md);
     }
     .ex-row {
       display: flex; align-items: center; gap: var(--space-sm);
@@ -692,6 +721,7 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
       border: 1px solid var(--color-danger, #c0392b);
       border-radius: var(--rounded-md);
       color: var(--color-ink);
+      margin-bottom: var(--space-md);
     }
     .limited-banner__title { font-weight: 600; font-size: 15px; }
     .limited-banner__sub { font-size: 13px; color: var(--color-muted); }
@@ -706,6 +736,7 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
       text-decoration: none;
       color: var(--color-ink);
       transition: transform .12s ease, box-shadow .12s ease;
+      margin-bottom: var(--space-md);
     }
     .renew-cta:hover { transform: translateY(-1px); box-shadow: var(--shadow-primary-hover); }
     .renew-cta--expired {
@@ -755,7 +786,7 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
       .catalog-login ::ng-deep button { padding: 7px 12px; }
     }
     
-    .grid { display: flex; flex-direction: column; gap: 24px; padding-top: 14px; }
+    .grid { display: flex; flex-direction: column; gap: var(--space-lg); padding-top: 14px; }
 
       
     .catalog-row {
@@ -871,9 +902,19 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
 
     .metric--currency { text-align: right; }
     .metric--rate .metric-val { font-size: 14px; color: var(--page-body, var(--color-muted)); font-weight: 500; }
+    /*
+     * В каталоге карт курс должен быть обычным чёрным, а не цветом темы
+     * конкретной карты (--page-h/--page-body задаются выше на .catalog-row
+     * под heading_color/body_color товара). Переопределяем эти переменные
+     * прямо на host app-rate-quote — внутренние стили компонента через
+     * var(--page-body, ...) подхватят этот чёрный вместо унаследованного.
+     */
+    .metric-quote {
+      --page-h: rgba(0, 0, 0, 1);
+      --page-body: rgba(0, 0, 0, 1);
+    }
     .metric--rate app-rate-quote {
       display: block;
-      font-size: 13px;
       line-height: 1.3;
     }
     .metric--rate ::ng-deep .rate-quote {
@@ -886,6 +927,7 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
     
     @media (min-width: 1024px) {
       .catalog-head h1 { font-size: 36px; }
+      .product-label { font-size: 36px; }
       .catalog-row { grid-template-columns: 344px 1fr; }
       .cat-visual {padding: 36px 60px;  grid-column: 1 / -1; flex-direction: row; align-items: center; text-align: left; gap: 60px; }
       .cat-tile { width: 240px; max-width: 240px; flex-shrink: 0; }
@@ -932,10 +974,14 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
       font-weight: 500;
     }
     .link-btn:hover { text-decoration: underline; }
-    .primary-link ::ng-deep button { padding: 18px 52px; height: auto; font-size: 16px; border-radius: 16px; }
+    /* add-card — наш фирменный жёлтый, как везде по приложению (не общий
+     * var(--color-primary-ink) остальных .link-btn вроде "Показать всю
+     * историю"). */
+    .link-btn.add-card { color: rgba(255, 186, 38, 1); }
+    .primary-link ::ng-deep button { padding: 14px 28px; height: auto; font-size: 15px; border-radius: 16px; }
 
            @media (min-width: 1024px) {
-      .primary-link ::ng-deep button { padding: 22px 66px; font-size: 20px; }
+      .primary-link ::ng-deep button { padding: 18px 42px; font-size: 28px; }
       .wrap { padding-left: 120px; padding-right: 120px; }  
       .email-dash::before {
           width: 216px; margin: 36px 0 12px;}
@@ -949,14 +995,11 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
       padding: 36px 0;
       margin-bottom: 28px;
       }
-      .grid { gap: 38px; }
 
       
       .catalog-row { grid-template-rows: auto auto; }
       .cat-visual { grid-column: 1 / -1; grid-row: 1; display: flex; align-items: center; gap: var(--space-lg); }
       .cat-info { grid-column: 1 / -1; grid-row: 2; }
-    }
-    }
     }
   `],
 })
