@@ -162,7 +162,7 @@ interface DayGroup {
     .row:hover { border-color: var(--color-primary); }
     .row:active { transform: scale(.995); }
     .row-main { width: 100%; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-    .row-name { font-weight: 600; font-size: 15px; }
+    .row-name { font-family: 'Gilroy'; font-weight: 500; font-size: 15px; }
     .row-days { font-weight: 400; font-size: 13px; }
     .row-sub { font-size: 13px; color: rgba(0, 0, 0, 1); }
     .row-price { display: flex; flex-direction: row; align-items: baseline; gap: 8px; }
