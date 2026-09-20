@@ -53,7 +53,7 @@ import { Component, input, output } from '@angular/core';
     .head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: var(--space-md); }
     h3 { font-family:"Syncopate Cyr"; text-transform: uppercase; font-size: 22px; min-width: 0;}
     .close {
-      position: absolute; top: var(--space-lg); right: 16px;
+      position: absolute; top: 16px; right: 16px;
       width: 36px; height: 36px; border-radius: var(--rounded-pill);
       background: var(--color-surface-card);
       display: flex; align-items: center; justify-content: center;

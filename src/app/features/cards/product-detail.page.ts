@@ -446,6 +446,7 @@ import {
       z-index: 100;
     }
 
+
     /*
      * Раньше "background .45s ease" анимировал переход между разными
      * background-image (градиент ↔ картинка) — браузер не умеет плавно
@@ -464,8 +465,7 @@ import {
       background-repeat: no-repeat;
       pointer-events: none;
     }
-
-        .name-accent {
+          .name-accent {
       color: var(--color-primary);
     }
 
@@ -712,7 +712,7 @@ import {
       width: 112px;
       height: 2px;
       background: rgba(200, 200, 200, 1);
-      margin: 22px auto;
+      margin: 18px auto;
     }
 
     .rate {
@@ -802,7 +802,7 @@ import {
 
     .list li,
     .grouped li {
-      padding-bottom: 22px;
+      padding-bottom: 20px;
     }
 
     .list li:last-child,
@@ -824,19 +824,20 @@ import {
       color: rgba(0, 0, 0, 1);
       font-weight: 700;
       font-size: 16px;
+      line-height: 1.2;
     }
 
     .list .li-card .muted {
       color: rgba(0, 0, 0, 1);
       font-weight: 400;
-      font-size: 16px;
+      font-size: 14px;
       display: inline-block;
     }
 
     .dot-mark {
       flex: 0 0 26px;
-      width: 26px;
-      height: 26px;
+      width: 35px;
+      height: 35px;
       border-radius: var(--rounded-pill);
       border: 1.84px solid rgba(255, 186, 38, 1);
       display: inline-flex;

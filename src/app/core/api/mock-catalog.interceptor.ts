@@ -333,7 +333,7 @@ const MOCK_CARD_PRODUCTS = [
     // Раньше tier2_attrs был пустым ([]) — под 6 плашек (как на макете
     // Premium-карты: Booking, Airbnb, Netflix, ChatGPT, Uber, Amazon) моков
     // не было и посмотреть раскладку с 6 иконками было нельзя.
-    tier1_attrs: ['visa'], tier2_attrs: ['booking', 'airbnb', 'netflix', 'chatgpt', 'uber', 'amazon'],
+    tier1_attrs: ['visa'], tier2_attrs: ['booking', 'airbnb'],
     sort_order: 0,
     disable_purchase: false, disable_topup: false,
     min_topup_amount: 0, monthly_purchase_limit: 500000,

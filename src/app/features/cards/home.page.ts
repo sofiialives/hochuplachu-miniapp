@@ -379,7 +379,16 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
                 <div class="cat-visual">
                 <app-card-tile class="cat-tile" [product]="p" />
                 <div class="cat-info-head">
-                  <h3 class="cat-name">{{ p.name }}</h3>
+                  <h3 class="cat-name">
+                    @for (word of nameWords(p.name); track $index) {
+                      @if (isLatinWord(word)) {
+                        <span class="name-accent">{{ word }}</span>
+                      } @else {
+                        {{ word }}
+                      }
+                      {{ ' ' }}
+                    }
+                  </h3>
                   <p class="cat-desc">{{ p.description }}</p>
                 </div>
                 </div>
@@ -436,6 +445,7 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
       padding-bottom: 110px;
       max-width: 1200px; margin: 0 auto;
       display: flex; flex-direction: column;
+      gap: 20px
     }
     .email {  color: rgba(228, 228, 228, 1); }
     .email-dash::before {
@@ -649,10 +659,10 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
      */
     .product-label {
       text-align: center;
+      text-transform: uppercase;
       font-family: 'Syncopate Cyr';
       font-size: 24px; font-weight: 600;
       color: var(--color-ink);
-      margin: 0 0 var(--space-md);
     }
     @media (max-width: 560px) {
       .product-label { font-size: 19px; }
@@ -668,9 +678,6 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
     app-verification-banner,
     app-referral-banner {
       display: block;
-      margin-bottom: var(--space-md);
-    }
-    .primary-link {
       margin-bottom: var(--space-md);
     }
     .link-btn.add-card {
@@ -786,7 +793,7 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
       .catalog-login ::ng-deep button { padding: 7px 12px; }
     }
     
-    .grid { display: flex; flex-direction: column; gap: var(--space-lg); padding-top: 14px; }
+    .grid { display: flex; flex-direction: column; gap: 40px; padding-top: 14px; }
 
       
     .catalog-row {
@@ -867,6 +874,15 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
     .cat-name {
       font-size: clamp(26px, 2vw, 32px);
       color: var(--page-h, var(--color-ink));
+    }
+    /*
+     * Латинские слова в названии карты (например "PREMIUM") подсвечены
+     * акцентным цветом — как на странице самой карточки
+     * (product-detail.page.ts, .name-accent). --color-primary тут уже
+     * выставлен per-card через [style.--color-primary]="p.cta_color".
+     */
+    .name-accent {
+      color: var(--color-primary);
     }
     .cat-desc {
       font-size: 15px; line-height: 1.45;
@@ -981,7 +997,7 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
     .primary-link ::ng-deep button { padding: 14px 28px; height: auto; font-size: 15px; border-radius: 16px; }
 
            @media (min-width: 1024px) {
-      .primary-link ::ng-deep button { padding: 18px 42px; font-size: 28px; }
+      .primary-link ::ng-deep button { padding: 18px 42px; font-size: 20px; }
       .wrap { padding-left: 120px; padding-right: 120px; }  
       .email-dash::before {
           width: 216px; margin: 36px 0 12px;}
@@ -1049,6 +1065,17 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       case 'best-rate': return 'Лучший курс';
       case 'most-popular': return 'Выбор большинства';
     }
+  }
+  /*
+   * Тот же приём подсветки латинских слов в названии карты (например
+   * "PREMIUM"), что и на странице карточки (product-detail.page.ts,
+   * .name-accent) — здесь применяем к названию в каталоге карт.
+   */
+  protected nameWords(name: string): string[] {
+    return name.split(' ');
+  }
+  protected isLatinWord(word: string): boolean {
+    return /^[A-Za-z]+$/.test(word);
   }
   protected readonly cards = signal<UserCard[]>([]);
   protected readonly recentTx = signal<CardTransaction[] | null>(null);
