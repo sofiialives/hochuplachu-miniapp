@@ -521,6 +521,7 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
       position: relative;
       aspect-ratio: 1.65 / 1;
       width: 100%;
+      height: 500px;
       border-radius: 18px;
       padding: clamp(16px, 4.5cqi, 24px);
       color: var(--color-on-dark, #fff);

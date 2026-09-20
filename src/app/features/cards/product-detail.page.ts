@@ -629,16 +629,17 @@ import {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 18px;
       background: rgba(255, 255, 255, 1);
       border-radius: 12px;
       border: 1.43px solid rgba(200, 200, 200, 1);
       box-shadow: 0px 31.42px 74.85px -25.71px rgba(0, 0, 0, 0.15);
+      width: 52px;
+      height: 52px
     }
 
     .tier2 li img {
       width: 32px;
-      height: 32px;
+      height: auto;
       border-radius: 50%;
       object-fit: cover;
       background: #fff;
@@ -1423,8 +1424,7 @@ import {
       .price {
         text-align: left;
         font-size: 60px;
-        margin-bottom: 10px;
-        line-height: 1.2;
+        line-height: 1;
       }
 
       .divider {
