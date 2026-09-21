@@ -56,17 +56,17 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     .tabs { display: flex; padding: 6px; background: white; border-radius: var(--rounded-pill); align-self: flex-start; }
     .tabs button {
       min-width: 110px; text-align: center; white-space: nowrap;
-      background: transparent; color: rgba(0, 0, 0, 1); cursor: pointer;
+      background: transparent; color: var(--color-black); cursor: pointer;
       padding: 12px 16px; border-radius: var(--rounded-pill); font: inherit; font-size: 14px; font-weight: 500;
       transition: background var(--dur-quick) ease, color var(--dur-quick) ease;
     }
-    .tabs button.tab--on { background: rgba(255, 186, 38, 1); color: rgba(0, 0, 0, 1); font-weight: 600; }
+    .tabs button.tab--on { background: var(--color-brand-gold); color: var(--color-black); font-weight: 600; }
 
     .search { position: relative; width: 320px; max-width: 100%; align-self: flex-start; }
     .search-ico { position: absolute; left: 26px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; }
     .search input {
       width: 100%; padding: 16px 24px 16px 62px;
-      border: 1px solid rgba(200, 200, 200, 1); border-radius: var(--rounded-pill);
+      border: 1px solid var(--color-grey-200); border-radius: var(--rounded-pill);
       background: var(--color-surface); color: var(--color-ink); font-size: 16px;
     }
     .search input:focus { outline: none; border-color: var(--color-primary); }
@@ -82,16 +82,16 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       align-items: start; justify-items: start;
       min-width: 0;
       padding: 12px; border-radius: 14px;
-      background: rgba(255, 255, 255, 1);
-      box-shadow: 0px 26.44px 62.98px -21.64px rgba(0, 0, 0, 0.15);
+      background: var(--color-white);
+      box-shadow: 0px 26.44px 62.98px -21.64px var(--overlay-black-15);
       cursor: pointer; font: inherit; text-align: left;
       border: 1px solid transparent; transition: border-color var(--dur-quick) ease;
     }
-    .card:hover { border-color: rgba(255, 186, 38, 1); }
+    .card:hover { border-color: var(--color-brand-gold); }
     .card:active { transform: scale(.98); }
 
     .ico { grid-column: 1; grid-row: 1; display: flex; align-items: center; height: clamp(20px, 4vw + 10px, 28px); }
-    .flag { width: clamp(28px, 6vw + 12px, 40px); height: clamp(21px, 4.5vw + 9px, 30px); object-fit: cover; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,.16); flex-shrink: 0; }
+    .flag { width: clamp(28px, 6vw + 12px, 40px); height: clamp(21px, 4.5vw + 9px, 30px); object-fit: cover; border-radius: 6px; box-shadow: 0 1px 4px var(--overlay-black-16); flex-shrink: 0; }
     .emoji { font-size: clamp(18px, 4vw + 8px, 26px); line-height: 1; }
 
     .name-block { grid-column: 1; grid-row: 2; min-width: 0; max-width: 100%; }
@@ -100,14 +100,14 @@ import { formatAmount } from '../../core/currency/currency-symbols';
 
     .from {
       grid-column: 2; grid-row: 1; justify-self: end;
-      font-family: 'Syncopate Cyr'; color: rgba(114, 86, 22, 1); font-size: clamp(9px, 0.8vw + 7px, 11px);
-      background: rgba(244, 244, 244, 1);
+      font-family: 'Syncopate Cyr'; color: var(--color-badge-brown); font-size: clamp(9px, 0.8vw + 7px, 11px);
+      background: var(--color-grey-100);
       padding: 6px 9px; border-radius: var(--rounded-pill);
     }
     .badge {
       grid-column: 2; grid-row: 2; justify-self: end;
       font-family: 'Syncopate Cyr';
-      background: rgba(255, 186, 38, 1); color: rgba(0, 0, 0, 1);
+      background: var(--color-brand-gold); color: var(--color-black);
       padding: 5px 8px; font-size: clamp(6px, 0.4vw + 5px, 7px); text-transform: uppercase;
       border-radius: var(--rounded-pill);
     }

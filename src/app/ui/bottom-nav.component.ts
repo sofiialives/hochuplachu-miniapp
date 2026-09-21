@@ -66,7 +66,7 @@ import { AuthService } from '../core/auth/auth.service';
     
     .nav {
       view-transition-name: bottom-nav;
-      background: rgba(255, 255, 255, 1);
+      background: var(--color-white);
       border-radius: 72px;
       padding: 10px 16px;
       display: flex; flex-direction: column; align-items: center;
@@ -93,13 +93,13 @@ import { AuthService } from '../core/auth/auth.service';
       max-width: 220px;
       height: 6px;
       margin: 0 auto;
-      background: rgba(255, 186, 38, 1);
+      background: var(--color-brand-gold);
       border-radius: 72px;
       pointer-events: none;
     }
     a {
       display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
-      color: rgba(186, 186, 186, 1);
+      color: var(--color-grey-400);
       font-size: 13px; font-weight: 500;
       text-decoration: none;
       white-space: nowrap;
@@ -110,9 +110,9 @@ import { AuthService } from '../core/auth/auth.service';
     .ico { width: 24px; height: 24px; flex: 0 0 24px; color: inherit; }
     
     a.active {
-      color: rgba(255, 186, 38, 1);
+      color: var(--color-brand-gold);
       padding: 6px 12px;
-      background: rgba(255, 245, 222, 1);
+      background: var(--color-cream);
       border-radius: 128px;
     }
     a.active span { color: var(--color-ink); }
@@ -126,9 +126,7 @@ import { AuthService } from '../core/auth/auth.service';
       .nav-underline { width: 80%; max-width: none; }
     }
 
-    /* hiddenMobile — скрываем nav только на мобилке (например, на странице
-       product-detail, где снизу зафиксирована кнопка "Выпустить карту" и
-       nav-бар накладывался бы на неё). На desktop nav всегда виден. */
+    
     @media (max-width: 1023px) {
       .wrap.hidden-mobile { display: none; }
     }

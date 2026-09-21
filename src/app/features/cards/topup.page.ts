@@ -108,12 +108,12 @@ import { CurrencyPickerDialogComponent } from './currency-picker.dialog';
     .row { display: flex; justify-content: space-between; padding: 8px 0; }
     .green { color: var(--color-success); }
     .range-hint { font-size: 12px; color: var(--color-muted); margin-top: 6px; }
-    .range-hint--error { color: var(--color-danger, #DC3545); }
+    .range-hint--error { color: var(--color-danger, var(--color-error)); }
     .blocked {
       display: flex; flex-direction: column; gap: var(--space-md);
       padding: var(--space-md);
-      background: color-mix(in srgb, var(--color-danger, #c0392b) 8%, var(--color-canvas));
-      border: 1px solid var(--color-danger, #c0392b);
+      background: color-mix(in srgb, var(--color-danger, var(--color-red)) 8%, var(--color-canvas));
+      border: 1px solid var(--color-danger, var(--color-red));
       border-radius: var(--rounded-md);
       color: var(--color-ink);
       margin-bottom: var(--space-md);

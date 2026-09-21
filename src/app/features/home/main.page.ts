@@ -178,7 +178,6 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       h2 { font-size: 19px; }
     }
 
-
     .hero {
       display: flex; align-items: center; gap: 10px;
       padding: 14px 14px;
@@ -190,50 +189,31 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     a.hero { transition: transform var(--dur-quick) var(--ease-out), box-shadow var(--dur-quick) ease; }
     a.hero:hover { transform: translateY(-2px); box-shadow: var(--shadow-card-hover); }
 
-    .hero--promo { background-color: white; box-shadow: 0px 26.44px 62.98px -21.64px rgba(0, 0, 0, 0.15); }
+    .hero--promo { background-color: white; box-shadow: 0px 26.44px 62.98px -21.64px var(--overlay-black-15); }
     .hero-body { flex: 1; min-width: 0; }
     .hero-title { font-family: 'Syncopate Cyr';
       text-transform: uppercase;
       font-size: 12px; }
-    .hero-sub { color: rgba(0, 0, 0, 1); font-size: 12px; }
-    /*
-     * Точка-разделитель "N карта · пополнение и реквизиты" — раньше был
-     * текстовым символом "·" (наследовал цвет текста), теперь отдельный
-     * кружок 3×3px фирменного жёлтого — inline-block, чтобы не выпадал из
-     * потока строки.
-     */
+    .hero-sub { color: var(--color-black); font-size: 12px; }
+    
     .hero-sub .dot-accent {
       display: inline-block;
       width: 3px;
       height: 3px;
       border-radius: 50%;
-      background: rgba(255, 186, 38, 1);
+      background: var(--color-brand-gold);
       vertical-align: middle;
     }
     .hero-cta { text-decoration: none; flex: 0 0 auto; }
-    /*
-     * hero-arr раньше был текстовым "→" (font-size задавал размер стрелки).
-     * Теперь это svg-иконка фиксированного размера 18×18 — одинакового на
-     * мобилке и десктопе, только цвет свой (rgba(137,137,137,1), не
-     * дизайн-токен var(--color-muted)).
-     */
-    .hero-arr { color: rgba(137, 137, 137, 1); width: 18px; height: 18px; flex: 0 0 18px; }
+    
+    .hero-arr { color: var(--color-grey-600); width: 18px; height: 18px; flex: 0 0 18px; }
 
-    /*
-     * Только для состояния «карта уже есть» (.hero--cards): свои размеры
-     * заголовка/подписи (20px / 16px, одинаково на мобилке и десктопе —
-     * поэтому селектор без media-query, специфичность выше и базовых
-     * правил, и правила внутри @media(min-width:1024px) ниже) и свой
-     * отступ 20px между визуалом карты и текстовым блоком. Flex-gap
-     * у .hero общий на все дочерние элементы (visual/body/arrow), поэтому
-     * тут gap обнулён и нужный интервал задан явно через margin-right у
-     * .hero-visual, а расстояние до стрелки сохранено отдельным margin-left.
-     */
+    
     .hero--cards { gap: 0; }
     .hero--cards .hero-visual { margin-right: 20px; }
     .hero--cards .hero-arr { margin-left: 10px; }
-    .hero--cards .hero-title { font-size: 16px; }
-    .hero--cards .hero-sub { font-size: 14px; }
+    .hero--cards .hero-title { font-size: 20px; }
+    .hero--cards .hero-sub { font-size: 16px; }
     .hero-spin {
       width: 36px; height: 36px; flex: 0 0 36px;
       color: var(--color-primary-ink);
@@ -242,20 +222,19 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     @keyframes main-spin { to { transform: rotate(360deg); } }
     @media (prefers-reduced-motion: reduce) { .hero-spin { animation: none; } }
 
-    /* hero-visual: 145×84 (было 72×48). */
+    
     .hero-visual { position: relative; width: 145px; height: 84px; flex: 0 0 145px; }
     .mini-card {
       position: absolute; inset: 0;
       border-radius: 8px;
-      background: linear-gradient(135deg, #2563eb 0%, #0c1e5d 100%);
-      box-shadow: 0 4px 12px rgba(20,20,19,.18);
+      background: linear-gradient(135deg, var(--card-blue-from) 0%, var(--card-blue-to) 100%);
+      box-shadow: 0 4px 12px var(--overlay-shadow-18);
     }
     .mini-card--back {
       transform: translate(8px, -8px) rotate(4deg);
-      background: linear-gradient(135deg, #181715 0%, #2d2a25 100%);
+      background: linear-gradient(135deg, var(--card-dark-from) 0%, var(--card-dark-to) 100%);
       z-index: -1;
     }
-
 
     .sec-head {
       display: flex; align-items: center; justify-content: space-between;
@@ -263,7 +242,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       gap: 4px 12px;
     }
 
-    .sec-link { color: rgba(137, 137, 137, 1); font-size: 14px; font-weight: 500; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
+    .sec-link { color: var(--color-grey-600); font-size: 14px; font-weight: 500; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
     .sec-link:hover { text-decoration: underline; }
     .top-row {
       display: flex; flex-direction: column;
@@ -285,7 +264,6 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     .soon-title { font-weight: 600; }
     .soon-sub { color: var(--color-muted); font-size: 13px; margin-top: 4px; }
 
-
     .esim-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 36px; margin-top: 20px }
 
     .esim-grid .card:nth-child(n+5) { display: none; }
@@ -303,17 +281,17 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       align-items: start; justify-items: start;
       min-width: 0;
       padding: 12px; border-radius: 14px;
-      background: rgba(255, 255, 255, 1);
-      box-shadow: 0px 26.44px 62.98px -21.64px rgba(0, 0, 0, 0.15);
+      background: var(--color-white);
+      box-shadow: 0px 26.44px 62.98px -21.64px var(--overlay-black-15);
       text-decoration: none; color: var(--color-ink);
       text-align: left;
       border: 1px solid transparent; transition: border-color var(--dur-quick) ease;
     }
-    .card:hover { border-color: rgba(255, 186, 38, 1); }
+    .card:hover { border-color: var(--color-brand-gold); }
     .card:active { transform: scale(.98); }
 
     .ico { grid-column: 1; grid-row: 1; display: flex; align-items: center; height: clamp(20px, 4vw + 10px, 28px); }
-    .flag { width: clamp(28px, 6vw + 12px, 40px); height: clamp(21px, 4.5vw + 9px, 30px); object-fit: cover; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,.16); flex-shrink: 0; }
+    .flag { width: clamp(28px, 6vw + 12px, 40px); height: clamp(21px, 4.5vw + 9px, 30px); object-fit: cover; border-radius: 6px; box-shadow: 0 1px 4px var(--overlay-black-16); flex-shrink: 0; }
     .emoji { font-size: clamp(18px, 4vw + 8px, 26px); line-height: 1; }
 
     .name-block { grid-column: 1; grid-row: 2; min-width: 0; max-width: 100%; }
@@ -322,32 +300,31 @@ import { formatAmount } from '../../core/currency/currency-symbols';
 
     .from {
       grid-column: 2; grid-row: 1; justify-self: end;
-      font-family: 'Syncopate Cyr'; color: rgba(114, 86, 22, 1); font-size: clamp(9px, 0.8vw + 7px, 11px);
-      background: rgba(244, 244, 244, 1);
+      font-family: 'Syncopate Cyr'; color: var(--color-badge-brown); font-size: clamp(9px, 0.8vw + 7px, 11px);
+      background: var(--color-grey-100);
       padding: 6px 9px; border-radius: var(--rounded-pill);
     }
     .badge {
       grid-column: 2; grid-row: 2; justify-self: end;
       font-family: 'Syncopate Cyr';
-      background: rgba(255, 186, 38, 1); color: rgba(0, 0, 0, 1);
+      background: var(--color-brand-gold); color: var(--color-black);
       padding: 5px 8px; font-size: clamp(6px, 0.4vw + 5px, 7px); text-transform: uppercase;
       border-radius: var(--rounded-pill);
     }
-
 
     .svc-card {
       position: relative;
       display: flex; flex-direction: column; align-items: center; gap: 8px;
       padding: 14px var(--space-sm);
-      background: rgba(255, 255, 255, 1);
+      background: var(--color-white);
       border: 1px solid transparent;
       border-radius: 18px;
-      box-shadow: 0px 26.44px 62.98px -21.64px rgba(0, 0, 0, 0.15);
+      box-shadow: 0px 26.44px 62.98px -21.64px var(--overlay-black-15);
       text-decoration: none; color: var(--color-ink);
       text-align: center;
       transition: border-color var(--dur-quick) ease;
     }
-    .svc-card:hover { border-color: rgba(255, 186, 38, 1); }
+    .svc-card:hover { border-color: var(--color-brand-gold); }
     .svc-card:active { transform: scale(.98); }
     .svc-ico { width: 44px; height: 44px; border-radius: 12px; object-fit: contain; }
     .svc-ico--stub {
@@ -363,10 +340,9 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     .svc-hot {
       position: absolute; top: 12px; left: 8px;
       padding: 4px; border-radius: var(--rounded-pill);
-      background: rgba(255, 186, 38, 1); color: rgba(0, 0, 0, 1);
+      background: var(--color-brand-gold); color: var(--color-black);
       font-family: 'Syncopate Cyr'; font-size: 6px; text-transform: uppercase;
     }
-
 
     @media (min-width: 1024px) {
       .card { grid-template-columns: 60px 1fr; column-gap: 10px; row-gap: 8px; padding: 16px; }
@@ -379,18 +355,14 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       .wrap { padding-right: 120px; padding-left: 120px }
       .hero-title {
       font-size: 16px; }
-      .hero--cards .hero-title { font-size: 20px; }
-      .hero--cards .hero-sub { font-size: 16px; }
 
       .esim-grid { grid-template-columns: repeat(4, 1fr); }
       .esim-grid .card:nth-child(n+5) { display: grid; }
-
 
       .svc-grid { grid-template-columns: repeat(5, 1fr); }
       .svc-grid app-service-hero-card { grid-column: span 2; }
       .svc-grid .svc-card:nth-child(n+8) { display: flex; }
     }
-
 
     .skel-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); margin-bottom: 36px; }    .skel {
       display: block; height: 92px; border-radius: var(--rounded-lg);
@@ -400,13 +372,12 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     }
     .skel::after {
       content: ""; position: absolute; inset: 0;
-      background: linear-gradient(100deg, transparent 32%, color-mix(in srgb, #fff 55%, transparent) 50%, transparent 68%);
+      background: linear-gradient(100deg, transparent 32%, color-mix(in srgb, var(--color-white) 55%, transparent) 50%, transparent 68%);
       transform: translateX(-100%);
       animation: main-skel 1.6s ease-in-out infinite;
     }
     @keyframes main-skel { to { transform: translateX(100%); } }
     @media (prefers-reduced-motion: reduce) { .skel::after { animation: none; } }
-
 
     @media (max-width: 1023px) {
       .esim-grid { grid-template-columns: repeat(2, 1fr); }
@@ -482,7 +453,6 @@ export class MainPage implements OnInit, OnDestroy {
       this.startIssuePollIfNeeded();
     }
   }
-
 
   private static readonly SERVICES_TOP = 8;
 

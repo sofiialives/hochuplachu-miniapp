@@ -134,12 +134,12 @@ interface DayGroup {
     .dim { color: var(--color-muted); padding: var(--space-lg) 0; }
 
     .head { display: flex; gap: var(--space-md); align-items: center; margin-bottom: var(--space-sm); }
-    .flag { width: 100px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, .16); }
+    .flag { width: 100px; border-radius: 10px; box-shadow: 0 2px 8px var(--overlay-black-16); }
     .emoji { font-size: 28px; line-height: 1; }
     .head-body { min-width: 0; }
-    .meta { font-size: 14px; color: rgba(0, 0, 0, 1); }
+    .meta { font-size: 14px; color: var(--color-black); }
     .meta b {font-family: 'Gilroy'; color: var(--color-primary-ink); font-weight: 400; }
-    .lead { font-size: 14px; color: rgba(0, 0, 0, 1); margin-bottom: 20px; }
+    .lead { font-size: 14px; color: var(--color-black); margin-bottom: 20px; }
 
     .filters { display: flex; flex-direction: column; gap: 8px; margin-bottom: var(--space-md); }
     .chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
@@ -147,7 +147,7 @@ interface DayGroup {
     .chip {
       display: flex; align-items: center; gap: 12px;
       padding: 12px 18px; border-radius: 16px; white-space: nowrap;
-      background: var(--color-surface); color: rgba(0, 0, 0, 1);
+      background: var(--color-surface); color: var(--color-black);
       cursor: pointer; font: inherit; font-size: 13px; font-weight: 500;
       transition: background var(--dur-quick) ease, border-color var(--dur-quick) ease, color var(--dur-quick) ease;
     }
@@ -168,26 +168,26 @@ interface DayGroup {
     .row-main { width: 100%; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
     .row-name { font-family: 'Gilroy'; font-weight: 500; font-size: 15px; }
     .row-days { font-weight: 400; font-size: 13px; }
-    .row-sub { font-size: 13px; color: rgba(0, 0, 0, 1); }
+    .row-sub { font-size: 13px; color: var(--color-black); }
     .row-price { display: flex; flex-direction: row; align-items: baseline; gap: 8px; }
     .row-price b { font-family: 'Gilroy'; font-weight: 500; font-size: 17px; color: var(--color-primary-ink); }
-    .per { font-family: 'Gilroy'; font-weight: 400; font-size: 12px; color: rgba(0, 0, 0, 1); }
+    .per { font-family: 'Gilroy'; font-weight: 400; font-size: 12px; color: var(--color-black); }
     .chev { position: absolute; top: 16px; right: 14px; color: var(--color-muted); font-size: 22px; }
 
-    .grp { margin-bottom: 16px; box-shadow: 0px 26.44px 62.98px -21.64px rgba(0, 0, 0, 0.15); border-radius: var(--rounded-lg); overflow: hidden; }
+    .grp { margin-bottom: 16px; box-shadow: 0px 26.44px 62.98px -21.64px var(--overlay-black-15); border-radius: var(--rounded-lg); overflow: hidden; }
     .grp-head {
-      width: 100%; box-shadow: 0px 26.44px 62.98px -21.64px rgba(0, 0, 0, 0.15); display: flex; align-items: center; gap: 20px; padding: 24px;
+      width: 100%; box-shadow: 0px 26.44px 62.98px -21.64px var(--overlay-black-15); display: flex; align-items: center; gap: 20px; padding: 24px;
       background: white; cursor: pointer; text-align: left;
     }
     .grp-title { font-weight: 600; font-size: 16px; }
-    .grp-count { color: rgba(0, 0, 0, 1); font-size: 14px; flex: 1; }
+    .grp-count { color: var(--color-black); font-size: 14px; flex: 1; }
     .grp-chev { transition: transform var(--dur-quick) ease; color: var(--color-muted); font-size: 24px; }
     .grp-chev--open { transform: rotate(180deg); }
-    .grp-body { padding: 40px; background: rgba(255, 255, 255, 0.36); backdrop-filter: blur(11.3px); }
+    .grp-body { padding: 40px; background: var(--overlay-white-36); backdrop-filter: blur(11.3px); }
     .vol { margin-bottom: 10px; }
     .vol-head { display: flex; justify-content: space-between; align-items: baseline; margin: 0 4px 6px; }
-    .vol-label { font-size: 14px; color: rgba(0, 0, 0, 1); }
-    .vol-count { font-size: 14px; color: rgba(0, 0, 0, 1); }
+    .vol-label { font-size: 14px; color: var(--color-black); }
+    .vol-count { font-size: 14px; color: var(--color-black); }
     .link {
       align-self: flex-start; background: none; border: 0; padding: 0;
       color: var(--color-primary-ink); cursor: pointer; font: inherit; font-size: 13px;

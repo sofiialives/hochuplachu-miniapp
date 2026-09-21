@@ -224,10 +224,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       text-align: center;
     }
 
-
-    /* =========================
-       HEADER
-       ========================= */
+    
 
     .head {
       display: flex;
@@ -262,10 +259,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       }
     }
 
-
-    /* =========================
-       DENOMINATIONS
-       ========================= */
+    
 
     .denoms {
       display: grid;
@@ -279,10 +273,10 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       align-items: center;
       gap: 12px;
       padding: var(--space-md) var(--space-sm);
-      background: rgba(255, 255, 255, 1);
+      background: var(--color-white);
       border: 1px solid transparent;
       border-radius: var(--rounded-lg);
-      box-shadow: 0px 27.22px 64.84px -22.27px rgba(0, 0, 0, 0.15);
+      box-shadow: 0px 27.22px 64.84px -22.27px var(--overlay-black-15);
       cursor: pointer;
       text-align: center;
       transition:
@@ -316,7 +310,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     }
 
     .denom-price {
-      color: rgba(114, 86, 22, 1);
+      color: var(--color-badge-brown);
       font-family: 'Gilroy', sans-serif;
       font-size: 15px;
     }
@@ -346,10 +340,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       }
     }
 
-
-    /* =========================
-       FORM
-       ========================= */
+    
 
     .form {
       display: flex;
@@ -367,7 +358,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       font-family: 'Gilroy';
       font-size: 13px;
       font-weight: 600;
-      color: rgba(0, 0, 0, 1);
+      color: var(--color-black);
     }
 
     .f-hint {
@@ -378,7 +369,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       gap: 4px;
       font-size: 13px;
       font-weight: 600;
-      color: rgba(0, 0, 0, 1);
+      color: var(--color-black);
       margin-top: 20px;
     }
 
@@ -411,16 +402,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
         flex: 0 0 11px;
       }
 
-      /*
-       * ОБЫЧНЫЕ INPUT
-       *
-       * Было:
-       * height: 62px
-       * font-size: 20px
-       * padding: 0 14px
-       *
-       * Теперь ещё компактнее.
-       */
+      
       .form ::ng-deep input {
         height: 52px;
         min-height: 52px;
@@ -430,10 +412,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       }
     }
 
-
-    /* =========================
-       CREDIT INPUT
-       ========================= */
+    
 
     .credit {
       display: flex;
@@ -456,7 +435,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
 
   padding: 0 14px;
 
-  border: 1.5px solid rgba(211, 211, 211, 1);
+  border: 1.5px solid var(--color-grey-300);
 
   border-radius: 14px;
 
@@ -479,10 +458,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
 }
 
     @media (min-width: 1024px) {
-      /*
-       * Ровно те же размеры, что и у обычного input:
-       * 52px / 12px / 16px / 14px.
-       */
+      
       .credit__val {
     height: 52px;
 
@@ -496,10 +472,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       }
     }
 
-
-    /* =========================
-       PRESETS
-       ========================= */
+    
 
     .presets {
       display: flex;
@@ -514,7 +487,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       gap: 4px;
       padding: 8px 14px;
       border-radius: var(--rounded-pill);
-      background: rgba(255, 255, 255, 1);
+      background: var(--color-white);
       color: var(--color-ink);
       border: 1.5px solid transparent;
       cursor: pointer;
@@ -532,8 +505,8 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     }
 
     .preset.on {
-      border: 1.5px solid rgba(255, 186, 38, 1);
-      background: rgba(250, 240, 218, 1);
+      border: 1.5px solid var(--color-brand-gold);
+      background: var(--color-cream-soft);
       color: var(--color-ink);
     }
 
@@ -558,10 +531,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       }
     }
 
-
-    /* =========================
-       ORDER
-       ========================= */
+    
 
     .order {
       display: flex;
@@ -625,10 +595,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       }
     }
 
-
-    /* =========================
-       OTHER STATES
-       ========================= */
+    
 
     .soon {
       padding: var(--space-lg) var(--space-md);
@@ -680,7 +647,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       background: linear-gradient(
         100deg,
         transparent 32%,
-        color-mix(in srgb, #fff 55%, transparent) 50%,
+        color-mix(in srgb, var(--color-white) 55%, transparent) 50%,
         transparent 68%
       );
       transform: translateX(-100%);

@@ -112,18 +112,18 @@ import { formatReferralAmount } from '../../core/referral/referral-format';
       padding: 2.4px;
       background: radial-gradient(
         147.58% 147.58% at 53.03% 53.33%,
-        #FFBA26 0%,
-        rgba(255, 186, 38, 0) 100%
+        var(--color-brand-gold) 0%,
+        var(--color-brand-gold-transparent) 100%
       );
 
       -webkit-mask:
-        linear-gradient(#fff 0 0) content-box,
-        linear-gradient(#fff 0 0);
+        linear-gradient(var(--color-white) 0 0) content-box,
+        linear-gradient(var(--color-white) 0 0);
       -webkit-mask-composite: xor;
 
       mask:
-        linear-gradient(#fff 0 0) content-box,
-        linear-gradient(#fff 0 0);
+        linear-gradient(var(--color-white) 0 0) content-box,
+        linear-gradient(var(--color-white) 0 0);
       mask-composite: exclude;
 
       pointer-events: none;
@@ -141,7 +141,7 @@ import { formatReferralAmount } from '../../core/referral/referral-format';
     }
 
     .text span {
-      color: rgba(0, 0, 0, 1);
+      color: var(--color-black);
     }
 
     .arrow {
@@ -165,13 +165,7 @@ import { formatReferralAmount } from '../../core/referral/referral-format';
         flex: none;
       }
 
-      /*
-       * На десктопе в stacked-варианте (профиль/главная в колонку)
-       * иконка со свечением визуально мельче остального контента —
-       * увеличиваем сам символ до 32×32 и круг-подсветку вокруг него
-       * до 60×60 (было 22×22 / 36×36, см. .icon-wrap выше). Инсет
-       * ::before пересчитан под новый размер: (60-32)/2 = 14px.
-       */
+      
       .banner.stacked .icon-wrap {
         width: 32px;
         height: 32px;

@@ -17,11 +17,13 @@ import { Component, input, output } from '@angular/core';
     :host { display: block; }
     
     .pay {
-      width: 100%; padding: 14px 28px;
+      width: 100%; padding: 14px 28px; font-size: 15px;
       display: flex; align-items: center; justify-content: center; gap: 10px;
-      background: rgba(255, 186, 38, 1); color: var(--color-on-primary);
+      background: var(--color-brand-gold); color: var(--color-on-primary);
       border-radius: var(--rounded-lg);
-      font-size: 16px; font-weight: 500;
+      
+      font-family: 'Raleway', 'Onest', sans-serif;
+      font-weight: 500;
       transition:
         box-shadow var(--dur-quick) ease,
         transform var(--dur-quick) var(--ease-out),
@@ -35,9 +37,10 @@ import { Component, input, output } from '@angular/core';
     }
     .pay:disabled { opacity: .6; cursor: not-allowed; }
     .sbp-logo { width: 18px; height: 18px; }
-
     @media (min-width: 1024px) {
-      font-size: 20px; padding: 18px 42px; 
+      .pay {
+        padding: 18px 42px; font-size: 20px; font-weight: 500;
+      }
     }
   `],
 })

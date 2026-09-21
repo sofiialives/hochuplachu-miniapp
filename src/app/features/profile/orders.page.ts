@@ -7,10 +7,6 @@ import { formatAmount } from '../../core/currency/currency-symbols';
 
 const PAGE_SIZE = 25;
 
-// ProfileOrdersPage — «/profile/orders»: единая история заказов всех типов
-// (GET /profile/orders — union card_order|topup|renewal|esim_order|
-// esim_recharge|service_order). Записи с типом/статусом/суммой; клик ведёт
-// на страницу заказа (eSIM/сервисы) или payment-страницу (карточные типы).
 @Component({
   selector: 'app-profile-orders',
   standalone: true,
@@ -105,16 +101,14 @@ const PAGE_SIZE = 25;
     }
     .skel::after {
       content: ""; position: absolute; inset: 0;
-      background: linear-gradient(100deg, transparent 32%, color-mix(in srgb, #fff 55%, transparent) 50%, transparent 68%);
+      background: linear-gradient(100deg, transparent 32%, color-mix(in srgb, var(--color-white) 55%, transparent) 50%, transparent 68%);
       transform: translateX(-100%);
       animation: po-skel 1.6s ease-in-out infinite;
     }
     @keyframes po-skel { to { transform: translateX(100%); } }
     @media (prefers-reduced-motion: reduce) { .skel::after { animation: none; } }
 
-    /* Тот же боковой отступ на desktop, что и на остальных страницах
-       (profile.page.ts, esim.page.ts, service-detail.page.ts и т.д.) —
-       здесь его раньше не было, .wrap упирался в края экрана. */
+    
     @media (min-width: 1024px) {
       .wrap { padding: 0 120px; }
     }
@@ -155,8 +149,6 @@ export class ProfileOrdersPage implements OnInit {
     this.load(this.page + 1);
   }
 
-  // open — ссылки на страницы заказов: у eSIM/сервисов — view-страницы;
-  // карточные типы и recharge живут на payment-страницах (они же view).
   protected open(it: ProfileOrderItem): void {
     switch (it.type) {
       case 'esim_order': void this.router.navigate(['/esim/orders', it.id]); break;
@@ -217,7 +209,7 @@ export class ProfileOrdersPage implements OnInit {
     return 'neutral';
   }
 
-  /** Подпись под суммой: «промокод −100 ₽». Пусто, если промокода не было. */
+  
   protected discountOf(it: ProfileOrderItem): string {
     const d = it.discount_amount ?? 0;
     if (d <= 0) return '';
@@ -227,8 +219,7 @@ export class ProfileOrdersPage implements OnInit {
 
   protected amountOf(it: ProfileOrderItem): string {
     if (it.amount != null && it.currency) return formatAmount(it.amount, it.currency);
-    // card_order не несёт currency — показываем оплаченную сумму; база
-    // payment_currency-направления («RUB_SBP» → RUB) как код валюты.
+
     if (it.amount_payment != null && it.amount_payment > 0 && it.payment_currency) {
       return formatAmount(it.amount_payment, it.payment_currency.split('_')[0]);
     }

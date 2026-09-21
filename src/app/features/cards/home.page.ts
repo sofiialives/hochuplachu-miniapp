@@ -447,7 +447,7 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
       display: flex; flex-direction: column;
       gap: 20px
     }
-    .email {  color: rgba(228, 228, 228, 1); }
+    .email {  color: var(--color-grey-250); }
     .email-dash::before {
       content: '';
       display: block;
@@ -523,9 +523,9 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
       width: 100%;
       border-radius: 18px;
       padding: clamp(16px, 4.5cqi, 24px);
-      color: var(--color-on-dark, #fff);
-      background: linear-gradient(135deg, #2563eb 0%, #1e40af 60%, #0c1e5d 100%);
-      box-shadow: 0 8px 24px rgba(20, 20, 19, .14);
+      color: var(--color-on-dark, var(--color-white));
+      background: linear-gradient(135deg, var(--card-blue-from) 0%, var(--card-blue-mid) 60%, var(--card-blue-to) 100%);
+      box-shadow: 0 8px 24px var(--overlay-shadow-14);
       overflow: hidden;
       display: flex; flex-direction: column;
       container-type: inline-size;
@@ -534,12 +534,12 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
     .bank::after {
       content: ""; position: absolute; inset: 0;
       background:
-        linear-gradient(180deg, rgba(0,0,0,.28) 0%, transparent 30%, transparent 58%, rgba(0,0,0,.55) 100%),
-        radial-gradient(circle at top right, rgba(255,255,255,.14), transparent 55%);
+        linear-gradient(180deg, var(--overlay-black-28) 0%, transparent 30%, transparent 58%, var(--overlay-black-55) 100%),
+        radial-gradient(circle at top right, var(--overlay-white-14), transparent 55%);
       pointer-events: none;
     }
-    .bank[data-gradient="dark"] { background: linear-gradient(135deg, #181715 0%, #2d2a25 100%); }
-    .bank[data-gradient="gold"] { background: linear-gradient(135deg, #d4a017 0%, #8c6a0b 100%); }
+    .bank[data-gradient="dark"] { background: linear-gradient(135deg, var(--card-dark-from) 0%, var(--card-dark-to) 100%); }
+    .bank[data-gradient="gold"] { background: linear-gradient(135deg, var(--card-gold-from) 0%, var(--card-gold-to) 100%); }
 
     .bank-top {
       position: relative; z-index: 1;
@@ -553,9 +553,9 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
 
     .reveal {
       display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(0,0,0,.30); border: none;
+      background: var(--overlay-black-30); border: none;
       padding: 6px 12px; border-radius: 999px;
-      color: var(--color-on-dark, #fff); opacity: .95;
+      color: var(--color-on-dark, var(--color-white)); opacity: .95;
       font-size: clamp(13px, 3.6cqi, 16px); cursor: pointer; white-space: nowrap;
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
@@ -577,11 +577,11 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
     .field .k {
       font-size: clamp(11px, 3.2cqi, 14px); text-transform: none; letter-spacing: .01em;
       opacity: .85; margin-bottom: 4px;
-      text-shadow: 0 1px 2px rgba(0,0,0,.4);
+      text-shadow: 0 1px 2px var(--overlay-black-40);
     }
     .field .v {
       font-weight: 600; font-size: clamp(18px, 5.2cqi, 22px); overflow-wrap: anywhere;
-      text-shadow: 0 1px 3px rgba(0,0,0,.5);
+      text-shadow: 0 1px 3px var(--overlay-black-50);
     }
     .field .v.balance { font-size: clamp(24px, 7cqi, 32px); letter-spacing: .01em; }
     .field .v.mono { font-family: var(--font-mono); letter-spacing: .06em; }
@@ -606,7 +606,7 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
       background: linear-gradient(100deg,
         transparent 32%,
         color-mix(in srgb, var(--color-primary) 12%, transparent) 45%,
-        color-mix(in srgb, #fff 60%, transparent) 50%,
+        color-mix(in srgb, var(--color-white) 60%, transparent) 50%,
         color-mix(in srgb, var(--color-primary) 12%, transparent) 55%,
         transparent 68%);
       transform: translateX(-100%);
@@ -638,25 +638,20 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
     
     .no-card {
       border-radius: 20px;
-      border: 2px solid rgba(205, 205, 205, 1); 
+      border: 2px solid var(--color-grey-350); 
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      padding: var(--space-md);
       text-align: center;
       padding: 24px 16px;
       margin-bottom: 18px;
     }
     .no-card-ico {
       width: 84px; height: 84px;  }
-    .no-card-title { font-size: 20px; font-weight: 600; color: rgba(0, 0, 0, 1); margin-bottom: 20px;}
+    .no-card-title { font-size: 20px; font-weight: 600; color: var(--color-black); margin-bottom: 20px;}
     .no-card-sub { font-size: 13px; color: var(--color-muted); }
     .no-card .primary-link { margin-top: 6px; }
 
     
-    /*
-     * Размеры продублированы 1:1 с .catalog-head h1 (тот же паттерн
-     * заголовка страницы: 24px по умолчанию → 19px на узких мобильных
-     * (≤560px, см. ниже) → 36px на десктопе (≥1024px, см. media-запрос).
-     */
+    
     .product-label {
       text-align: center;
       text-transform: uppercase;
@@ -668,13 +663,7 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
       .product-label { font-size: 19px; }
     }
 
-    /*
-     * Единый вертикальный ритм для стопки блоков на "карте с топапом":
-     * product-label → limited-banner/renew-cta/extra (margin-bottom уже
-     * выше) → verification-banner → referral-banner → "Пополнить" →
-     * "+ Выпустить ещё карту" → история. Раньше .wrap не задавал gap и
-     * часть этих блоков шла впритык друг к другу без отступа.
-     */
+    
     app-verification-banner,
     app-referral-banner {
       display: block;
@@ -724,8 +713,8 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
     .limited-banner {
       display: flex; flex-direction: column; gap: 4px;
       padding: var(--space-md);
-      background: color-mix(in srgb, var(--color-danger, #c0392b) 9%, var(--color-canvas));
-      border: 1px solid var(--color-danger, #c0392b);
+      background: color-mix(in srgb, var(--color-danger, var(--color-red)) 9%, var(--color-canvas));
+      border: 1px solid var(--color-danger, var(--color-red));
       border-radius: var(--rounded-md);
       color: var(--color-ink);
       margin-bottom: var(--space-md);
@@ -747,8 +736,8 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
     }
     .renew-cta:hover { transform: translateY(-1px); box-shadow: var(--shadow-primary-hover); }
     .renew-cta--expired {
-      background: color-mix(in srgb, var(--color-danger, #c0392b) 9%, var(--color-canvas));
-      border-color: var(--color-danger, #c0392b);
+      background: color-mix(in srgb, var(--color-danger, var(--color-red)) 9%, var(--color-canvas));
+      border-color: var(--color-danger, var(--color-red));
     }
     .renew-cta__head { display: flex; flex-direction: column; gap: 2px; }
     .renew-cta__title { font-weight: 600; font-size: 15px; }
@@ -757,13 +746,13 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
       margin-top: 8px;
       padding: 12px 16px;
       background: var(--color-primary);
-      color: var(--color-on-primary, #fff);
+      color: var(--color-on-primary, var(--color-white));
       border-radius: var(--rounded-md);
       text-align: center;
       font-weight: 600;
       font-size: 15px;
     }
-    .renew-cta--expired .renew-cta__btn { background: var(--color-danger, #c0392b); color: #fff; }
+    .renew-cta--expired .renew-cta__btn { background: var(--color-danger, var(--color-red)); color: var(--color-white); }
     .renew-cta__note { font-size: 12px; color: var(--color-muted); text-align: center; margin-top: 4px; }
 
     
@@ -835,7 +824,7 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
     }
     .catalog-row:hover {
       transform: translateY(-2px);
-      box-shadow: 0 16px 32px rgba(20, 20, 19, .10);
+      box-shadow: 0 16px 32px var(--overlay-shadow-10);
       border-color: var(--color-primary);
     }
     .cat-tile {
@@ -867,7 +856,7 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
     .cat-info--band .metric-lbl,
     .cat-info--band .metric-val,
     .cat-info--band .metric-cur {
-      color: rgba(0, 0, 0, 1);
+      color: var(--color-black);
     }
     .cat-info-head { display: flex; align-items: center; text-align: center; flex-direction: column; gap: 12px; margin-top: 26px; }
     
@@ -875,12 +864,7 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
       font-size: clamp(26px, 2vw, 32px);
       color: var(--page-h, var(--color-ink));
     }
-    /*
-     * Латинские слова в названии карты (например "PREMIUM") подсвечены
-     * акцентным цветом — как на странице самой карточки
-     * (product-detail.page.ts, .name-accent). --color-primary тут уже
-     * выставлен per-card через [style.--color-primary]="p.cta_color".
-     */
+    
     .name-accent {
       color: var(--color-primary);
     }
@@ -903,14 +887,14 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
     .metric-lbl {
       font-weight: 500;
       font-size: 12px; text-transform: uppercase;
-      color: rgba(0, 0, 0, 1);
+      color: var(--color-black);
       white-space: nowrap;
       margin-bottom: 4px;
     }
     .metric-val {
       font-family: "Syncopate Cyr";
       font-size: 17px;
-      color: rgba(0, 0, 0, 1);
+      color: var(--color-black);
       line-height: 1.1;
       white-space: nowrap;
     }
@@ -918,16 +902,10 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
 
     .metric--currency { text-align: right; }
     .metric--rate .metric-val { font-size: 14px; color: var(--page-body, var(--color-muted)); font-weight: 500; }
-    /*
-     * В каталоге карт курс должен быть обычным чёрным, а не цветом темы
-     * конкретной карты (--page-h/--page-body задаются выше на .catalog-row
-     * под heading_color/body_color товара). Переопределяем эти переменные
-     * прямо на host app-rate-quote — внутренние стили компонента через
-     * var(--page-body, ...) подхватят этот чёрный вместо унаследованного.
-     */
+    
     .metric-quote {
-      --page-h: rgba(0, 0, 0, 1);
-      --page-body: rgba(0, 0, 0, 1);
+      --page-h: var(--color-black);
+      --page-body: var(--color-black);
     }
     .metric--rate app-rate-quote {
       display: block;
@@ -951,10 +929,7 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
       .cat-name, .cat-desc { text-align: left; }
       .cat-info { grid-column: 1 / -1; }
       
-      .cat-info--band { padding: 24px 120px; }
-
-      
-
+      .cat-info--band { padding: 24px 74px; }
     }
 
     
@@ -990,10 +965,8 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
       font-weight: 500;
     }
     .link-btn:hover { text-decoration: underline; }
-    /* add-card — наш фирменный жёлтый, как везде по приложению (не общий
-     * var(--color-primary-ink) остальных .link-btn вроде "Показать всю
-     * историю"). */
-    .link-btn.add-card { color: rgba(255, 186, 38, 1); }
+    
+    .link-btn.add-card { color: var(--color-brand-gold); }
     .primary-link ::ng-deep button { padding: 14px 28px; height: auto; font-size: 15px; border-radius: 16px; font-weight: 500;}
 
            @media (min-width: 1024px) {
@@ -1004,7 +977,7 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
       .no-card-ico { width: 160px; height: 160px;}
       .no-card {
         border-radius: 30px;
-      border: 2px solid rgba(205, 205, 205, 1); 
+      border: 2px solid var(--color-grey-350); 
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       padding: var(--space-md);
       text-align: center;
@@ -1016,15 +989,9 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
       .cat-visual { grid-column: 1 / -1; grid-row: 1; display: flex; align-items: center; gap: var(--space-lg); }
       .cat-info { grid-column: 1 / -1; grid-row: 2; }
 
-      /*
-       * Одиночная карта (.bank.single, см. шаблон): в отличие от карусели
-       * (.slide .bank { width:100% } внутри .slide с --slide-w из
-       * clamp(220px, 75vw, 320px)) тут .bank растягивается на всю ширину
-       * .wrap — на desktop это выходило на весь экран. Ограничиваем той же
-       * шириной, что и карточка в карусели, и центрируем.
-       */
+      
       .bank.single {
-        max-width: 320px;
+        max-width: 520px;
         margin: 0 auto;
       }
     }
@@ -1077,11 +1044,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       case 'most-popular': return 'Выбор большинства';
     }
   }
-  /*
-   * Тот же приём подсветки латинских слов в названии карты (например
-   * "PREMIUM"), что и на странице карточки (product-detail.page.ts,
-   * .name-accent) — здесь применяем к названию в каталоге карт.
-   */
+  
   protected nameWords(name: string): string[] {
     return name.split(' ');
   }

@@ -420,16 +420,7 @@ import {
       z-index: 100;
     }
 
-
-    /*
-     * Раньше "background .45s ease" анимировал переход между разными
-     * background-image (градиент ↔ картинка) — браузер не умеет плавно
-     * интерполировать это, из-за чего в момент смены карты .page-bg на
-     * долю секунды показывал fallback/пустое (белое) состояние, которое
-     * было видно сквозь полупрозрачные края лапы поверх — и выглядело
-     * как "лапа перекрасилась в белый". Transition убран — фон меняется
-     * мгновенно, без промежуточного флеша.
-     */
+    
     .page-bg {
       position: fixed;
       inset: 0;
@@ -443,19 +434,7 @@ import {
       color: var(--color-primary);
     }
 
-    /*
-     * По макету заливка лапы — это не картинка со своим "вшитым" серым
-     * цветом (233,233,233 у оригинального PNG), а силуэт, залитый
-     * ровно цветом карты (rgba(0,0,0,1) / rgba(255,255,255,1) /
-     * rgba(38,38,38,1) — pawColor() выставляет его в --page-paw-bg
-     * инлайн) — но у самого слоя в Фигме отдельно задан Opacity ~10%
-     * (не видно в свойствах Fill, только в панели слоя), из-за этого
-     * лапа на макете выглядит мягкой/приглушённой, а не плоским
-     * пятном сплошного цвета. Здесь то же самое: силуэт вырезается
-     * маской из PNG (mask-image), красится в сплошной --page-paw-bg,
-     * а opacity: .1 на самом .page-paw даёт тот же приглушённый вид,
-     * как в макете (проверено измерением пикселей скриншота макета).
-     */
+    
     .page-paw {
       position: fixed;
       z-index: 0;
@@ -464,7 +443,7 @@ import {
       width: 320px;
       height: 100%;
       transform: translateX(-50%);
-      background-color: var(--page-paw-bg, rgba(0, 0, 0, 1));
+      background-color: var(--page-paw-bg, var(--color-black));
       -webkit-mask-image: url('/assets/bg-paw.png');
       -webkit-mask-repeat: no-repeat;
       -webkit-mask-position: center bottom;
@@ -502,9 +481,7 @@ import {
       color: var(--page-body, var(--color-muted));
     }
 
-    /*
-     * MOBILE
-     */
+    
 
     .hero-strip {
       --slide-w: clamp(280px, 80vw, 380px);
@@ -518,25 +495,14 @@ import {
       scroll-behavior: smooth;
       scrollbar-width: none;
       -webkit-overflow-scrolling: touch;
-      /*
-       * touch-action: none — на touch-устройствах свайп по карусели
-       * теперь целиком ведёт наш собственный onStripPointer* (см. TS) —
-       * нативный browser-скролл здесь больше не участвует и не может
-       * "проскочить" через нативный scroll-snap на резком свайпе.
-       */
+      
       touch-action: none;
 
       padding: var(--space-md) calc((100% - var(--slide-w)) / 2);
       margin: 0 calc(-1 * var(--space-md)) var(--space-md);
     }
 
-    /*
-     * Пока идёт ручной drag (мышь ИЛИ touch — см. onStripPointerMove),
-     * снимаем нативный scroll-snap/smooth-scroll: они не должны спорить
-     * с ручным выставлением scrollLeft. Не привязано к media (hover:hover)
-     * — раньше это правило работало только для мыши, и на touch нативный
-     * scroll-snap продолжал действовать поверх ручного драга.
-     */
+    
     .hero-strip.dragging {
       scroll-snap-type: none;
       scroll-behavior: auto;
@@ -603,10 +569,10 @@ import {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      background: rgba(255, 255, 255, 1);
+      background: var(--color-white);
       border-radius: 12px;
-      border: 1.43px solid rgba(200, 200, 200, 1);
-      box-shadow: 0px 31.42px 74.85px -25.71px rgba(0, 0, 0, 0.15);
+      border: 1.43px solid var(--color-grey-200);
+      box-shadow: 0px 31.42px 74.85px -25.71px var(--overlay-black-15);
       width: 52px;
       height: 52px
     }
@@ -616,7 +582,7 @@ import {
       height: auto;
       border-radius: 50%;
       object-fit: cover;
-      background: #fff;
+      background: var(--color-white);
     }
 
     .tier1 {
@@ -631,10 +597,10 @@ import {
       align-items: center;
       justify-content: center;
       padding: 20px 8px;
-      background: rgba(255, 255, 255, 1);
-      border: 1.3px solid rgba(200, 200, 200, 1);
+      background: var(--color-white);
+      border: 1.3px solid var(--color-grey-200);
       border-radius: var(--rounded-md);
-      box-shadow: 0px 28.62px 68.18px -23.42px rgba(0, 0, 0, 0.15);
+      box-shadow: 0px 28.62px 68.18px -23.42px var(--overlay-black-15);
     }
 
     .pay-badge img {
@@ -642,7 +608,7 @@ import {
       height: 18px;
       border-radius: 50%;
       object-fit: contain;
-      background: #fff;
+      background: var(--color-white);
       flex-shrink: 0;
     }
 
@@ -665,7 +631,7 @@ import {
     }
 
     .desc {
-      color: rgba(0, 0, 0, 1);
+      color: var(--color-black);
       text-align: center;
       font-size: 15px;
       margin: 14px 0 var(--space-lg);
@@ -675,7 +641,7 @@ import {
       text-align: center;
       font-family: 'Syncopate Cyr';
       font-size: 28px;
-      color: rgba(114, 86, 22, 1);
+      color: var(--color-badge-brown);
       margin-bottom: 0;
       line-height: 0.7;
     }
@@ -687,7 +653,7 @@ import {
     .divider {
       width: 112px;
       height: 2px;
-      background: rgba(200, 200, 200, 1);
+      background: var(--color-grey-200);
       margin: 16px auto;
     }
 
@@ -703,7 +669,7 @@ import {
       font-size: 12px;
       text-transform: uppercase;
       letter-spacing: .08em;
-      color: rgba(123, 123, 123, 1);
+      color: var(--color-grey-500);
       font-weight: 600;
     }
 
@@ -762,16 +728,11 @@ import {
       list-style: none;
       padding: 20px;
       margin: 0;
-      background: rgba(255, 255, 255, 1);
+      background: var(--color-white);
       border-radius: var(--rounded-md);
     }
 
-    /*
-     * На mobile нужен небольшой зазор после основного
-     * списка преимуществ.
-     *
-     * Цвет list.ok здесь НЕ меняем в зависимости от карты.
-     */
+    
     .list.ok {
       margin-bottom: 12px;
     }
@@ -797,14 +758,14 @@ import {
     }
 
     .list .li-card > span:last-child {
-      color: rgba(0, 0, 0, 1);
+      color: var(--color-black);
       font-weight: 700;
       font-size: 16px;
       line-height: 1.2;
     }
 
     .list .li-card .muted {
-      color: rgba(0, 0, 0, 1);
+      color: var(--color-black);
       font-weight: 400;
       font-size: 14px;
       display: inline-block;
@@ -815,7 +776,7 @@ import {
       width: 35px;
       height: 35px;
       border-radius: var(--rounded-pill);
-      border: 1.84px solid rgba(255, 186, 38, 1);
+      border: 1.84px solid var(--color-brand-gold);
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -858,16 +819,12 @@ import {
       text-decoration: none;
     }
 
-    /*
-     * MOBILE:
-     * acc-toggle всегда белый.
-     * Карточные цвета применяются только на desktop.
-     */
+    
     .acc-toggle {
       width: 100%;
       padding: 12px 20px;
       margin: 0 0 8px;
-      background: rgba(255, 255, 255, 1);
+      background: var(--color-white);
       border-radius: 52px;
       color: var(--color-ink);
       display: flex;
@@ -940,19 +897,14 @@ import {
     }
 
     .wrap:not(.is-travel) .price {
-      color: rgba(255, 186, 38, 1);
+      color: var(--color-brand-gold);
     }
 
     .wrap:not(.is-travel) .divider {
-      background: rgba(200, 200, 200, 1);
+      background: var(--color-grey-200);
     }
 
-    /*
-     * MOBILE:
-     * acc-toggle (Условия / Запрещённые операции / доп. группы p.lists)
-     * на мобильной версии убран целиком. На desktop все эти блоки
-     * возвращаются к прежнему виду (см. media-запрос ниже).
-     */
+    
     .acc-toggle,
     .grouped,
     .list.bad {
@@ -1041,45 +993,16 @@ import {
         display: flex;
         flex-direction: column;
         height: 100%;
-        /*
-         * Стрелки переключения карты позиционируются абсолютно ОТ
-         * .side-block (а не от .pay-row) — см. .arrows ниже. Это нужно,
-         * чтобы их позиция не зависела от того, в 1 или 2 ряда встали
-         * плашки оплаты внутри .pay-row.
-         */
+        
         position: relative;
       }
 
-      /*
-       * side-block и list-col — соседние grid-ячейки одной строки, поэтому
-       * align-items: stretch у .wrap и так растягивает их КОНТЕЙНЕРЫ до
-       * одной высоты (высота строки = высота более длинной колонки). Раньше
-       * кнопка шла обычным потоком сразу после курса — это давало стабильную
-       * позицию кнопки, но если list-col оказывался длиннее (что обычно и
-       * есть — там список условий/иконок), под кнопкой в side-block
-       * оставалось пустое место и визуально колонки не совпадали по низу.
-       * Теперь margin-top: auto снова прижимает кнопку к низу растянутого
-       * side-block — так низ кнопки всегда совпадает с низом list-col.
-       * Раньше это же решение "скакало" из-за похожего margin-top: auto на
-       * последней кнопке аккордеона ВНУТРИ list-col (см. комментарий выше) —
-       * та причина убрана отдельно, а тут скачков нет, потому что верхняя
-       * часть side-block (иконки/цена/курс) больше не завязана на высоту
-       * list-col и не меняет позицию — “плавает” только кнопка, и только
-       * когда список условий действительно меняет высоту строки.
-       */
+      
       .side-block .cta-action {
         display: block;
         margin-top: auto;
         margin-bottom: 0;
         transition: margin-top var(--dur-quick, .15s) ease;
-      }
-
-      /*
-       * Кнопка только на desktop этой страницы:
-       * ширина 426px, вертикальный padding 26px.
-       * Не задаём width самому .cta-action, чтобы не ломать grid.
-       */
-      .side-block .cta-action {
         width: 426px;
       }
 
@@ -1120,36 +1043,24 @@ import {
         padding: 12px;
       }
 
-      /*
-       * DESKTOP:
-       * list.ok меняет фон в зависимости от карты.
-       *
-       * Travel / Premium:
-       * фон берём из heading_color (--page-h).
-       *
-       * Subscription:
-       * тёмный фон.
-       *
-       * Travel: текст ЧЁРНЫЙ (фон у неё белый — белый текст был бы не
-       * виден). Premium / Subscription: текст белый (тёмный фон).
-       */
+      
       .wrap.is-travel .list.ok {
-        background: rgba(255, 255, 255, 1);
+        background: var(--color-white);
       }
       .wrap.is-premium .list.ok {
-  background: rgb(106, 88, 77);        color: rgba(255, 255, 255, 1);
+  background: var(--color-card-premium-bg);        color: var(--color-white);
       }
 
       .wrap.is-subscription .list.ok {
-        background: rgba(63, 63, 63, 1);
-        color: rgba(255, 255, 255, 1);
+        background: var(--color-grey-charcoal);
+        color: var(--color-white);
       }
 
       .wrap.is-premium .list.ok .li-card > span:last-child,
       .wrap.is-premium .list.ok .li-card .muted,
       .wrap.is-subscription .list.ok .li-card > span:last-child,
       .wrap.is-subscription .list.ok .li-card .muted {
-        color: rgba(255, 255, 255, 1);
+        color: var(--color-white);
       }
 
       .list.ok {
@@ -1166,12 +1077,7 @@ import {
         padding-bottom: 0;
       }
 
-      /*
-       * DESKTOP:
-       * возвращаем акк-тоггл блоки (Условия / Запрещённые операции /
-       * доп. группы) и прячем мобильную копию кнопки внутри .list.ok —
-       * на desktop кнопка снова живёт только в .side-block (см. выше).
-       */
+      
       .acc-toggle {
         display: flex;
       }
@@ -1185,17 +1091,7 @@ import {
         padding-bottom: 12px;
       }
 
-      /*
-       * Растягивание .list.ok (flex:1 + space-between) включаем ТОЛЬКО
-       * когда справа реально много плашек оплаты (больше 3 — значит 2
-       * ряда, side-block заметно выше обычного): класс
-       * .side-block--wide-icons ставится в шаблоне по tier2Icons().length
-       * > 3. Для 1-3 плашек (один ряд) side-block и так почти той же
-       * высоты, что и list-col, и растягивание тут только портило вид —
-       * большие пустые зазоры между тремя пунктами списка. Поэтому для
-       * этого случая список остаётся с обычными, "родными" отступами
-       * (padding-bottom: 22px у li, см. общее правило .list li выше).
-       */
+      
       .side-block--wide-icons ~ .list-col .list.ok {
         flex: 1;
         display: flex;
@@ -1203,96 +1099,61 @@ import {
         justify-content: space-between;
       }
 
-      /*
-       * DESKTOP:
-       * acc-toggle также получает цвет карты. Отступы между элементами
-       * .list-col идут ТОЛЬКО через gap:8px у .list-col — свой margin у
-       * .acc-toggle убран, иначе margin+gap складывались и зазор между
-       * двумя acc-toggle оказывался вдвое больше, чем между .list.ok и
-       * первым acc-toggle.
-       */
+      
       .acc-toggle {
         padding: 9px 14px;
         margin: 0;
       }
 
       .wrap.is-travel .acc-toggle {
-        background: rgba(255, 255, 255, 1);
+        background: var(--color-white);
 
   color: var(--color-ink);
       }
 
       .wrap.is-premium .acc-toggle {
-  background: rgb(106, 88, 77);        color: rgba(255, 255, 255, 1);
+  background: var(--color-card-premium-bg);        color: var(--color-white);
       }
 
       .wrap.is-subscription .acc-toggle {
-        background: rgba(63, 63, 63, 1);
-        color: rgba(255, 255, 255, 1);
+        background: var(--color-grey-charcoal);
+        color: var(--color-white);
       }
 
       .wrap.is-premium .acc-toggle .chev,
       .wrap.is-subscription .acc-toggle .chev {
-        color: rgba(255, 255, 255, 1);
+        color: var(--color-white);
       }
 
-      /*
-       * DESKTOP:
-       * развёрнутый контент аккордеона (.grouped) должен быть того же
-       * цвета, что и сама кнопка .acc-toggle этой карты — иначе при
-       * открытии список получался белым на travel и просто выпадал из
-       * цветовой схемы premium/subscription карт.
-       */
+      
       .wrap.is-travel .grouped {
-        background: rgba(255, 255, 255, 1);
+        background: var(--color-white);
         color: var(--color-ink);
       }
 
       .wrap.is-premium .grouped {
-  background: rgb(106, 88, 77);        color: rgba(255, 255, 255, 1);
+  background: var(--color-card-premium-bg);        color: var(--color-white);
       }
 
       .wrap.is-subscription .grouped {
-        background: rgba(63, 63, 63, 1);
-        color: rgba(255, 255, 255, 1);
+        background: var(--color-grey-charcoal);
+        color: var(--color-white);
       }
 
       .wrap.is-premium .grouped .li-card,
       .wrap.is-subscription .grouped .li-card {
-        color: rgba(255, 255, 255, 1);
+        color: var(--color-white);
       }
 
       .wrap.is-premium .grouped .kv-label,
       .wrap.is-subscription .grouped .kv-label {
-        color: rgba(255, 255, 255, 1);
+        color: var(--color-white);
       }
 
-      /*
-       * DESKTOP: list-col обычно короче side-block, из-за чего их
-       * контент визуально заканчивался на разной высоте, хотя сами
-       * колонки уже были одной высоты (align-items:stretch). Раньше это
-       * компенсировалось через margin-top:auto на последней кнопке
-       * аккордеона — но именно это и "двигало" кнопку и создавало
-       * большие пустые промежутки при открытии/закрытии блоков. Теперь
-       * список идёт обычным потоком без принудительного прижатия к низу:
-       * высота колонки та же (stretch), просто снизу может быть пустое
-       * место — это стабильнее, чем скачущая кнопка.
-       */
+      
 
-      /*
-       * Отступы в side-block уменьшены, чтобы на desktop блок был
-       * примерно той же высоты, что и соседняя .list-col (раньше
-       * side-block был заметно выше, и .list-col оставлял пустое место
-       * снизу из-за stretch — см. комментарий выше про margin-top:auto).
-       */
-      /*
-       * Плашки оплаты и высота .pay-row теперь идут своим естественным
-       * потоком (без искусственной min-height) — у travel/1 ряда
-       * .pay-row невысокая, у premium/2 рядов — выше, это нормально.
-       * align-items: flex-start (вместо унаследованного с мобильной
-       * версии center) прижимает плашки к верхнему краю всегда,
-       * независимо от того, сколько рядов.
-       */
+      
+      
       .pay-row {
         align-items: flex-start;
         justify-content: flex-start;
@@ -1300,18 +1161,7 @@ import {
         margin: 0 0 10px;
       }
 
-      /*
-       * Стрелки переключения карты раньше центрировались (top:50%)
-       * относительно .pay-row — а высота .pay-row как раз "плавает"
-       * (1 ряд плашек у travel / 2 ряда у premium), из-за чего стрелки
-       * прыгали и по вертикали при переключении карт. Теперь стрелки
-       * позиционируются абсолютно от .side-block (см. position:relative
-       * там выше) с ФИКСИРОВАННЫМ top — не зависят от .pay-row вообще и
-       * стоят на одном и том же месте на любой карте, сколько бы рядов
-       * плашек ни было. 7px — визуальный центр первого (всегда
-       * присутствующего) ряда плашек tier2 (68px контент + рамка ≈71px,
-       * стрелка 58px высотой → (71-58)/2 ≈ 7px отступ сверху).
-       */
+      
       .arrows {
         position: absolute;
         top: 7px;
@@ -1364,22 +1214,22 @@ import {
         width: 58px;
         height: 58px;
         border-radius: 50%;
-        background: rgba(255, 255, 255, 1);
-        border: 1px solid rgba(200, 200, 200, 1);
-        box-shadow: 0px 31.42px 74.85px -25.71px rgba(0, 0, 0, 0.15);
+        background: var(--color-white);
+        border: 1px solid var(--color-grey-200);
+        box-shadow: 0px 31.42px 74.85px -25.71px var(--overlay-black-15);
         cursor: pointer;
         color: var(--color-ink);
         transition: transform .15s ease;
       }
 
       .wrap.is-subscription .arrow {
-        background: rgba(63, 63, 63, 1);
-        color: rgba(255, 255, 255, 1);
+        background: var(--color-grey-charcoal);
+        color: var(--color-white);
       }
 
       .wrap.is-premium .arrow {
-        background: rgba(255, 255, 255, 1);
-        color: rgba(186, 186, 186, 1);
+        background: var(--color-white);
+        color: var(--color-grey-400);
       }
 
       .arrow svg {
@@ -1539,12 +1389,7 @@ export class ProductDetailPage implements OnInit, AfterViewInit, OnDestroy {
     return p.id === 'mock-card-premium';
   }
 
-  /*
-   * Цвет лапы (.page-paw) фиксирован для каждого типа карты и не
-   * зависит от фона .page-bg под ней — подписки: rgba(38, 38, 38, 1),
-   * премиум: rgba(255, 255, 255, 1), путешествия (дефолт):
-   * rgba(0, 0, 0, 1).
-   */
+  
   protected readonly pawColor = computed<string | null>(() => {
     const p = this.product();
 
@@ -1553,22 +1398,17 @@ export class ProductDetailPage implements OnInit, AfterViewInit, OnDestroy {
     }
 
     if (this.isSubscriptionCard(p)) {
-      return 'rgba(38, 38, 38, 1)';
+      return 'var(--color-grey-900)';
     }
 
     if (this.isPremiumCard(p)) {
-      return 'rgba(255, 255, 255, 1)';
+      return 'var(--color-white)';
     }
 
-    return 'rgba(0, 0, 0, 1)';
+    return 'var(--color-black)';
   });
 
-  /*
-   * Непрозрачность лапы: по макету у путешествий/премиум слой лапы
-   * приглушён (opacity ~10%, отдельно от заливки). У карты подписок
-   * этого приглушения нет — там лапа рисуется в полную силу заливки
-   * (opacity: 1).
-   */
+  
   protected readonly pawOpacity = computed<number | null>(() => {
     const p = this.product();
 
@@ -1767,15 +1607,7 @@ export class ProductDetailPage implements OnInit, AfterViewInit, OnDestroy {
   private static readonly STRIP_DRAG_THRESHOLD = 6;
 
   protected onStripPointerDown(e: PointerEvent): void {
-    // Раньше здесь был ранний return для всего, что не 'mouse' — то есть
-    // на touch (мобилка) вся эта ручная drag-логика вообще не работала, и
-    // карусель листалась чисто нативным scroll-snap браузера. Именно
-    // нативный scroll-snap при резком свайпе иногда "проскакивал" сразу
-    // через 2 карты вместо 1 (инерция/скорость флика не всегда стопится
-    // на каждой snap-точке, особенно в WebView Telegram). Теперь touch
-    // обрабатывается той же самой ручной логикой, что и мышь — а
-    // итоговый шаг в onStripPointerUp ниже жёстко ограничен ровно одной
-    // картой за жест, независимо от скорости/дистанции свайпа.
+
     if (e.button !== 0) {
       return;
     }
@@ -1860,13 +1692,6 @@ export class ProductDetailPage implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    // Раньше здесь искали БЛИЖАЙШИЙ к центру слайд среди ВСЕХ слайдов —
-    // при быстром/сильном свайпе scrollLeft мог уйти дальше, чем на одну
-    // карту, и "ближайшим" оказывался слайд через один — карусель
-    // скипала карту. Теперь смотрим только на НАПРАВЛЕНИЕ свайпа
-    // (по знаку смещения от точки, где начался drag) и всегда двигаемся
-    // ровно на 1 карту за жест — независимо от того, как далеко/быстро
-    // пользователь провёл пальцем.
     const dx = e.clientX - this.stripDragStartX;
     const list = this.products();
     const idx = list.findIndex((p) => p.id === this.currentId());
@@ -2071,8 +1896,8 @@ export class ProductDetailPage implements OnInit, AfterViewInit, OnDestroy {
       0.114 * hex.b;
 
     return y > 140
-      ? '#141413'
-      : '#ffffff';
+      ? 'var(--color-near-black)'
+      : 'var(--color-white)';
   }
 }
 

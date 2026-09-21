@@ -1,57 +1,22 @@
 import { HttpInterceptorFn, HttpResponse } from '@angular/common/http';
 import { of } from 'rxjs';
 
-// ЗАЧЕМ ЭТОТ ФАЙЛ:
-// Бэкенд для бренда «Хочу Плачу!» сейчас отдаёт coming_soon для eSIM и
-// Сервисов (нет активных провайдеров/привязки в админке — см. разбор в чате).
-// Чтобы не гонять доступы у бэкенд-команды ради вёрстки/редизайна, здесь
-// лежат моки конкретно этих ручек.
-//
-// Мок включён ВСЕГДА, безусловно — этот деплой отдельный, специально
-// для команды, чтобы у всех сразу были одни и те же мок-данные без
-// ручных действий в консоли браузера (никакого localStorage-флага и
-// dev/production-проверок больше нет). Если когда-нибудь этот же код
-// понадобится и на РЕАЛЬНОМ проде для настоящих пользователей — тогда
-// нужно будет вернуть переключатель или просто убрать
-// mockCatalogInterceptor из withInterceptors([...]) в app.config.ts (один
-// функциональный интерцептор, больше нигде не завязан) для того деплоя.
-
 const TOKEN_KEY = 'hp.token';
 
 function mockEnabled(): boolean {
   return true;
 }
 
-// AuthService.bootstrap() делает запрос /auth/me ТОЛЬКО если в localStorage
-// уже лежит токен (иначе срабатывает ранний return, и запроса вообще не
-// будет — мок ответа на /auth/me сам по себе тогда бесполезен). Поэтому
-// подкладываем фейковый токен ещё на уровне модуля — до того, как
-// AuthService успеет проверить localStorage. Один раз, не перезаписывает
-// существующий (мало ли реальный токен уже есть от прошлой сессии).
 if (mockEnabled()) {
   try {
     if (!localStorage.getItem(TOKEN_KEY)) localStorage.setItem(TOKEN_KEY, 'mock-token');
-  } catch {
-    /* noop */
-  }
+  } catch {}
 }
 
-// envelope — фронт всегда ждёт { ok, data } (см. ApiEnvelope в api.service.ts),
-// реальный HTTP-слой это разворачивает сам, поэтому мок обязан повторить форму.
 function envelope<T>(data: T): { ok: true; data: T } {
   return { ok: true, data };
 }
 
-// email_linked: true — иначе EmailLinkDialog в app-shell.ts всплывает
-// автоматически поверх ЛЮБОЙ страницы, как только в /cards появляется хотя
-// бы одна карта (needsEmailLink = cards.length > 0 && !email_linked) — а с
-// добавлением мок-выпущенной карты (MOCK_USER_CARDS) это условие всегда
-// истинно. Раньше здесь было false — специально, чтобы в профиле была
-// видна кнопка «Войти по email» (needsEmailLogin() в profile.page.ts) — но
-// это конфликтует с показом выпущенной карты. Если понадобится снова
-// посмотреть кнопку «Войти по email» в профиле — верните false здесь И
-// уберите/закомментируйте MOCK_USER_CARDS ниже (или очистите её до []),
-// иначе модалка будет всплывать сразу при заходе в приложение.
 const MOCK_USER = {
   id: 'mock-user-1',
   telegram_id: 123456789,
@@ -70,12 +35,6 @@ const MOCK_USER = {
   referral_bonus_applied: true,
 };
 
-// MOCK_ESIM_PRODUCTS — по несколько тарифов на КАЖДОЕ направление из
-// MOCK_ESIM_DIRECTIONS (страны + регион 'asia'), иначе клик на направление,
-// для которого тарифов не было (AE/US/GB/DE/FR/IT/ES/JP/CN, регион 'asia'),
-// показывал бы «Для этого направления пока нет тарифов» — интерцептор ниже
-// фильтрует по ?direction= (country_code либо region_code), так что пустой
-// список выглядел бы как настоящий баг витрины, а не как недостающий мок.
 const MOCK_ESIM_PRODUCTS = [
   {
     id: 'mock-esim-tr-7d', name: 'Турция, 7 дней', description: '3 ГБ, локальный номер не входит',
@@ -293,12 +252,6 @@ const MOCK_REFERRAL_PAYOUTS = {
 
 const MOCK_REFERRAL_WITHDRAWALS = { items: [] };
 
-// MOCK_PROFILE_ORDERS — единая история заказов «Мои заказы» (профиль).
-// Покрывает все типы из ProfileOrderItem.type, чтобы на странице сразу было
-// видно и разные статусы (оплачен/ожидает/ошибка/возврат), и разные
-// заголовки/иконки-статусы (titleOf/toneOf в orders.page.ts). Привязана к
-// MOCK_USER_CARDS[0]/MOCK_CARD_PRODUCTS/MOCK_SERVICE_PRODUCTS — открытие
-// заказа ведёт на реальные (мок) сущности, а не в никуда.
 const MOCK_PROFILE_ORDERS = [
   {
     type: 'card_order', id: 'mock-order-card-1', created_at: '2026-09-18T09:20:00Z',
@@ -341,17 +294,6 @@ const MOCK_PROFILE_ORDERS = [
 
 const MOCK_REFERRAL_CONFIG = { referrer_reward: 200, referee_bonus: 100, currency: 'RUB' };
 
-// Курсы способов оплаты для /payment/methods (scope=issue|topup,
-// product_type=card|esim|service) — ИМЕННО эта ручка кормит
-// CurrencyService.issueMethods(), от которого зависит <app-rate-quote>
-// («Курс пополнения» на карточке продукта/каталоге). Раньше этой ручки в
-// моке не было вообще — запрос улетал в реальный (недоступный в этом
-// деплое) бэкенд, падал, issueMethods() так и оставался пустым, и
-// app-rate-quote просто не рендерился (`@if (quotes().length > 0)`) —
-// отсюда была видна только статичная подпись «Курс пополнения», а сам
-// курс — никогда. rate здесь — «сколько получатель получает за 1 юнит
-// receive-валюты» (см. previewRate/RateQuoteComponent): у RUB_SBP это
-// ~1/курс₽, у USDT_TRX — курс, близкий к 1.
 const MOCK_PAYMENT_METHODS = [
   {
     id: 'RUB_SBP', currency_short_name: 'RUB', short_name: 'RUB', name: 'СБП',
@@ -363,11 +305,6 @@ const MOCK_PAYMENT_METHODS = [
   },
 ];
 
-// Карты — отдельная от catalog/sections ручка (та управляет только видимостью
-// разделов на главной, а сам список карточек для покупки едет отдельно).
-// gradient принимает пресеты blue/dark/gold (см. комментарий в CardProduct)
-// либо произвольный CSS-фон — тут беру пресеты, чтобы визуально сразу было
-// видно разницу между тремя продуктами без реальных картинок карт.
 const MOCK_CARD_PRODUCTS = [
   {
     id: 'mock-card-travel',
@@ -386,7 +323,7 @@ const MOCK_CARD_PRODUCTS = [
     ],
     lists: [['Booking.com', 'Airbnb', 'Skyscanner', 'Aviasales']],
     forbidden: null,
-    image_url: '', gradient: 'gold',
+    image_url: 'assets/mock/card-travel.png', gradient: 'gold',
     bg_image_url: '', bg_gradient: 'rgba(255, 245, 222, 1)',
     heading_color: 'rgba(0, 0, 0, 1)', body_color: 'rgba(0, 0, 0, 1)', cta_color: 'rgba(255, 186, 38, 1)',
     tier1_attrs: ['visa'], tier2_attrs: ['booking', 'airbnb'],
@@ -413,7 +350,7 @@ const MOCK_CARD_PRODUCTS = [
     ],
     lists: [['Netflix', 'Spotify', 'ChatGPT Plus', 'YouTube Premium']],
     forbidden: null,
-    image_url: '', gradient: 'dark',
+    image_url: 'assets/mock/card-subs.png', gradient: 'dark',
     bg_image_url: '', bg_gradient: 'rgba(22, 22, 22, 1)',
     heading_color: '#ffffff', body_color: '#ffffff', cta_color: 'rgba(255, 186, 38, 1)',
     tier1_attrs: ['mastercard'], tier2_attrs: ['netflix', 'spotify'],
@@ -440,12 +377,10 @@ const MOCK_CARD_PRODUCTS = [
     ],
     lists: [['Любые зарубежные сервисы', 'Премиум-поддержка']],
     forbidden: null,
-    image_url: '', gradient: 'dark',
+    image_url: 'assets/mock/card-premium.png', gradient: 'dark',
     bg_image_url: '', bg_gradient: 'rgba(54, 45, 39, 1)',
     heading_color: 'rgba(255, 255, 255, 1)', body_color: 'rgba(255, 255, 255, 1)', cta_color: 'rgba(255, 186, 38, 1)',
-    // Раньше tier2_attrs был пустым ([]) — под 6 плашек (как на макете
-    // Premium-карты: Booking, Airbnb, Netflix, ChatGPT, Uber, Amazon) моков
-    // не было и посмотреть раскладку с 6 иконками было нельзя.
+
     tier1_attrs: ['visa'], tier2_attrs: ['booking', 'airbnb'],
     sort_order: 0,
     disable_purchase: false, disable_topup: false,
@@ -455,11 +390,6 @@ const MOCK_CARD_PRODUCTS = [
   },
 ];
 
-// Уже выпущенная карта пользователя — чтобы посмотреть, как выглядит
-// состояние "карта уже выпущена" (главная /cards, детали карты, пополнение
-// и т.д.), а не только каталог для выпуска новой. Привязана к продукту
-// mock-card-premium — можно сменить card_product_id на любой другой id из
-// MOCK_CARD_PRODUCTS, чтобы посмотреть с другим дизайном/цветом карты.
 const MOCK_USER_CARDS = [
   {
     id: 'mock-user-card-1',
@@ -492,11 +422,6 @@ export const mockCatalogInterceptor: HttpInterceptorFn = (req, next) => {
     );
   }
 
-  // GET /esim/products/:id — один тариф (не список). Без этой ветки
-  // esim-checkout.page.ts (EsimApi.product(id)) улетал в реальный бэкенд,
-  // 404-ился и показывал «Тариф не найден или временно недоступен» на
-  // ЛЮБОМ переходе к оплате тарифа — общий список ниже (endsWith
-  // '/esim/products') на этот путь не реагирует, чекаут был мёртвой веткой.
   const esimProductMatch = pathname.match(/\/esim\/products\/([^/]+)$/);
   if (esimProductMatch) {
     const id = decodeURIComponent(esimProductMatch[1]);
@@ -508,8 +433,7 @@ export const mockCatalogInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   if (pathname.endsWith('/esim/products')) {
-    // direction — ISO-2 страны либо код региона (см. EsimApi.products);
-    // без параметра (общий каталог) отдаём всё целиком.
+
     const direction = searchParams.get('direction');
     const products = direction
       ? MOCK_ESIM_PRODUCTS.filter((p) => p.country_code === direction || p.region_code === direction)
@@ -525,12 +449,6 @@ export const mockCatalogInterceptor: HttpInterceptorFn = (req, next) => {
     return of(new HttpResponse({ status: 200, body: envelope({ esims: [] }) }));
   }
 
-  // GET /payment/methods?scope=issue|topup&product_type=card|esim|service —
-  // курсы способов оплаты. Отдаём один и тот же мок-набор независимо от
-  // query-параметров: CurrencyService.issueMethods() кладёт сюда только
-  // ответ scope=issue&product_type=card, но остальные страницы (topup,
-  // checkout) читают эту же ручку под другим scope/product_type — им тоже
-  // нужен непустой список, а не 404/сеть.
   if (pathname.endsWith('/payment/methods')) {
     return of(
       new HttpResponse({
@@ -540,13 +458,6 @@ export const mockCatalogInterceptor: HttpInterceptorFn = (req, next) => {
     );
   }
 
-  // GET /services/products/:slug — карточка ОДНОГО сервиса (не список).
-  // Раньше такого маршрута не было вообще: любой productBySlug() (hero-блок
-  // Steam на главной/сервисах, страница деталей /services/:slug) падал —
-  // мок обрабатывал только точный путь /services/products без хвоста,
-  // а .../products/steam под endsWith('/services/products') не попадает.
-  // Из-за этого страница деталей показывала «Сервис не найден» даже для
-  // существующих слагов вроде steam.
   const svcDetailMatch = pathname.match(/\/services\/products\/([^/]+)$/);
   if (svcDetailMatch) {
     const slug = decodeURIComponent(svcDetailMatch[1]);
@@ -582,19 +493,11 @@ export const mockCatalogInterceptor: HttpInterceptorFn = (req, next) => {
     return of(new HttpResponse({ status: 200, body: envelope(MOCK_REFERRAL_CONFIG) }));
   }
 
-  // GET /cards/products/:id — карточка ОДНОГО продукта (не список). Раньше
-  // такого маршрута не было вообще: CardsApi.getProduct(id) (дёргается на
-  // ProductDetailPage и на CheckoutPage) молча падал — мок реагировал
-  // только на точный путь /cards/products без хвоста. На ProductDetailPage
-  // это было незаметно (там product() падает обратно на список), а на
-  // CheckoutPage фолбэка нет — оттого и белый экран на /cards/:id/checkout.
   const cardDetailMatch = pathname.match(/\/cards\/products\/([^/]+)$/);
   if (cardDetailMatch) {
     const id = decodeURIComponent(cardDetailMatch[1]);
     const product = MOCK_CARD_PRODUCTS.find((p) => p.id === id);
-    // CardsApi.getProduct() отдаёт CardProduct БЕЗ обёртки {product:...}
-    // (в отличие от ServicesApi.productBySlug выше) — product-detail.page.ts
-    // обращается к полям результата напрямую (p.id, не p.product.id).
+
     if (product) {
       return of(new HttpResponse({ status: 200, body: envelope(product) }));
     }
@@ -605,10 +508,6 @@ export const mockCatalogInterceptor: HttpInterceptorFn = (req, next) => {
     return of(new HttpResponse({ status: 200, body: envelope({ products: MOCK_CARD_PRODUCTS }) }));
   }
 
-  // GET /cards/:id — карточка ОДНОЙ уже выпущенной карты пользователя (не
-  // каталог продуктов — та ветка выше уже отработала бы и вернулась). Нужен,
-  // чтобы можно было открыть детали уже выпущенной мок-карты, а не только
-  // увидеть её в списке на главной.
   const userCardMatch = pathname.match(/\/cards\/([^/]+)$/);
   if (userCardMatch && userCardMatch[1] !== 'products') {
     const id = decodeURIComponent(userCardMatch[1]);
@@ -619,19 +518,10 @@ export const mockCatalogInterceptor: HttpInterceptorFn = (req, next) => {
     return of(new HttpResponse({ status: 404, body: envelope({ error: 'not_found' }) }));
   }
 
-  // Точное совпадение по хвосту пути, а не просто includes: иначе задело бы
-  // и /cards/products (каталог, отдельная ветка выше), и /cards/:id
-  // (конкретную выпущенную карту, тоже отдельная ветка выше). endsWith('/cards')
-  // ни на что из этого не среагирует — их пути заканчиваются иначе.
-  // cards: MOCK_USER_CARDS — чтобы сразу видеть состояние "карта уже
-  // выпущена" на главной, а не только пустой каталог для выпуска новой.
   if (pathname.endsWith('/cards')) {
     return of(new HttpResponse({ status: 200, body: envelope({ cards: MOCK_USER_CARDS }) }));
   }
 
-  // GET /profile/orders?page=&page_size= — единая история заказов в
-  // профиле (см. MOCK_PROFILE_ORDERS выше). Пагинация по page/page_size —
-  // ProfileOrdersPage дозагружает страницами через «Показать ещё».
   if (pathname.endsWith('/profile/orders')) {
     const page = Number(searchParams.get('page') ?? 1) || 1;
     const pageSize = Number(searchParams.get('page_size') ?? 25) || 25;

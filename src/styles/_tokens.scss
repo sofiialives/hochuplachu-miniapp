@@ -1,18 +1,17 @@
-
 :root {
-  --color-primary: #fed136;      // фирменный жёлтый лендинга
-  --color-on-primary: #3d2000;   // тёмный текст на жёлтом (контраст!)
-  --color-ink: #212529;          // заголовки / сильный текст
-  --color-canvas: #f8f9fa;       // фон страницы (landing surfaceAlt)
-  --color-muted: #6c757d;        // вторичный текст
-  --color-hairline: #dee2e6;     // границы (landing border)
-  --color-surface: #ffffff;      // карточки / поверхности
-  --color-surface-card: #f1f3f5; // чипы, кнопки-пилюли, вторичные поверхности
+  --color-primary: #fed136;
+  --color-on-primary: #3d2000;
+  --color-ink: #212529;
+  --color-canvas: #f8f9fa;
+  --color-muted: #6c757d;
+  --color-hairline: #dee2e6;
+  --color-surface: #ffffff;
+  --color-surface-card: #f1f3f5;
 
   --color-primary-hover: color-mix(in srgb, var(--color-primary) 90%, #1a1a1a);
   --color-primary-active: color-mix(in srgb, var(--color-primary) 78%, #1a1a1a);
-  --color-primary-soft: color-mix(in srgb, var(--color-primary) 14%, var(--color-surface));   // ≈ primarySoft #FFF8E1
-  --color-primary-softer: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface)); // ≈ primarySofter #FFF0B8
+  --color-primary-soft: color-mix(in srgb, var(--color-primary) 14%, var(--color-surface));
+  --color-primary-softer: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface));
   --color-primary-disabled: color-mix(in srgb, var(--color-primary) 22%, var(--color-surface));
   --color-primary-ink: color-mix(in srgb, var(--color-primary) 45%, var(--color-ink));
   --color-primary-grad-from: color-mix(in srgb, var(--color-primary) 90%, #ffffff);
@@ -38,7 +37,7 @@
   --color-success: #198754;
   --color-warning: #b58500;
   --color-error: #dc3545;
-  --color-danger: var(--color-error); // алиас: часть страниц пишет danger
+  --color-danger: var(--color-error);
 
   --font-display: 'Unbounded', 'Onest', system-ui, sans-serif;
   --font-body: 'Raleway', 'Onest', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif;
@@ -64,9 +63,52 @@
   --shadow-card-hover: 0 2px 6px rgba(33, 37, 41, 0.06), 0 12px 28px rgba(33, 37, 41, 0.12);
 
   --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
-  --ease-spring: cubic-bezier(0.34, 1.45, 0.64, 1); // лёгкий overshoot для диалогов/bottom-sheet
+  --ease-spring: cubic-bezier(0.34, 1.45, 0.64, 1);
   --dur-quick: 0.18s;
   --dur-normal: 0.24s;
+
+  --color-black: rgba(0, 0, 0, 1);
+  --color-near-black: #141413;
+  --color-white: rgba(255, 255, 255, 1);
+  --color-brand-gold: rgba(255, 186, 38, 1);
+  --color-brand-gold-transparent: rgba(255, 186, 38, 0);
+  --color-red: #c0392b;
+  --color-grey-100: rgba(244, 244, 244, 1);
+  --color-grey-200: rgba(200, 200, 200, 1);
+  --color-grey-250: rgba(228, 228, 228, 1);
+  --color-grey-300: rgba(211, 211, 211, 1);
+  --color-grey-350: rgba(205, 205, 205, 1);
+  --color-grey-400: rgba(186, 186, 186, 1);
+  --color-grey-500: rgba(123, 123, 123, 1);
+  --color-grey-600: rgba(137, 137, 137, 1);
+  --color-grey-charcoal: rgba(63, 63, 63, 1);
+  --color-grey-900: rgba(38, 38, 38, 1);
+  --color-grey-skeleton: #CDCDCD;
+  --color-badge-brown: rgba(114, 86, 22, 1);
+  --color-cream: rgba(255, 245, 222, 1);
+  --color-cream-soft: rgba(250, 240, 218, 1);
+  --color-card-premium-bg: rgb(106, 88, 77);
+
+  --card-gold-from: #d4a017;
+  --card-gold-to: #8c6a0b;
+  --card-dark-from: #181715;
+  --card-dark-to: #2d2a25;
+  --card-blue-from: #2563eb;
+  --card-blue-mid: #1e40af;
+  --card-blue-to: #0c1e5d;
+
+  --overlay-black-15: rgba(0, 0, 0, 0.15);
+  --overlay-black-16: rgba(0, 0, 0, 0.16);
+  --overlay-black-28: rgba(0, 0, 0, 0.28);
+  --overlay-black-30: rgba(0, 0, 0, 0.30);
+  --overlay-black-40: rgba(0, 0, 0, 0.40);
+  --overlay-black-50: rgba(0, 0, 0, 0.50);
+  --overlay-black-55: rgba(0, 0, 0, 0.55);
+  --overlay-white-14: rgba(255, 255, 255, 0.14);
+  --overlay-white-36: rgba(255, 255, 255, 0.36);
+  --overlay-shadow-10: rgba(20, 20, 19, 0.10);
+  --overlay-shadow-14: rgba(20, 20, 19, 0.14);
+  --overlay-shadow-18: rgba(20, 20, 19, 0.18);
 }
 
 @media (max-width: 1023px) {

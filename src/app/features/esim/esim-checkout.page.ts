@@ -137,7 +137,15 @@ type PendingAction = 'pay' | 'free' | 'promo';
         (dismissed)="onCodeDismissed()" />
     }`,
   styles: [`
-    .wrap { padding: 0 16px; max-width: 560px; margin: 0 auto; padding-bottom: 110px; display: flex; flex-direction: column; gap: var(--space-lg); }
+    .wrap {
+      padding: 0 16px;
+      padding-bottom: 110px;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
     h2 { text-align: center; margin: 0; }
 
     .summary {
@@ -156,8 +164,9 @@ type PendingAction = 'pay' | 'free' | 'promo';
     .s-chip {
       padding: 4px 12px; border-radius: var(--rounded-pill);
       background: var(--color-surface-card); font-size: 13px; font-weight: 500;
+      font-family: 'Gilroy', sans-serif;
     }
-    .s-desc { margin: 0; color: var(--color-body); font-size: 14px; line-height: 1.5; }
+    .s-desc { margin: 0; color: var(--color-body); font-size: 14px; line-height: 1.5; font-family: 'Gilroy', sans-serif; }
 
     .order {
       display: flex; flex-direction: column;
@@ -188,12 +197,16 @@ type PendingAction = 'pay' | 'free' | 'promo';
     .skel-lg { height: 140px; }
     .skel::after {
       content: ""; position: absolute; inset: 0;
-      background: linear-gradient(100deg, transparent 32%, color-mix(in srgb, #fff 55%, transparent) 50%, transparent 68%);
+      background: linear-gradient(100deg, transparent 32%, color-mix(in srgb, var(--color-white) 55%, transparent) 50%, transparent 68%);
       transform: translateX(-100%);
       animation: ec-skel 1.6s ease-in-out infinite;
     }
     @keyframes ec-skel { to { transform: translateX(100%); } }
     @media (prefers-reduced-motion: reduce) { .skel::after { animation: none; } }
+
+    @media (min-width: 1024px) {
+      .wrap { padding: 0 120px; }
+    }
   `],
 })
 export class EsimCheckoutPage implements OnInit {
