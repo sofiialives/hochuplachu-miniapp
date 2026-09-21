@@ -122,8 +122,12 @@ interface DayGroup {
   `,
   styles: [`
     .wrap {
-      padding: 0 16px; padding-bottom: 110px;
-      max-width: 1200px; margin: 0 auto;
+      padding: 0 16px;
+      padding-bottom: 110px;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
     }
     h1 { margin: 0 0 2px; }
     p { margin: 0; }
@@ -202,7 +206,7 @@ interface DayGroup {
     }
 
     @media (min-width: 1024px) {
-      .wrap { padding-left: 120px; padding-right: 120px; }
+      .wrap { padding: 0 120px; }
       .chip { font-size: 17px; }
       .grp-title { font-size: 19px; }
 

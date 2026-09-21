@@ -1,7 +1,7 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BackBarComponent } from '../../ui/back-bar.component';
-import { ButtonComponent } from '../../ui/button.component';
+import { PayButtonComponent } from '../../ui/pay-button.component';
 import { InputComponent } from '../../ui/input.component';
 import {
   ServicesApi, ServiceDenomination, ServiceProduct, denominationLabel, isUnitTopup,
@@ -14,7 +14,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
 @Component({
   selector: 'app-service-detail',
   standalone: true,
-  imports: [BackBarComponent, ButtonComponent, InputComponent, HintComponent, RouterLink],
+  imports: [BackBarComponent, PayButtonComponent, InputComponent, HintComponent, RouterLink],
   template: `<app-back-bar />
     @if (product(); as p) {
       <section class="wrap">
@@ -89,14 +89,11 @@ import { formatAmount } from '../../core/currency/currency-symbols';
               </div>
             </div>
 
-            <app-button
-              variant="primary"
-              [full]="true"
+            <app-pay-button
+              label="Продолжить"
               [loading]="checking()"
               loadingLabel="Проверяем логин…"
-              (clicked)="goCheckoutPlan()">
-              Продолжить
-            </app-button>
+              (clicked)="goCheckoutPlan()" />
           }
         } @else {
           <div class="form">
@@ -181,14 +178,11 @@ import { formatAmount } from '../../core/currency/currency-symbols';
               </output>
             </div>
 
-            <app-button
-              variant="primary"
-              [full]="true"
+            <app-pay-button
+              label="Продолжить"
               [loading]="checking()"
               loadingLabel="Проверяем логин…"
-              (clicked)="goCheckoutTopup()">
-              Продолжить
-            </app-button>
+              (clicked)="goCheckoutTopup()" />
           </div>
         }
       </section>

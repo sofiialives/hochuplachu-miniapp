@@ -89,7 +89,17 @@ import { CurrencyPickerDialogComponent } from './currency-picker.dialog';
       <app-requisites-dialog [currency]="cur" (dismissed)="requisitesFor.set(null)" (submitted)="onRequisites($event)" />
     }`,
   styles: [`
-    .wrap { padding: var(--space-md); max-width: 480px; margin: 0 auto; padding-bottom: 110px; }
+    .wrap {
+      padding: 0 16px;
+      padding-bottom: 110px;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+    }
+    @media (min-width: 1024px) {
+      .wrap { padding: 0 120px; }
+    }
     h2 { text-align: center; }
     .hint { text-align: center; color: var(--color-muted); margin-bottom: var(--space-lg); }
     .amount { margin-bottom: var(--space-md); }

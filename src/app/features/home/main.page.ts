@@ -48,7 +48,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
             </div>
             <div class="hero-body">
               <div class="hero-title">Мои карты</div>
-              <div class="hero-sub">{{ cardsCountLabel() }} · пополнение и реквизиты</div>
+              <div class="hero-sub">{{ cardsCountLabel() }} <span class="dot-accent" aria-hidden="true"></span> пополнение и реквизиты</div>
             </div>
             <svg class="hero-arr" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M9 6l6 6-6 6"></path>
@@ -196,6 +196,20 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       text-transform: uppercase;
       font-size: 12px; }
     .hero-sub { color: rgba(0, 0, 0, 1); font-size: 12px; }
+    /*
+     * Точка-разделитель "N карта · пополнение и реквизиты" — раньше был
+     * текстовым символом "·" (наследовал цвет текста), теперь отдельный
+     * кружок 3×3px фирменного жёлтого — inline-block, чтобы не выпадал из
+     * потока строки.
+     */
+    .hero-sub .dot-accent {
+      display: inline-block;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: rgba(255, 186, 38, 1);
+      vertical-align: middle;
+    }
     .hero-cta { text-decoration: none; flex: 0 0 auto; }
     /*
      * hero-arr раньше был текстовым "→" (font-size задавал размер стрелки).
@@ -304,7 +318,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
 
     .name-block { grid-column: 1; grid-row: 2; min-width: 0; max-width: 100%; }
     .name { display: block; font-weight: 600; font-size: clamp(11px, 1vw + 8px, 13px); }
-    .cnt { color: var(--color-muted); font-size: clamp(9px, 0.6vw + 7.5px, 11px); }
+    .cnt { color: var(--color-muted); font-size: clamp(9px, 0.6vw + 7.5px, 11px); font-family: 'Gilroy', sans-serif; }
 
     .from {
       grid-column: 2; grid-row: 1; justify-self: end;

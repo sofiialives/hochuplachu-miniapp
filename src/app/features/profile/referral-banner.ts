@@ -165,6 +165,28 @@ import { formatReferralAmount } from '../../core/referral/referral-format';
         flex: none;
       }
 
+      /*
+       * На десктопе в stacked-варианте (профиль/главная в колонку)
+       * иконка со свечением визуально мельче остального контента —
+       * увеличиваем сам символ до 32×32 и круг-подсветку вокруг него
+       * до 60×60 (было 22×22 / 36×36, см. .icon-wrap выше). Инсет
+       * ::before пересчитан под новый размер: (60-32)/2 = 14px.
+       */
+      .banner.stacked .icon-wrap {
+        width: 32px;
+        height: 32px;
+        flex: 0 0 32px;
+      }
+
+      .banner.stacked .icon-wrap svg {
+        width: 32px;
+        height: 32px;
+      }
+
+      .banner.stacked .icon-wrap::before {
+        inset: -9px;
+      }
+
       .banner.stacked .arrow {
         position: absolute;
         right: 16px;

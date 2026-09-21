@@ -994,10 +994,10 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
      * var(--color-primary-ink) остальных .link-btn вроде "Показать всю
      * историю"). */
     .link-btn.add-card { color: rgba(255, 186, 38, 1); }
-    .primary-link ::ng-deep button { padding: 14px 28px; height: auto; font-size: 15px; border-radius: 16px; font-weight: 400;}
+    .primary-link ::ng-deep button { padding: 14px 28px; height: auto; font-size: 15px; border-radius: 16px; font-weight: 500;}
 
            @media (min-width: 1024px) {
-      .primary-link ::ng-deep button { padding: 18px 42px; font-size: 20px; font-weight: 400;}
+      .primary-link ::ng-deep button { padding: 18px 42px; font-size: 20px; font-weight: 500;}
       .wrap { padding-left: 120px; padding-right: 120px; }  
       .email-dash::before {
           width: 216px; margin: 36px 0 12px;}
@@ -1015,6 +1015,18 @@ import { formatAmount, isPrefixSymbolCurrency, symbolFor } from '../../core/curr
       .catalog-row { grid-template-rows: auto auto; }
       .cat-visual { grid-column: 1 / -1; grid-row: 1; display: flex; align-items: center; gap: var(--space-lg); }
       .cat-info { grid-column: 1 / -1; grid-row: 2; }
+
+      /*
+       * Одиночная карта (.bank.single, см. шаблон): в отличие от карусели
+       * (.slide .bank { width:100% } внутри .slide с --slide-w из
+       * clamp(220px, 75vw, 320px)) тут .bank растягивается на всю ширину
+       * .wrap — на desktop это выходило на весь экран. Ограничиваем той же
+       * шириной, что и карточка в карусели, и центрируем.
+       */
+      .bank.single {
+        max-width: 320px;
+        margin: 0 auto;
+      }
     }
   `],
 })

@@ -286,32 +286,6 @@ import {
                   </div>
                 </li>
               }
-
-              <li class="cta-li">
-                @if (p.disable_purchase) {
-                  <div class="cta-action cta-action--list">
-                    <app-button
-                      variant="primary"
-                      [full]="true"
-                      [disabled]="true"
-                    >
-                      Выпуск карты временно недоступен
-                    </app-button>
-                  </div>
-                } @else {
-                  <a
-                    [routerLink]="['/cards', p.id, 'checkout']"
-                    class="cta-action cta-action--list"
-                  >
-                    <app-button
-                      variant="primary"
-                      [full]="true"
-                    >
-                      Выпустить карту
-                    </app-button>
-                  </a>
-                }
-              </li>
             </ul>
 
             @for (lst of (p.lists ?? []); track lst[0]) {
@@ -976,82 +950,13 @@ import {
     /*
      * MOBILE:
      * acc-toggle (Условия / Запрещённые операции / доп. группы p.lists)
-     * на мобильной версии убран целиком — вместо аккордеонов кнопка
-     * "Выпустить карту" переезжает внутрь списка .list.ok как последний
-     * пункт (см. .cta-li / .cta-action--list ниже). На desktop все эти
-     * блоки возвращаются к прежнему виду (см. media-запрос ниже).
+     * на мобильной версии убран целиком. На desktop все эти блоки
+     * возвращаются к прежнему виду (см. media-запрос ниже).
      */
     .acc-toggle,
     .grouped,
     .list.bad {
       display: none;
-    }
-
-    /*
-     * MOBILE:
-     * "плавающая" кнопка в side-block больше не используется — вместо неё
-     * работает копия внутри .list.ok (.cta-li). На desktop возвращаем
-     * обратно (см. media-запрос ниже).
-     */
-    .side-block .cta-action {
-      display: none;
-    }
-
-    /*
-     * .cta-li вынесен из потока (position: absolute) и лежит на всю
-     * ширину контейнера списка (.list.ok — position: relative, задаёт
-     * контекст позиционирования). Снизу у .list.ok увеличен
-     * padding-bottom, чтобы под абсолютную кнопку было зарезервировано
-     * место и она не наезжала на последний реальный li.
-     */
-    .list.ok {
-      position: relative;
-      padding-bottom: 44px;
-    }
-
-    .cta-li {
-      list-style: none;
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-    }
-
-    .cta-action--list {
-      display: block;
-      position: static;
-      left: auto;
-      right: auto;
-      bottom: auto;
-      z-index: auto;
-      width: 100%;
-      padding: 0;
-      backdrop-filter: none;
-      -webkit-backdrop-filter: none;
-    }
-
-    .cta-action--list > * {
-      display: block;
-      width: 100%;
-      max-width: none;
-      margin: 0;
-    }
-
-    /*
-     * Кнопка внутри списка — на всю ширину списка (в отличие от
-     * side-block версии на desktop, у которой фиксированная ширина).
-     * padding-top увеличен относительно padding-bottom по просьбе.
-     */
-    :host ::ng-deep .cta-action--list app-button button {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding-top: 24px;
-      padding-bottom: 24px;
-      font-weight: 500;
-      font-size: 16px;
     }
 
     @media (min-width: 1024px) {
@@ -1276,15 +1181,6 @@ import {
         display: block;
       }
 
-      .cta-li {
-        display: none;
-      }
-
-      /*
-       * DESKTOP: .cta-li скрыт (кнопка снова живёт в .side-block),
-       * поэтому запас снизу под неё тут не нужен — иначе внизу
-       * карточки .list.ok оставалось пустое место.
-       */
       .list.ok {
         padding-bottom: 12px;
       }

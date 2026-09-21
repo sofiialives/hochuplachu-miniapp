@@ -96,7 +96,7 @@ import { formatAmount } from '../../core/currency/currency-symbols';
 
     .name-block { grid-column: 1; grid-row: 2; min-width: 0; max-width: 100%; }
     .name { display: block; font-weight: 600; font-size: clamp(11px, 1vw + 8px, 13px); }
-    .cnt { color: var(--color-muted); font-size: clamp(9px, 0.6vw + 7.5px, 11px); }
+    .cnt { color: var(--color-muted); font-size: clamp(9px, 0.6vw + 7.5px, 11px); font-family: 'Gilroy', sans-serif; }
 
     .from {
       grid-column: 2; grid-row: 1; justify-self: end;

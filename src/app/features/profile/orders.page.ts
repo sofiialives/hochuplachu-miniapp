@@ -60,7 +60,15 @@ const PAGE_SIZE = 25;
       }
     </section>`,
   styles: [`
-    .wrap { padding: var(--space-md); max-width: 640px; margin: 0 auto; padding-bottom: var(--space-xl); display: flex; flex-direction: column; gap: var(--space-md); }
+    .wrap {
+      padding: 0 16px;
+      padding-bottom: 110px;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
     h2 { text-align: center; margin: 0; }
     .empty { text-align: center; color: var(--color-muted); padding: var(--space-xl) 0; }
     .list { display: flex; flex-direction: column; gap: var(--space-sm); }
@@ -81,13 +89,14 @@ const PAGE_SIZE = 25;
     .i-sub {
       display: flex; align-items: center; gap: 6px;
       color: var(--color-muted); font-size: 13px; margin-top: 4px;
+      font-family: 'Gilroy', sans-serif;
     }
     .dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 8px; background: var(--color-muted); }
     .dot[data-tone="ok"] { background: var(--color-success); }
     .dot[data-tone="wait"] { background: var(--color-warning); }
     .dot[data-tone="bad"] { background: var(--color-error); }
     .i-right { display: flex; align-items: center; gap: 10px; flex: 0 0 auto; }
-    .i-amount { font-weight: 600; white-space: nowrap; }
+    .i-amount { font-weight: 600; white-space: nowrap; font-family: 'Gilroy', sans-serif; }
     .i-arr { color: var(--color-muted); font-size: 20px; line-height: 1; }
     .skel {
       display: block; height: 68px; border-radius: var(--rounded-lg);
@@ -102,6 +111,13 @@ const PAGE_SIZE = 25;
     }
     @keyframes po-skel { to { transform: translateX(100%); } }
     @media (prefers-reduced-motion: reduce) { .skel::after { animation: none; } }
+
+    /* Тот же боковой отступ на desktop, что и на остальных страницах
+       (profile.page.ts, esim.page.ts, service-detail.page.ts и т.д.) —
+       здесь его раньше не было, .wrap упирался в края экрана. */
+    @media (min-width: 1024px) {
+      .wrap { padding: 0 120px; }
+    }
   `],
 })
 export class ProfileOrdersPage implements OnInit {

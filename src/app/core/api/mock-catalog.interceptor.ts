@@ -70,6 +70,12 @@ const MOCK_USER = {
   referral_bonus_applied: true,
 };
 
+// MOCK_ESIM_PRODUCTS — по несколько тарифов на КАЖДОЕ направление из
+// MOCK_ESIM_DIRECTIONS (страны + регион 'asia'), иначе клик на направление,
+// для которого тарифов не было (AE/US/GB/DE/FR/IT/ES/JP/CN, регион 'asia'),
+// показывал бы «Для этого направления пока нет тарифов» — интерцептор ниже
+// фильтрует по ?direction= (country_code либо region_code), так что пустой
+// список выглядел бы как настоящий баг витрины, а не как недостающий мок.
 const MOCK_ESIM_PRODUCTS = [
   {
     id: 'mock-esim-tr-7d', name: 'Турция, 7 дней', description: '3 ГБ, локальный номер не входит',
@@ -77,15 +83,76 @@ const MOCK_ESIM_PRODUCTS = [
     issue_price: 590, issue_currency: 'RUB', disable_purchase: false, sort_order: 1,
   },
   {
+    id: 'mock-esim-tr-30d', name: 'Турция, 30 дней', description: 'Безлимитный интернет',
+    country_code: 'TR', country_name: 'Турция', days: 30, data_mb: 0,
+    issue_price: 1490, issue_currency: 'RUB', disable_purchase: false, sort_order: 2,
+  },
+  {
     id: 'mock-esim-eu-14d', name: 'Европа, 14 дней', description: 'Покрытие 30+ стран, 5 ГБ',
     country_code: '', country_name: '', days: 14, data_mb: 5000,
-    issue_price: 1290, issue_currency: 'RUB', disable_purchase: false, sort_order: 2,
+    issue_price: 1290, issue_currency: 'RUB', disable_purchase: false, sort_order: 3,
     region_code: 'europe', region_name: 'Европа', locations: ['DE', 'FR', 'IT', 'ES', 'PT'],
   },
   {
     id: 'mock-esim-th-10d', name: 'Таиланд, 10 дней', description: 'Безлимитный интернет',
     country_code: 'TH', country_name: 'Таиланд', days: 10, data_mb: 0,
-    issue_price: 990, issue_currency: 'RUB', disable_purchase: false, sort_order: 3,
+    issue_price: 990, issue_currency: 'RUB', disable_purchase: false, sort_order: 4,
+  },
+  {
+    id: 'mock-esim-ae-7d', name: 'ОАЭ, 7 дней', description: '5 ГБ, локальный номер не входит',
+    country_code: 'AE', country_name: 'ОАЭ', days: 7, data_mb: 5000,
+    issue_price: 790, issue_currency: 'RUB', disable_purchase: false, sort_order: 5,
+  },
+  {
+    id: 'mock-esim-us-7d', name: 'США, 7 дней', description: '5 ГБ, локальный номер не входит',
+    country_code: 'US', country_name: 'США', days: 7, data_mb: 5000,
+    issue_price: 1490, issue_currency: 'RUB', disable_purchase: false, sort_order: 6,
+  },
+  {
+    id: 'mock-esim-us-30d', name: 'США, 30 дней', description: 'Безлимитный интернет',
+    country_code: 'US', country_name: 'США', days: 30, data_mb: 0,
+    issue_price: 2990, issue_currency: 'RUB', disable_purchase: false, sort_order: 7,
+  },
+  {
+    id: 'mock-esim-gb-7d', name: 'Великобритания, 7 дней', description: '5 ГБ',
+    country_code: 'GB', country_name: 'Великобритания', days: 7, data_mb: 5000,
+    issue_price: 1290, issue_currency: 'RUB', disable_purchase: false, sort_order: 8,
+  },
+  {
+    id: 'mock-esim-de-7d', name: 'Германия, 7 дней', description: '5 ГБ',
+    country_code: 'DE', country_name: 'Германия', days: 7, data_mb: 5000,
+    issue_price: 990, issue_currency: 'RUB', disable_purchase: false, sort_order: 9,
+  },
+  {
+    id: 'mock-esim-fr-7d', name: 'Франция, 7 дней', description: '5 ГБ',
+    country_code: 'FR', country_name: 'Франция', days: 7, data_mb: 5000,
+    issue_price: 990, issue_currency: 'RUB', disable_purchase: false, sort_order: 10,
+  },
+  {
+    id: 'mock-esim-it-7d', name: 'Италия, 7 дней', description: '3 ГБ',
+    country_code: 'IT', country_name: 'Италия', days: 7, data_mb: 3000,
+    issue_price: 890, issue_currency: 'RUB', disable_purchase: false, sort_order: 11,
+  },
+  {
+    id: 'mock-esim-es-7d', name: 'Испания, 7 дней', description: '3 ГБ',
+    country_code: 'ES', country_name: 'Испания', days: 7, data_mb: 3000,
+    issue_price: 890, issue_currency: 'RUB', disable_purchase: false, sort_order: 12,
+  },
+  {
+    id: 'mock-esim-jp-10d', name: 'Япония, 10 дней', description: 'Безлимитный интернет',
+    country_code: 'JP', country_name: 'Япония', days: 10, data_mb: 0,
+    issue_price: 1690, issue_currency: 'RUB', disable_purchase: false, sort_order: 13,
+  },
+  {
+    id: 'mock-esim-cn-10d', name: 'Китай, 10 дней', description: '5 ГБ, с обходом блокировок',
+    country_code: 'CN', country_name: 'Китай', days: 10, data_mb: 5000,
+    issue_price: 1150, issue_currency: 'RUB', disable_purchase: false, sort_order: 14,
+  },
+  {
+    id: 'mock-esim-asia-14d', name: 'Азия, 14 дней', description: 'Покрытие 18 стран, 5 ГБ',
+    country_code: '', country_name: '', days: 14, data_mb: 5000,
+    issue_price: 1150, issue_currency: 'RUB', disable_purchase: false, sort_order: 15,
+    region_code: 'asia', region_name: 'Азия', locations: ['TH', 'JP', 'CN', 'SG', 'MY'],
   },
 ];
 
@@ -226,6 +293,52 @@ const MOCK_REFERRAL_PAYOUTS = {
 
 const MOCK_REFERRAL_WITHDRAWALS = { items: [] };
 
+// MOCK_PROFILE_ORDERS — единая история заказов «Мои заказы» (профиль).
+// Покрывает все типы из ProfileOrderItem.type, чтобы на странице сразу было
+// видно и разные статусы (оплачен/ожидает/ошибка/возврат), и разные
+// заголовки/иконки-статусы (titleOf/toneOf в orders.page.ts). Привязана к
+// MOCK_USER_CARDS[0]/MOCK_CARD_PRODUCTS/MOCK_SERVICE_PRODUCTS — открытие
+// заказа ведёт на реальные (мок) сущности, а не в никуда.
+const MOCK_PROFILE_ORDERS = [
+  {
+    type: 'card_order', id: 'mock-order-card-1', created_at: '2026-09-18T09:20:00Z',
+    status: 'issued', card_product_id: 'mock-card-premium',
+    amount_payment: 2999, payment_currency: 'RUB_SBP',
+  },
+  {
+    type: 'topup', id: 'mock-order-topup-1', created_at: '2026-09-19T14:05:00Z',
+    status: 'topped_up', card_id: 'mock-user-card-1',
+    amount: 200, currency: 'USD', amount_payment: 20800, payment_currency: 'RUB_SBP',
+  },
+  {
+    type: 'topup', id: 'mock-order-topup-2', created_at: '2026-09-20T11:40:00Z',
+    status: 'pending_payment', card_id: 'mock-user-card-1',
+    amount: 50, currency: 'USD', amount_payment: 5200, payment_currency: 'RUB_SBP',
+  },
+  {
+    type: 'esim_order', id: 'mock-order-esim-1', created_at: '2026-09-15T18:00:00Z',
+    status: 'issued', esim_product_id: 'mock-esim-tr-7d', product_name: 'Турция, 7 дней',
+    amount_payment: 590, payment_currency: 'RUB_SBP',
+  },
+  {
+    type: 'service_order', id: 'mock-order-svc-1', created_at: '2026-09-17T08:30:00Z',
+    status: 'completed', service_product_id: 'mock-svc-tg-stars', product_name: 'Telegram Stars',
+    kind: 'account_topup', codes_issued: false,
+    amount: 100, currency: 'XTR', amount_payment: 180, payment_currency: 'RUB_SBP',
+  },
+  {
+    type: 'service_order', id: 'mock-order-svc-2', created_at: '2026-09-12T20:15:00Z',
+    status: 'failed', service_product_id: 'mock-svc-netflix', product_name: 'Netflix',
+    kind: 'gift_card', codes_issued: false,
+    amount_payment: 1490, payment_currency: 'RUB_SBP',
+  },
+  {
+    type: 'renewal', id: 'mock-order-renewal-1', created_at: '2026-09-05T10:00:00Z',
+    status: 'refunded', card_id: 'mock-user-card-1',
+    amount_payment: 990, payment_currency: 'RUB_SBP', discount_amount: 100,
+  },
+];
+
 const MOCK_REFERRAL_CONFIG = { referrer_reward: 200, referee_bonus: 100, currency: 'RUB' };
 
 // Курсы способов оплаты для /payment/methods (scope=issue|topup,
@@ -273,7 +386,7 @@ const MOCK_CARD_PRODUCTS = [
     ],
     lists: [['Booking.com', 'Airbnb', 'Skyscanner', 'Aviasales']],
     forbidden: null,
-    image_url: 'assets/mock/card-travel.png', gradient: 'gold',
+    image_url: '', gradient: 'gold',
     bg_image_url: '', bg_gradient: 'rgba(255, 245, 222, 1)',
     heading_color: 'rgba(0, 0, 0, 1)', body_color: 'rgba(0, 0, 0, 1)', cta_color: 'rgba(255, 186, 38, 1)',
     tier1_attrs: ['visa'], tier2_attrs: ['booking', 'airbnb'],
@@ -300,7 +413,7 @@ const MOCK_CARD_PRODUCTS = [
     ],
     lists: [['Netflix', 'Spotify', 'ChatGPT Plus', 'YouTube Premium']],
     forbidden: null,
-    image_url: 'assets/mock/card-subs.png', gradient: 'dark',
+    image_url: '', gradient: 'dark',
     bg_image_url: '', bg_gradient: 'rgba(22, 22, 22, 1)',
     heading_color: '#ffffff', body_color: '#ffffff', cta_color: 'rgba(255, 186, 38, 1)',
     tier1_attrs: ['mastercard'], tier2_attrs: ['netflix', 'spotify'],
@@ -327,7 +440,7 @@ const MOCK_CARD_PRODUCTS = [
     ],
     lists: [['Любые зарубежные сервисы', 'Премиум-поддержка']],
     forbidden: null,
-    image_url: 'assets/mock/card-premium.png', gradient: 'dark',
+    image_url: '', gradient: 'dark',
     bg_image_url: '', bg_gradient: 'rgba(54, 45, 39, 1)',
     heading_color: 'rgba(255, 255, 255, 1)', body_color: 'rgba(255, 255, 255, 1)', cta_color: 'rgba(255, 186, 38, 1)',
     // Раньше tier2_attrs был пустым ([]) — под 6 плашек (как на макете
@@ -364,7 +477,7 @@ const MOCK_USER_CARDS = [
 export const mockCatalogInterceptor: HttpInterceptorFn = (req, next) => {
   if (!mockEnabled() || req.method !== 'GET') return next(req);
 
-  const { pathname } = new URL(req.url, 'http://mock.local');
+  const { pathname, searchParams } = new URL(req.url, 'http://mock.local');
 
   if (pathname.endsWith('/auth/me')) {
     return of(new HttpResponse({ status: 200, body: envelope({ user: MOCK_USER }) }));
@@ -379,8 +492,29 @@ export const mockCatalogInterceptor: HttpInterceptorFn = (req, next) => {
     );
   }
 
+  // GET /esim/products/:id — один тариф (не список). Без этой ветки
+  // esim-checkout.page.ts (EsimApi.product(id)) улетал в реальный бэкенд,
+  // 404-ился и показывал «Тариф не найден или временно недоступен» на
+  // ЛЮБОМ переходе к оплате тарифа — общий список ниже (endsWith
+  // '/esim/products') на этот путь не реагирует, чекаут был мёртвой веткой.
+  const esimProductMatch = pathname.match(/\/esim\/products\/([^/]+)$/);
+  if (esimProductMatch) {
+    const id = decodeURIComponent(esimProductMatch[1]);
+    const product = MOCK_ESIM_PRODUCTS.find((p) => p.id === id);
+    if (product) {
+      return of(new HttpResponse({ status: 200, body: envelope({ product }) }));
+    }
+    return of(new HttpResponse({ status: 404, body: envelope({ error: 'not_found' }) }));
+  }
+
   if (pathname.endsWith('/esim/products')) {
-    return of(new HttpResponse({ status: 200, body: envelope({ products: MOCK_ESIM_PRODUCTS }) }));
+    // direction — ISO-2 страны либо код региона (см. EsimApi.products);
+    // без параметра (общий каталог) отдаём всё целиком.
+    const direction = searchParams.get('direction');
+    const products = direction
+      ? MOCK_ESIM_PRODUCTS.filter((p) => p.country_code === direction || p.region_code === direction)
+      : MOCK_ESIM_PRODUCTS;
+    return of(new HttpResponse({ status: 200, body: envelope({ products }) }));
   }
 
   if (pathname.endsWith('/esim/directions')) {
@@ -493,6 +627,22 @@ export const mockCatalogInterceptor: HttpInterceptorFn = (req, next) => {
   // выпущена" на главной, а не только пустой каталог для выпуска новой.
   if (pathname.endsWith('/cards')) {
     return of(new HttpResponse({ status: 200, body: envelope({ cards: MOCK_USER_CARDS }) }));
+  }
+
+  // GET /profile/orders?page=&page_size= — единая история заказов в
+  // профиле (см. MOCK_PROFILE_ORDERS выше). Пагинация по page/page_size —
+  // ProfileOrdersPage дозагружает страницами через «Показать ещё».
+  if (pathname.endsWith('/profile/orders')) {
+    const page = Number(searchParams.get('page') ?? 1) || 1;
+    const pageSize = Number(searchParams.get('page_size') ?? 25) || 25;
+    const start = (page - 1) * pageSize;
+    const items = MOCK_PROFILE_ORDERS.slice(start, start + pageSize);
+    return of(
+      new HttpResponse({
+        status: 200,
+        body: envelope({ items, total: MOCK_PROFILE_ORDERS.length, page, page_size: pageSize }),
+      }),
+    );
   }
 
   if (pathname.endsWith('/payment/info')) {

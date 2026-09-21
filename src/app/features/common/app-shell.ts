@@ -21,13 +21,23 @@ function routePath(url: string): string {
   return url.split('#')[0].split('?')[0];
 }
 
+// isProductDetailRoute — страница карточки товара (/cards/:id, включая
+// /cards/new — ':id' поглощает 'new'), РОВНО 2 сегмента пути начиная с
+// 'cards'. Отличаем от списка карт (/cards, 1 сегмент) и более глубоких
+// путей (/cards/:id/checkout, /cards/:cardId/extend-service и т.п., 3+
+// сегмента) — там нижний nav-бар должен остаться как был.
+function isProductDetailRoute(url: string): boolean {
+  const segments = routePath(url).split('/').filter(Boolean);
+  return segments.length === 2 && segments[0] === 'cards';
+}
+
 @Component({
   selector: 'app-app-shell',
   standalone: true,
   imports: [RouterOutlet, BottomNavComponent, EmailLinkDialog, WelcomeBonusDialog, BotPermissionDialog],
   template: `<div class="shell has-nav">
     <main><router-outlet /></main>
-    <app-bottom-nav />
+    <app-bottom-nav [hiddenMobile]="hideNavMobile()" />
 
     @if (needsEmailLink()) { <app-email-link-dialog (linked)="onLinked()" /> }
     @if (needsBotPerm()) { <app-bot-permission-dialog (dismissed)="onBotPermDismiss()" /> }
@@ -72,8 +82,21 @@ export class AppShell implements OnInit {
   // null — не показывать. Сначала null, потом подтягивается из /referral/config
   // если пользователь подходит под условия.
   protected readonly welcomeBonus = signal<{ amount: number; currency: string } | null>(null);
+  // hideNavMobile — на мобилке скрываем нижний nav-бар на product-detail
+  // (там снизу зафиксирована кнопка "Выпустить карту", см. BottomNavComponent
+  // и product-detail.page.ts). Инициализируем текущим router.url сразу, чтобы
+  // при прямом заходе/обновлении страницы на /cards/:id nav не мигал видимым
+  // на первом рендере.
+  protected readonly hideNavMobile = signal(isProductDetailRoute(this.router.url));
 
   ngOnInit(): void {
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((e) => {
+      this.hideNavMobile.set(isProductDetailRoute(e.urlAfterRedirects || e.url));
+    });
+
     if (!this.auth.isAuthenticated()) return;
     this.refreshCards();
     if (this.auth.isTelegram() && !this.auth.user()?.bot_can_write) {

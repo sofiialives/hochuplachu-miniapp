@@ -89,7 +89,7 @@ type PendingAction = 'pay' | 'free' | 'promo';
           </app-button>
         } @else {
           <app-pay-button [loading]="loading()" [loadingLabel]="busyLabel()" [sbpLogo]="sbpOnly()"
-                          [label]="'Перейти к оплате — ' + money(finalAmount(), p.issue_currency)"
+                          label="Перейти к оплате"
                           (clicked)="onPayClicked()" />
         }
       </section>

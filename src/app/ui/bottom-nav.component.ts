@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../core/auth/auth.service';
 
@@ -7,7 +7,7 @@ import { AuthService } from '../core/auth/auth.service';
   standalone: true,
   imports: [RouterLink, RouterLinkActive],
   template: `
-    <div class="wrap">
+    <div class="wrap" [class.hidden-mobile]="hiddenMobile()">
     <nav class="nav">
       <div class="bar">
       <a routerLink="/" [routerLinkActiveOptions]="{exact:true}" routerLinkActive="active">
@@ -122,12 +122,20 @@ import { AuthService } from '../core/auth/auth.service';
       a { flex-direction: row; gap: 4px; }
       a span { display: inline; }
       .wrap { padding-left: 120px; padding-right: 120px; }
-      
+
       .nav-underline { width: 80%; max-width: none; }
+    }
+
+    /* hiddenMobile — скрываем nav только на мобилке (например, на странице
+       product-detail, где снизу зафиксирована кнопка "Выпустить карту" и
+       nav-бар накладывался бы на неё). На desktop nav всегда виден. */
+    @media (max-width: 1023px) {
+      .wrap.hidden-mobile { display: none; }
     }
   `],
 })
 export class BottomNavComponent {
   private readonly auth = inject(AuthService);
   protected readonly isAuthed = this.auth.isAuthenticated;
+  readonly hiddenMobile = input(false);
 }

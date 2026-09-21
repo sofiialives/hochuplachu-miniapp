@@ -355,12 +355,21 @@
 }
 
 
+/*
+ * БАГ БЫЛ ЗДЕСЬ: оба font-weight (400 и 500) указывали на ОДИН И ТОТ ЖЕ файл
+ * Gilroy-Medium.woff2 — из-за этого font-weight:500 у любого текста на
+ * 'Gilroy' визуально ничего не менял (браузер и так рисовал Medium на 400),
+ * а файл Gilroy-Regular.woff2 (реально более тонкий) вообще нигде не был
+ * подключён. Теперь 400 = Gilroy-Regular (тонкий), 500 = Gilroy-Medium
+ * (жирнее) — веса стали визуально различимы по всему приложению, в т.ч. у
+ * .pay (app-pay-button) и кнопки "Продолжить" в сервисах.
+ */
 @font-face {
   font-family: 'Gilroy';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/Gilroy-Medium.woff2') format('woff2');
+  src: url('/fonts/Gilroy-Regular.woff2') format('woff2');
 }
 
 @font-face {
