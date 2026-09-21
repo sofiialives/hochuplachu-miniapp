@@ -232,8 +232,8 @@ import { formatAmount } from '../../core/currency/currency-symbols';
     .hero--cards { gap: 0; }
     .hero--cards .hero-visual { margin-right: 20px; }
     .hero--cards .hero-arr { margin-left: 10px; }
-    .hero--cards .hero-title { font-size: 20px; }
-    .hero--cards .hero-sub { font-size: 16px; }
+    .hero--cards .hero-title { font-size: 16px; }
+    .hero--cards .hero-sub { font-size: 14px; }
     .hero-spin {
       width: 36px; height: 36px; flex: 0 0 36px;
       color: var(--color-primary-ink);
@@ -379,7 +379,8 @@ import { formatAmount } from '../../core/currency/currency-symbols';
       .wrap { padding-right: 120px; padding-left: 120px }
       .hero-title {
       font-size: 16px; }
-
+      .hero--cards .hero-title { font-size: 20px; }
+      .hero--cards .hero-sub { font-size: 16px; }
 
       .esim-grid { grid-template-columns: repeat(4, 1fr); }
       .esim-grid .card:nth-child(n+5) { display: grid; }
